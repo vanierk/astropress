@@ -68,5 +68,7 @@ runAudit("workspace-prepare", async () => {
 		}
 	}
 
-	report.finish("workspace-prepare audit passed — all workspace deps consumed by examples have a prepare script");
+	report.finish(
+		"workspace-prepare audit passed — all workspace deps consumed by examples have a prepare script",
+	);
 });

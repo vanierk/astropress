@@ -49,11 +49,15 @@ async function checkScript(path: string, report: AuditReport): Promise<void> {
 		if (isStringArg) continue;
 
 		if (/cargo\s+(build|run|test)\b/.test(line) && !line.includes("--manifest-path")) {
-			report.add(`${path}:${lineNum}: bare \`cargo ${/cargo\s+(\w+)/.exec(line)?.[1]}\` without --manifest-path — will fail when no Cargo.toml exists at the repo root`);
+			report.add(
+				`${path}:${lineNum}: bare \`cargo ${/cargo\s+(\w+)/.exec(line)?.[1]}\` without --manifest-path — will fail when no Cargo.toml exists at the repo root`,
+			);
 		}
 
 		if (NPX_PLAYWRIGHT_RE.test(line)) {
-			report.add(`${path}:${lineNum}: \`npx … playwright\` invokes npm in a Bun-managed repo; use \`bun x playwright\` instead`);
+			report.add(
+				`${path}:${lineNum}: \`npx … playwright\` invokes npm in a Bun-managed repo; use \`bun x playwright\` instead`,
+			);
 		}
 	}
 }
