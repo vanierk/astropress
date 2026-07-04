@@ -64,8 +64,8 @@ async function main() {
 
 	for (const file of allFiles) {
 		const content = await readFile(file, "utf8");
-		const display = relative(root, file);
-		const filename = file.split("/").pop() ?? "";
+		const display = relative(root, file).replaceAll("\\", "/");
+		const filename = display.split("/").pop() ?? "";
 		const lines = content.split("\n").length;
 
 		// --- Rule: LOC limits ---
@@ -204,7 +204,7 @@ async function main() {
 	const COMPLEXITY_ERROR = 40;
 
 	for (const file of allFiles) {
-		const display = relative(root, file);
+		const display = relative(root, file).replaceAll("\\", "/");
 
 		const content = await readFile(file, "utf8");
 
