@@ -1,0 +1,51 @@
+{
+	"// Formatting": "Astropress uses Biome (not Prettier/ESLint). Format + organize imports on save.",
+	"editor.defaultFormatter": "biomejs.biome",
+	"editor.formatOnSave": true,
+	"editor.codeActionsOnSave": {
+		"source.fixAll.biome": "explicit"
+	},
+	"[typescript]": { "editor.defaultFormatter": "biomejs.biome" },
+	"[typescriptreact]": { "editor.defaultFormatter": "biomejs.biome" },
+	"[javascript]": { "editor.defaultFormatter": "biomejs.biome" },
+	"[json]": { "editor.defaultFormatter": "biomejs.biome" },
+	"[jsonc]": { "editor.defaultFormatter": "biomejs.biome" },
+	"[css]": { "editor.defaultFormatter": "biomejs.biome" },
+	"[astro]": { "editor.defaultFormatter": "astro-build.astro-vscode" },
+
+	"// Indentation": "Biome config uses tabs, width 100.",
+	"editor.insertSpaces": false,
+	"editor.tabSize": 2,
+
+	"// Rust": "Format with rustfmt via rust-analyzer; check on save.",
+	"[rust]": { "editor.defaultFormatter": "rust-lang.rust-analyzer" },
+	"rust-analyzer.check.command": "clippy",
+	"rust-analyzer.linkedProjects": ["crates/Cargo.toml"],
+
+	"// Gherkin / BDD": "Point the Cucumber helper at the BDD scenarios.",
+	"cucumberautocomplete.steps": ["tooling/bdd/**/*.ts", "tooling/e2e/**/*.ts"],
+	"cucumberautocomplete.strictGherkinCompletion": false,
+
+	"// Claude Code": "Start each session pre-approving edits; the .claude/settings.json hooks still run.",
+	"claudeCode.initialPermissionMode": "acceptEdits",
+
+	"// Files": "Hide generated + heavy dirs from search/watch for speed.",
+	"files.eol": "\n",
+	"files.exclude": {
+		"**/.astro": true,
+		"**/.stryker-tmp": true
+	},
+	"search.exclude": {
+		"**/node_modules": true,
+		"**/dist": true,
+		"**/coverage": true,
+		"**/reports": true,
+		"**/crates/target": true,
+		"bun.lock": true
+	},
+	"files.watcherExclude": {
+		"**/node_modules/**": true,
+		"**/dist/**": true,
+		"**/crates/target/**": true
+	}
+}

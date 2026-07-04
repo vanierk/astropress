@@ -1,0 +1,12 @@
+{
+	"//": "Recommended extensions for Astropress. VS Code will prompt to install these when the repo is opened. Requires VS Code 1.98.0+ for the Claude Code extension.",
+	"recommendations": [
+		"anthropic.claude-code",
+		"biomejs.biome",
+		"astro-build.astro-vscode",
+		"rust-lang.rust-analyzer",
+		"ms-playwright.playwright",
+		"alexkrechik.cucumberautocomplete",
+		"tamasfe.even-better-toml"
+	]
+}

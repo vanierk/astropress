@@ -83,3 +83,32 @@ Before calling a CI or security fix done:
 3. Confirm the originally failing check is green.
 4. Run `bun run check:pr-ghas` against the PR merge ref.
 5. Only then declare the branch fixed.
+<!--
+  OPTIONAL: append this block to the repo's existing CLAUDE.md.
+  The repo already ships an excellent CLAUDE.md (security-fix verification,
+  mutation conventions, pre-push gates) and AGENTS.md (full architecture). This
+  bundle does NOT replace them — it adds the .claude/ machinery (settings, hooks,
+  skills, path-scoped rules, slash commands) around them. This pointer just makes
+  the commands discoverable from CLAUDE.md.
+-->
+
+## Claude Code workflow (this repo)
+
+Detailed conventions load on demand from `.claude/skills/` (project-architecture,
+admin-ui, security, testing) and `.claude/rules/` (path-scoped). The deep context
+remains in `AGENTS.md`.
+
+Use **bun** for everything; **never** bare `bun test` (use `bun run --filter astropress
+test`). Format with the repo-local Biome. Commits must be **signed**.
+
+Slash commands:
+
+- Build: `/bdd <behaviour>` · `/slice <area>` · `/new-adapter <service>` ·
+  `/new-integration <tool>` · `/admin-page <screen>`
+- Review: `/review [path]` · `/security-review [path]` · `/a11y [page]`
+- Ship: `/verify` · `/pr-ready` · `/docs-sync` · `/doctor`
+
+Hooks (`.claude/settings.json`): a PreToolUse secret-guard, a PostToolUse Biome
+formatter, and a light Stop-event gate (Biome check + `audit:arch`). The heavy suite
+(BDD + 1500+ Vitest + Playwright + mutation, ~10 min) stays in the lefthook pre-push
+gate and CI — not on every turn.

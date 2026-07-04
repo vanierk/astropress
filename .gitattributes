@@ -1,0 +1,25 @@
+# Line-ending policy for Astropress.
+# Normalize all text files to LF in the repository AND in the working tree
+# (eol=lf overrides a developer's core.autocrlf=true on Windows), so tooling
+# such as Biome (lineEnding: lf) sees consistent endings on every platform.
+* text=auto eol=lf
+
+# PowerShell scripts are Windows-facing — keep CRLF.
+*.ps1 text eol=crlf
+
+# Binary assets: never normalize or diff.
+*.docx binary
+*.pdf  binary
+*.png  binary
+*.jpg  binary
+*.jpeg binary
+*.gif  binary
+*.ico  binary
+*.webp binary
+*.woff  binary
+*.woff2 binary
+*.ttf  binary
+*.otf  binary
+*.wasm binary
+*.zip  binary
+*.gz   binary
