@@ -53,6 +53,14 @@ async function main() {
 
 	const violations: Violation[] = [];
 
+	// Section renderers whose set:html output is sanitized at save time
+	// (sanitizeSections in src/sections/sanitize.ts), so rendering the stored
+	// html raw is the documented contract rather than a sink.
+	const sectionRendererAllowlist = new Set([
+		"packages/astropress/components/sections/ImageText.astro",
+		"packages/astropress/components/sections/RichText.astro",
+	]);
+
 	for (const file of auditedFiles) {
 		const content = await readFile(file, "utf8");
 		const display = relative(root, file);
@@ -78,10 +86,39 @@ async function main() {
 			});
 		}
 
-		if (/set:html=\{pageRecord\.body\}/.test(content)) {
+		// Flag every set:html of dynamic content unless it is provably safe:
+		//   (A) a JSON script sink (type="application/(ld+)json") — not HTML-executed
+		//   (B) an identifier traced to sanitizeHtml()/sanitizeSections()
+		//   (C) one of the sanitize-on-save section renderers (allowlist above)
+		//   (E) an `audit-ok:` annotation on the same or preceding line
+		// Replaces a pageRecord.body-literal check that a renamed variable slipped past.
+		const normalizedDisplay = display.replaceAll("\\", "/");
+		const setHtmlLines = content.split(/\r?\n/);
+		for (let i = 0; i < setHtmlLines.length; i++) {
+			const line = setHtmlLines[i];
+			const match = /set:html=\{([^}]+)\}/.exec(line);
+			if (!match) continue;
+			const expr = match[1].trim();
+			// (A) JSON script sink — rendered into <script type="application/(ld+)json">
+			if (/type=["']application\/(?:ld\+)?json["']/.test(line)) continue;
+			// (C) documented sanitize-on-save section renderer
+			if (sectionRendererAllowlist.has(normalizedDisplay)) continue;
+			// (E) explicit annotation on the same or previous line
+			if (/audit-ok:/.test(line) || (i > 0 && /audit-ok:/.test(setHtmlLines[i - 1]))) {
+				continue;
+			}
+			// (B) bare identifier assigned from sanitizeHtml()/sanitizeSections()
+			if (/^[A-Za-z_$][\w$]*$/.test(expr)) {
+				const assignment = new RegExp(`\\b(?:const|let|var)\\s+${expr}\\s*=([\\s\\S]*?);`).exec(
+					content,
+				);
+				if (assignment && /sanitizeHtml|sanitizeSections/.test(assignment[1])) {
+					continue;
+				}
+			}
 			violations.push({
 				file: display,
-				message: "unsafe post body preview render path found",
+				message: `raw set:html of \`${expr}\` — route through sanitizeHtml()/sanitizeSections(), render into a JSON script sink, or annotate audit-ok:`,
 			});
 		}
 
