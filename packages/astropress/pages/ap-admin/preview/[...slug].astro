@@ -1,6 +1,6 @@
 ---
 import AdminLayout from "@astropress-diy/astropress/components/AdminLayout.astro";
-import { getPageT, requiresAccess, resolveAdminLocale } from "astropress";
+import { getPageT, requiresAccess, resolveAdminLocale, sanitizeHtml } from "astropress";
 
 // #107: preview can surface draft/unpublished content, so gate it on posts:edit
 // — a denied subject is redirected and never sees a draft.
@@ -56,6 +56,13 @@ try {
 } catch {
 	// Provider not available — show placeholder
 }
+
+// Preview can surface draft content whose write path may bypass the
+// sanitize-on-save flow, so route the stored body through the shared
+// sanitizeHtml before set:html rather than rendering it raw.
+const safeBody = record?.body
+	? await sanitizeHtml(record.body)
+	: "<p>No content body to preview.</p>";
 ---
 
 <AdminLayout
@@ -82,7 +89,7 @@ try {
           </a>
         )}
       </div>
-      <article class="preview-content panel" set:html={record.body ?? "<p>No content body to preview.</p>"} />
+      <article class="preview-content panel" set:html={safeBody} />
     </div>
   ) : (
     <section class="panel preview-empty">

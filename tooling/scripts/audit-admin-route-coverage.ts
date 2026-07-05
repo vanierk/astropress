@@ -43,13 +43,13 @@ function astroFileToRoute(relPath: string): string | null {
 	// Skip dynamic routes (files with [param] segments)
 	if (relPath.includes("[")) return null;
 
-	let route = relPath
+	// Normalize slashes first so the /index and /^index strips below match on
+	// Windows too, where listFiles() yields backslash-separated paths.
+	const route = relPath
+		.replace(/\\/g, "/")
 		.replace(/\.astro$/, "")
 		.replace(/\/index$/, "")
 		.replace(/^index$/, "");
-
-	// Normalize slashes
-	route = route.replace(/\\/g, "/");
 
 	// Prepend /ap-admin
 	return route ? `/ap-admin/${route}` : "/ap-admin";
