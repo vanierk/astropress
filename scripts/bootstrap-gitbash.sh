@@ -112,10 +112,10 @@ section "Rust CLI"
 if [ "$SKIP_BUILD" = true ]; then
   warn "skipped (--skip-build)"
 else
-  info "cargo build --bin astropress-cli (debug)…"
-  cargo build --bin astropress-cli || warn "cargo build failed — fix toolchain, then re-run."
-  [ -x target/debug/astropress-cli ] && ok "CLI built: target/debug/astropress-cli" || \
-    [ -x target/debug/astropress-cli.exe ] && ok "CLI built: target/debug/astropress-cli.exe"
+  info "cargo build --manifest-path crates/Cargo.toml --bin astropress-cli (debug)…"
+  cargo build --manifest-path crates/Cargo.toml --bin astropress-cli || warn "cargo build failed — fix toolchain, then re-run."
+  [ -x crates/target/debug/astropress-cli ] && ok "CLI built: crates/target/debug/astropress-cli" || \
+    [ -x crates/target/debug/astropress-cli.exe ] && ok "CLI built: crates/target/debug/astropress-cli.exe"
 fi
 
 # ── 6. Light check ────────────────────────────────────────────────────────────
@@ -129,9 +129,9 @@ ${GREEN}${BOLD}Astropress is bootstrapped for Git Bash.${RESET}
 
 Next:
   1. Scaffold a site (from the repo root):
-       cargo run --bin astropress-cli -- new my-site --provider sqlite
+       cargo run --manifest-path crates/Cargo.toml --bin astropress-cli -- new my-site --provider sqlite
        cd my-site && bun install
-       ../target/debug/astropress-cli dev --project-dir .
+       ../crates/target/debug/astropress-cli dev --project-dir .
      Admin UI:  http://localhost:4321/ap-admin   (admin / admin123)
 
   2. Place the Claude Code config (if you haven't):

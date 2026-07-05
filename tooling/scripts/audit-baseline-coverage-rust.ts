@@ -56,7 +56,7 @@ function eligibleFiles(): string[] {
 		console.error(`audit-baseline-coverage-rust: missing ${root}`);
 		process.exit(1);
 	}
-	const all = walk(root).map((p) => relative(CRATE_ROOT, p));
+	const all = walk(root).map((p) => relative(CRATE_ROOT, p).replaceAll("\\", "/"));
 	return all.filter((p) => !EXCLUDE.some((m) => m(p))).sort();
 }
 

@@ -91,7 +91,7 @@ async function main() {
 
 	for (const filePath of handlerFiles) {
 		const relPath = relative(ROOT, filePath);
-		const fileName = filePath.split("/").pop() ?? "";
+		const fileName = filePath.replaceAll("\\", "/").split("/").pop() ?? "";
 
 		// OG image endpoints return binary PNG, not JSON
 		if (relPath.includes("og-image")) continue;

@@ -36,7 +36,7 @@ async function walkAstroFiles(dir: string): Promise<string[]> {
 }
 
 function isLayoutFile(filePath: string): boolean {
-	const filename = filePath.split("/").pop() ?? "";
+	const filename = filePath.replaceAll("\\", "/").split("/").pop() ?? "";
 	return LAYOUT_FILES.has(filename);
 }
 

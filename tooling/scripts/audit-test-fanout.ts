@@ -20,7 +20,7 @@
 
 import type { Dirent } from "node:fs";
 import { readdirSync, readFileSync } from "node:fs";
-import { join } from "node:path";
+import { join, relative } from "node:path";
 
 import { AuditReport, fromRoot, runAudit } from "../lib/audit-utils.js";
 
@@ -125,7 +125,7 @@ async function main(): Promise<void> {
 	for (const path of tests) {
 		const src = readFileSync(path, "utf8");
 		const paths = extractFanout(src);
-		const rel = path.replace(`${fromRoot()}/`, "");
+		const rel = relative(fromRoot(), path).replaceAll("\\", "/");
 		const basename = rel.split("/").pop() ?? rel;
 		results.push({ relPath: rel, count: paths.length, paths });
 		void basename;

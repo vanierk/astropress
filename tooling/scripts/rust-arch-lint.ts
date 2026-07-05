@@ -44,7 +44,7 @@ async function main() {
 	for (const file of allFiles) {
 		const content = await readFile(file, "utf8");
 		const display = relative(root, file);
-		const filename = file.split("/").pop() ?? "";
+		const filename = file.replaceAll("\\", "/").split("/").pop() ?? "";
 		const lines = content.split("\n").length;
 		const pathSegments = display.replace(/\\/g, "/");
 

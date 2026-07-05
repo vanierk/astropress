@@ -25,7 +25,11 @@ const ENV_AWARE_FLAGS: [string, RegExp, RegExp][] = [
 const TYPE_DEFINITION_FILES = new Set(["security-headers.ts", "security-middleware.ts"]);
 
 function isTestFile(path: string): boolean {
-	return path.includes(".test.") || path.includes(".spec.") || path.includes("/tests/");
+	return (
+		path.includes(".test.") ||
+		path.includes(".spec.") ||
+		path.replaceAll("\\", "/").includes("/tests/")
+	);
 }
 
 async function walkFiles(dir: string): Promise<string[]> {
@@ -37,7 +41,7 @@ async function walkFiles(dir: string): Promise<string[]> {
 }
 
 function isTypeDefinition(filePath: string): boolean {
-	const filename = filePath.split("/").pop() ?? "";
+	const filename = filePath.replaceAll("\\", "/").split("/").pop() ?? "";
 	return TYPE_DEFINITION_FILES.has(filename);
 }
 

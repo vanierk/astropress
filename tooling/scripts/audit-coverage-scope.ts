@@ -74,6 +74,7 @@ async function collectMatchingTestBasenames(): Promise<Set<string>> {
 	for (const entry of entries) {
 		if (!entry.endsWith(".test.ts")) continue;
 		const base = entry
+			.replaceAll("\\", "/")
 			.split("/")
 			.pop()
 			?.replace(/\.test\.ts$/, "");

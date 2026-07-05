@@ -52,7 +52,7 @@ function isSuppressedInWindow(lines: string[], start: number, end: number): bool
 
 function checkFile(file: string, src: string): Violation[] {
 	const violations: Violation[] = [];
-	const rel = relative(ROOT, file);
+	const rel = relative(ROOT, file).replaceAll("\\", "/");
 	const lines = src.split("\n");
 
 	// ── 1. Path traversal: path.join with untrusted filename in import scripts ──
