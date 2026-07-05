@@ -324,7 +324,8 @@ These are encoded in the skills/rules and matter most:
 - **No speculative providers/integrations.** A service must exist at a real URL and be in
   `tooling/verified-providers.json` (`audit:providers`) before any adapter code.
 - **Crypto naming:** Argon2id (passwords), KMAC256 (token/privacy digests), ML-DSA-65
-  (outbound webhook signatures). Don't use SHA-2/PBKDF2 names for Astropress's own crypto.
+  (outbound webhook signatures). Stick to Astropress's own crypto names — Argon2id,
+  KMAC256, ML-DSA-65 — rather than other libraries' password-hash or KDF names.
 - **Honesty + microcopy:** no maturity overclaims, no banned generic error phrases.
 - **Signed commits**, linear history, no force-push.
 
