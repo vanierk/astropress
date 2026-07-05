@@ -82,7 +82,7 @@ if [ "$SKIP_PLAYWRIGHT" = true ]; then
   warn "skipped (--skip-playwright)"
 else
   info "Installing Chromium, Firefox, WebKit (browser binaries)…"
-  npx --yes playwright install chromium firefox webkit || \
+  bun x playwright install chromium firefox webkit || \
     warn "Playwright install hit an issue; UI E2E may not run locally. You can retry later."
 fi
 

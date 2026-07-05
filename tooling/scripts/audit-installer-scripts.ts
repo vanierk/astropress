@@ -19,6 +19,7 @@ import { AuditReport, fromRoot, runAudit } from "../lib/audit-utils.js";
 const INSTALL_SCRIPTS = [
 	fromRoot("tooling/scripts/install.sh"),
 	fromRoot("tooling/scripts/install.ps1"),
+	fromRoot("scripts/bootstrap-gitbash.sh"),
 ];
 
 // Matches npx invocations that call playwright
