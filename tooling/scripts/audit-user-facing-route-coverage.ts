@@ -39,11 +39,13 @@ const SMOKE_SCRIPT = fromRoot("tooling/scripts/run-consumer-smoke.ts");
 
 function astroFileToRoute(relPath: string, prefix: string): string | null {
 	if (relPath.includes("[")) return null;
-	let route = relPath
+	// Normalize slashes first so the /index and /^index strips below match on
+	// Windows too, where listFiles() yields backslash-separated paths.
+	const route = relPath
+		.replace(/\\/g, "/")
 		.replace(/\.astro$/, "")
 		.replace(/\/index$/, "")
 		.replace(/^index$/, "");
-	route = route.replace(/\\/g, "/");
 	return route ? `${prefix}/${route}` : prefix || "/";
 }
 

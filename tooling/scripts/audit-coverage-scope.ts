@@ -23,11 +23,13 @@ type ExemptionManifest = {
 
 function astroFileToRoute(relPath: string): string | null {
 	if (relPath.includes("[")) return null;
-	let route = relPath
+	// Normalize slashes first so the /index and /^index strips below match on
+	// Windows too, where listFiles() yields backslash-separated paths.
+	const route = relPath
+		.replace(/\\/g, "/")
 		.replace(/\.astro$/, "")
 		.replace(/\/index$/, "")
 		.replace(/^index$/, "");
-	route = route.replace(/\\/g, "/");
 	return route ? `/ap-admin/${route}` : "/ap-admin";
 }
 
