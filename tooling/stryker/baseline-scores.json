@@ -85,18 +85,6 @@
       "score": 95.23809523809523,
       "hash": "d1f879a5733ef63174f918d1c0a183b787427940"
     },
-    "packages/astropress/src/client/comments-dialog.ts": {
-      "score": 100,
-      "hash": "1f33e56c908bfd7969d8798379357accf27fdc9f"
-    },
-    "packages/astropress/src/client/post-editor.ts": {
-      "score": 100,
-      "hash": "bff17e617e0b617cbc8b8dcade7576afb160ca1d"
-    },
-    "packages/astropress/src/client/redirects-dialog.ts": {
-      "score": 100,
-      "hash": "7366100767c78ba9e901ab2f78f1e05fc180d756"
-    },
     "packages/astropress/src/client/theme-toggle.ts": {
       "score": 100,
       "hash": "398c390de066fd38a51953b56c5377ce366d77cc"
