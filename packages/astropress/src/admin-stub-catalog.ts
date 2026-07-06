@@ -422,7 +422,7 @@ export const adminStubs = {
 export type AdminStubKey = keyof typeof adminStubs;
 
 /**
- * Per-route metadata for the 25 admin stub pages rendered through the
+ * Per-route metadata for the admin stub pages rendered through the
  * dynamic `pages/ap-admin/[stub].astro` route. Each entry binds a URL
  * slug (the path segment) to:
  *
@@ -552,16 +552,11 @@ export const ADMIN_STUB_PAGES = {
 		navKey: "mapsLocal",
 		action: "seo:edit",
 	},
-	"structured-data": {
-		stubKey: "structuredData",
-		navKey: "structuredData",
-		action: "seo:edit",
-	},
-	shop: {
-		stubKey: "shop",
-		navKey: "shop",
-		action: "services:manage",
-	},
+	// structured-data, shop, and monitoring were promoted to real pages
+	// (structured-data.astro, shop.astro, monitoring.astro). Their adminStubs
+	// entries (capability/description/configHint/providers copy) stay as
+	// orphaned catalog entries — structured-data.astro/monitoring.astro still
+	// reuse that copy directly — matching the deploy-hooks precedent.
 	sitemaps: {
 		stubKey: "sitemaps",
 		navKey: "sitemaps",
@@ -570,11 +565,6 @@ export const ADMIN_STUB_PAGES = {
 	"ab-testing": {
 		stubKey: "abTesting",
 		navKey: "abTesting",
-		action: "services:manage",
-	},
-	monitoring: {
-		stubKey: "monitoring",
-		navKey: "monitoring",
 		action: "services:manage",
 	},
 } as const satisfies Record<string, AdminStubPageEntry>;

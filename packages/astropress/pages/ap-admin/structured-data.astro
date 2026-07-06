@@ -1,0 +1,45 @@
+---
+import AdminLayout from "@astropress-diy/astropress/components/AdminLayout.astro";
+import { getPageT, requiresAccess, resolveAdminLocale } from "astropress";
+
+// Promoted from the [stub].astro coming-soon/env-gated route: JSON-LD
+// (AstropressContentLayout.astro's auto-wiring) and llms.txt generation
+// (pages/llms.txt.ts) are both real, automatic, and need no CmsConfig field
+// at all — [stub].astro was showing this as "not configured" unconditionally.
+const guard = await requiresAccess(Astro, "seo:edit");
+if (guard) return guard;
+const adminUser = Astro.locals.adminUser;
+if (!adminUser) return Astro.redirect("/ap-admin/login");
+const t = getPageT(resolveAdminLocale(Astro));
+---
+
+<AdminLayout
+  title={t("structuredData.title")}
+  heading={t("structuredData.title")}
+  currentPath="/ap-admin/structured-data"
+  description={t("structuredData.description")}
+  userName={adminUser.name}
+>
+  <p class="admin-kicker">{t("integrationConnect.statusActive")}</p>
+
+  <section class="panel">
+    <div class="section-header">
+      <div>
+        <h2>{t("structuredData.jsonLdHeading")}</h2>
+        <p>{t("structuredData.jsonLdBody")}</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="panel">
+    <div class="section-header">
+      <div>
+        <h2>{t("structuredData.llmsTxtHeading")}</h2>
+        <p>{t("structuredData.llmsTxtBody")}</p>
+      </div>
+    </div>
+    <a href="/llms.txt" target="_blank" rel="noreferrer" class="admin-button-ghost">
+      {t("structuredData.viewLlmsTxt")}
+    </a>
+  </section>
+</AdminLayout>

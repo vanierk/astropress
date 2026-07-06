@@ -1,0 +1,56 @@
+---
+import AdminLayout from "@astropress-diy/astropress/components/AdminLayout.astro";
+import RequiresIntegration from "@astropress-diy/astropress/components/RequiresIntegration.astro";
+import {
+	adminStubs,
+	getPageT,
+	peekCmsConfig,
+	requiresAccess,
+	resolveAdminLocale,
+} from "astropress";
+
+// Promoted from the [stub].astro coming-soon/env-gated route: the Prometheus
+// metrics endpoint (pages/ap/metrics.ts) and its CmsConfig.monitoring field
+// are both real and tested — [stub].astro never checked the config, so an
+// already-enabled deployment still saw "not configured." This page branches
+// on the live config instead.
+const guard = await requiresAccess(Astro, "services:manage");
+if (guard) return guard;
+const adminUser = Astro.locals.adminUser;
+if (!adminUser) return Astro.redirect("/ap-admin/login");
+const locale = resolveAdminLocale(Astro);
+const t = getPageT(locale);
+const stub = adminStubs.monitoring;
+const isActive = Boolean(peekCmsConfig()?.monitoring?.prometheusEnabled);
+---
+
+<AdminLayout
+  title={t("stub.monitoring.capability", stub.capability)}
+  heading={t("stub.monitoring.capability", stub.capability)}
+  currentPath="/ap-admin/monitoring"
+  description={t("stub.monitoring.description", stub.description)}
+  userName={adminUser.name}
+>
+  {isActive ? (
+    <section class="panel">
+      <p class="admin-kicker">{t("integrationConnect.statusActive")}</p>
+      <h2>{t("stub.monitoring.capability", stub.capability)}</h2>
+      <p>
+        {t("monitoring.activeHeadingPrefix")} <code>/ap/metrics</code>.
+      </p>
+      <a href="/ap/metrics" target="_blank" rel="noreferrer" class="admin-button-ghost">
+        {t("monitoring.viewMetricsLink")}
+      </a>
+    </section>
+  ) : (
+    <RequiresIntegration
+      capability={stub.capability}
+      description={stub.description}
+      configHint={stub.configHint}
+      providers={[...stub.providers]}
+      docsHref={(stub as { docsHref?: string }).docsHref}
+      locale={locale}
+      stubKey="monitoring"
+    />
+  )}
+</AdminLayout>

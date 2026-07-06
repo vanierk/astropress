@@ -1,6 +1,6 @@
 ---
 /**
- * Single dynamic route for the 25 admin stub pages whose backing
+ * Single dynamic route for the admin stub pages whose backing
  * integrations are not yet wired (or are env-gated and unconfigured).
  *
  * Source of truth lives in `ADMIN_STUB_PAGES` (admin-stub-catalog.ts):
@@ -27,7 +27,7 @@ import {
 export const prerender = false;
 
 // `[stub]` makes the file a dynamic-route entrypoint, but admin-routes.ts
-// also injects this file under each of the 25 enumerated static patterns
+// also injects this file under each of the enumerated static patterns
 // (so the route catalog stays explicit). Either way, the slug is the last
 // path segment.
 const slugFromParam = typeof Astro.params.stub === "string" ? Astro.params.stub : undefined;

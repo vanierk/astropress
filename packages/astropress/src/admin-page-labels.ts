@@ -10943,6 +10943,25 @@ export const pageLabels = {
 	"deployHooks.description": {
 		en: "Connect a deploy-hooks provider to trigger production builds from CI or vendor webhooks.",
 	},
+
+	// ── Monitoring (promoted: branches on CmsConfig.monitoring.prometheusEnabled) ──
+	"monitoring.activeHeadingPrefix": { en: "Prometheus metrics are exposed at" },
+	"monitoring.viewMetricsLink": { en: "View raw metrics" },
+
+	// ── Structured Data / AEO (promoted: always active, no config needed) ───
+	"structuredData.title": { en: "Structured Data / AEO" },
+	"structuredData.description": {
+		en: "Automatic JSON-LD and llms.txt generation for search and AI crawlers — no configuration needed.",
+	},
+	"structuredData.jsonLdHeading": { en: "Automatic JSON-LD" },
+	"structuredData.jsonLdBody": {
+		en: "Posts automatically get BlogPosting schema. Content with FAQ items, HowTo steps, or speakable CSS selectors in its metadata gets FAQPage, HowTo, or Speakable schema as well — no manual wiring.",
+	},
+	"structuredData.llmsTxtHeading": { en: "llms.txt" },
+	"structuredData.llmsTxtBody": {
+		en: "Generated automatically from published posts and pages, listing titles, URLs, and descriptions for AI crawlers.",
+	},
+	"structuredData.viewLlmsTxt": { en: "View /llms.txt" },
 } as const satisfies Record<string, LocaleMap>;
 
 /**

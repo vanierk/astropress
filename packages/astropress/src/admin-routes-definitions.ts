@@ -296,7 +296,7 @@ export const adminRouteDefinitions = [
 		entrypoint: "[stub].astro",
 		kind: "page",
 	},
-	{ pattern: "/ap-admin/shop", entrypoint: "[stub].astro", kind: "page" },
+	{ pattern: "/ap-admin/shop", entrypoint: "shop.astro", kind: "page" },
 	{
 		pattern: "/ap-admin/social-syndication",
 		entrypoint: "[stub].astro",
@@ -304,7 +304,7 @@ export const adminRouteDefinitions = [
 	},
 	{
 		pattern: "/ap-admin/structured-data",
-		entrypoint: "[stub].astro",
+		entrypoint: "structured-data.astro",
 		kind: "page",
 	},
 	{
@@ -351,7 +351,7 @@ export const adminRouteDefinitions = [
 	},
 	{
 		pattern: "/ap-admin/monitoring",
-		entrypoint: "[stub].astro",
+		entrypoint: "monitoring.astro",
 		kind: "page",
 	},
 	{
