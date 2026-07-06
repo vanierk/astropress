@@ -3,13 +3,14 @@ import AdminLayout from "@astropress-diy/astropress/components/AdminLayout.astro
 import CsrfInput from "@astropress-diy/astropress/components/CsrfInput.astro";
 import { createListmonkOps } from "@astropress-diy/astropress/newsletter-adapter";
 import { getNewsletterConfig } from "@astropress-diy/astropress/runtime-env";
-import { requiresAccess, resolveAdminLocale } from "astropress";
+import { getPageT, requiresAccess, resolveAdminLocale } from "astropress";
 
 const guard = await requiresAccess(Astro, "subscribers:view");
 if (guard) return guard;
 const adminUser = Astro.locals.adminUser;
 if (!adminUser) return Astro.redirect("/ap-admin/login");
 const adminLocale = resolveAdminLocale(Astro);
+const t = getPageT(adminLocale);
 
 const { id } = Astro.params as { id: string };
 
@@ -45,32 +46,31 @@ try {
 		subscriber = result.subscriber as SubscriberDetail;
 	}
 } catch (e) {
-	errorMessage =
-		"Could not load subscriber. The subscriber may not exist, or your LISTMONK_* environment variables may be misconfigured.";
+	errorMessage = t("subscribers.detail.loadError");
 }
 
 const wasDeleted = Astro.url.searchParams.get("deleted") === "1";
 ---
 
   <AdminLayout
-    title={subscriber ? `${subscriber.email} — Subscribers` : "Subscriber"}
-    heading={subscriber ? subscriber.email : "Subscriber"}
-    description="View and manage this newsletter subscriber."
+    title={subscriber ? `${subscriber.email} — ${t("subscribers.detail.breadcrumb")}` : t("subscribers.detail.fallbackTitle")}
+    heading={subscriber ? subscriber.email : t("subscribers.detail.fallbackTitle")}
+    description={t("subscribers.detail.description")}
     userName={adminUser.name}
     currentPath="/ap-admin/subscribers"
   >
     <nav class="breadcrumb" aria-label="breadcrumb">
-      <a href="/ap-admin/subscribers">Subscribers</a>
+      <a href="/ap-admin/subscribers">{t("subscribers.detail.breadcrumb")}</a>
       <span aria-hidden="true"> / </span>
       <span aria-current="page">{subscriber ? subscriber.email : id}</span>
     </nav>
 
-    {wasDeleted && <p class="notice">Subscriber removed successfully.</p>}
+    {wasDeleted && <p class="notice">{t("subscribers.detail.removedSuccess")}</p>}
     {errorMessage && <p class="error-notice">{errorMessage}</p>}
 
     {!listSupported && !errorMessage && (
       <div class="notice">
-        <p>Subscriber details require Listmonk. Configure the <code>LISTMONK_*</code> environment variables to enable it.</p>
+        <p>{t("subscribers.detail.listmonkRequiredPrefix")} <code>LISTMONK_*</code> {t("subscribers.detail.listmonkRequiredSuffix")}</p>
       </div>
     )}
 
@@ -79,36 +79,36 @@ const wasDeleted = Astro.url.searchParams.get("deleted") === "1";
         <div class="detail-card">
           <dl class="detail-list">
             <div class="detail-row">
-              <dt>Email</dt>
+              <dt>{t("subscribers.detail.emailLabel")}</dt>
               <dd class="detail-email">{subscriber.email}</dd>
             </div>
             <div class="detail-row">
-              <dt>Name</dt>
+              <dt>{t("subscribers.detail.nameLabel")}</dt>
               <dd>{subscriber.name || <span class="muted">—</span>}</dd>
             </div>
             <div class="detail-row">
-              <dt>Status</dt>
+              <dt>{t("common.status")}</dt>
               <dd>
                 <span class={`status-badge status-badge--${subscriber.status}`}>{subscriber.status}</span>
               </dd>
             </div>
             <div class="detail-row">
-              <dt>Subscribed</dt>
+              <dt>{t("subscribers.detail.subscribedLabel")}</dt>
               <dd class="muted">
                 {subscriber.createdAt ? new Date(subscriber.createdAt).toLocaleString(adminLocale) : "—"}
               </dd>
             </div>
             <div class="detail-row">
-              <dt>Subscriber ID</dt>
+              <dt>{t("subscribers.detail.idLabel")}</dt>
               <dd class="muted">{subscriber.id}</dd>
             </div>
           </dl>
         </div>
 
         <div class="danger-zone">
-          <h2 class="danger-zone__title">Remove subscriber</h2>
+          <h2 class="danger-zone__title">{t("subscribers.detail.removeSubscriber")}</h2>
           <p class="danger-zone__desc">
-            This permanently removes the subscriber from Listmonk. This action cannot be undone.
+            {t("subscribers.detail.removeWarning")}
           </p>
           <button
             type="button"
@@ -119,21 +119,21 @@ const wasDeleted = Astro.url.searchParams.get("deleted") === "1";
             data-field-value={String(subscriber.id)}
             data-text-subscriber-email={subscriber.email}
           >
-            Remove subscriber
+            {t("subscribers.detail.removeSubscriber")}
           </button>
         </div>
         <ap-confirm-dialog>
           <dialog id="confirm-delete-subscriber" class="confirm-modal" aria-labelledby="confirm-delete-subscriber-title">
             <div class="modal-content">
-              <h2 id="confirm-delete-subscriber-title">Remove subscriber?</h2>
-              <p>Are you sure you want to remove <strong id="subscriber-email"></strong>?</p>
-              <p class="dialog-warning">This action cannot be undone.</p>
+              <h2 id="confirm-delete-subscriber-title">{t("subscribers.detail.removeConfirmTitle")}</h2>
+              <p>{t("subscribers.detail.confirmRemovePrefix")} <strong id="subscriber-email"></strong>?</p>
+              <p class="dialog-warning">{t("subscribers.detail.actionCannotBeUndone")}</p>
               <div class="modal-actions">
-                <button type="button" class="admin-button-ghost small secondary-button" data-dialog-close>Cancel</button>
+                <button type="button" class="admin-button-ghost small secondary-button" data-dialog-close>{t("postEditor.cancel")}</button>
                 <form method="post" action="/ap-admin/actions/subscriber-delete" style="display:inline;">
                   <CsrfInput token={Astro.locals.csrfToken} />
                   <input type="hidden" name="id" value="" />
-                  <button type="submit" class="admin-button small delete-button">Remove Subscriber</button>
+                  <button type="submit" class="admin-button small delete-button">{t("subscribers.detail.removeSubscriberSubmit")}</button>
                 </form>
               </div>
             </div>
@@ -143,7 +143,7 @@ const wasDeleted = Astro.url.searchParams.get("deleted") === "1";
     )}
 
     {listSupported && !subscriber && !errorMessage && (
-      <p class="error-notice">Subscriber not found.</p>
+      <p class="error-notice">{t("subscribers.detail.notFound")}</p>
     )}
 
     <style>

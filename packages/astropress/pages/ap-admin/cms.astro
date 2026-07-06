@@ -1,6 +1,6 @@
 ---
 import AdminLayout from "@astropress-diy/astropress/components/AdminLayout.astro";
-import { requiresAccess } from "astropress";
+import { getPageT, requiresAccess, resolveAdminLocale } from "astropress";
 import { validateEmbedUrl } from "../../src/admin-embed-url";
 
 // #125 parity: the CMS panel maps to settings:edit in the nav; gate it on the
@@ -8,6 +8,7 @@ import { validateEmbedUrl } from "../../src/admin-embed-url";
 const guard = await requiresAccess(Astro, "settings:edit");
 if (guard) return guard;
 const adminUser = Astro.locals.adminUser;
+const t = getPageT(resolveAdminLocale(Astro));
 
 // Require authentication
 if (!adminUser) {
@@ -42,7 +43,7 @@ const embed = validateEmbedUrl(cmsConfig.url);
   title={cmsLabel}
   heading={cmsLabel}
   currentPath="/ap-admin/cms"
-  description={`Editorial CMS panel — ${cmsLabel}`}
+  description={`${t("cms.descriptionPrefix")} ${cmsLabel}`}
   userName={adminUser.name}
   hasCms={true}
 >
@@ -50,10 +51,10 @@ const embed = validateEmbedUrl(cmsConfig.url);
     <section class="panel cms-link-panel" data-cms-invalid-url>
       <div class="section-header">
         <div>
-          <p class="admin-kicker">Editorial CMS</p>
+          <p class="admin-kicker">{t("cms.kicker")}</p>
           <h2>{cmsLabel}</h2>
-          <p class="error-notice">This CMS panel is misconfigured and was not loaded: {embed.reason}</p>
-          <p class="admin-note">Set <code>cmsConfig.url</code> to an https URL (http is allowed only for localhost).</p>
+          <p class="error-notice">{t("cms.misconfiguredPrefix")} {embed.reason}</p>
+          <p class="admin-note">{t("cms.setUrlPrefix")} <code>cmsConfig.url</code> {t("cms.setUrlSuffix")}</p>
         </div>
       </div>
     </section>
@@ -62,7 +63,7 @@ const embed = validateEmbedUrl(cmsConfig.url);
       <iframe
         src={embed.url}
         class="cms-frame"
-        title={`${cmsLabel} editorial panel`}
+        title={`${cmsLabel} ${t("cms.iframeTitleSuffix")}`}
         allow={cmsConfig.iframeAllow ?? "clipboard-write; fullscreen"}
         data-cms-type={cmsConfig.type}
       />
@@ -71,9 +72,9 @@ const embed = validateEmbedUrl(cmsConfig.url);
     <section class="panel cms-link-panel">
       <div class="section-header">
         <div>
-          <p class="admin-kicker">Editorial CMS</p>
+          <p class="admin-kicker">{t("cms.kicker")}</p>
           <h2>{cmsLabel}</h2>
-          <p>This CMS runs as a separate service. Click below to open the editorial panel in a new tab.</p>
+          <p>{t("cms.separateServiceNotice")}</p>
         </div>
       </div>
       <div class="cms-link-actions">
@@ -84,10 +85,10 @@ const embed = validateEmbedUrl(cmsConfig.url);
           class="admin-button"
           data-cms-open-link
         >
-          Open {cmsLabel}
+          {t("embedPanel.openPrefix")} {cmsLabel}
         </a>
         <p class="admin-note">
-          Opens <code>{embed.url}</code> in a new tab.
+          {t("embedPanel.opensPrefix")} <code>{embed.url}</code> {t("embedPanel.opensSuffix")}
         </p>
       </div>
     </section>

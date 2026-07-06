@@ -10726,6 +10726,65 @@ export const pageLabels = {
 	"preview.editInAdmin": { en: "Edit in admin" },
 	"preview.noRecordPrefix": { en: "No content record was found for slug" },
 	"preview.backToDashboard": { en: "Back to dashboard" },
+
+	// ── Access page tabs aria-label ──────────────────────────────────────────
+	"access.tabsAria": { en: "Access tabs" },
+
+	// ── CMS embed panel ───────────────────────────────────────────────────────
+	"cms.descriptionPrefix": { en: "Editorial CMS panel —" },
+	"cms.kicker": { en: "Editorial CMS" },
+	"cms.misconfiguredPrefix": { en: "This CMS panel is misconfigured and was not loaded:" },
+	"cms.setUrlPrefix": { en: "Set" },
+	"cms.setUrlSuffix": { en: "to an https URL (http is allowed only for localhost)." },
+	"cms.iframeTitleSuffix": { en: "editorial panel" },
+	"cms.separateServiceNotice": {
+		en: "This CMS runs as a separate service. Click below to open the editorial panel in a new tab.",
+	},
+
+	// ── Host (database provider) embed panel ─────────────────────────────────
+	"host.descriptionPrefix": { en: "Database provider infrastructure panel —" },
+	"host.kicker": { en: "Database Provider" },
+	"host.misconfiguredPrefix": {
+		en: "This provider panel is misconfigured and was not loaded:",
+	},
+	"host.setUrlNotice": {
+		en: "Set the provider panel URL to an https URL (http is allowed only for localhost).",
+	},
+	"host.iframeTitleSuffix": { en: "provider panel" },
+	"host.separateServiceNotice": {
+		en: "The provider's infrastructure panel runs as a separate service. Click below to open it in a new tab.",
+	},
+
+	// ── Shared by cms.astro / host.astro embed-link panels ───────────────────
+	"embedPanel.openPrefix": { en: "Open" },
+	"embedPanel.opensPrefix": { en: "Opens" },
+	"embedPanel.opensSuffix": { en: "in a new tab." },
+
+	// ── Subscriber detail (subscribers/[id]) ─────────────────────────────────
+	"subscribers.detail.loadError": {
+		en: "Could not load subscriber. The subscriber may not exist, or your LISTMONK_* environment variables may be misconfigured.",
+	},
+	"subscribers.detail.breadcrumb": { en: "Subscribers" },
+	"subscribers.detail.fallbackTitle": { en: "Subscriber" },
+	"subscribers.detail.description": { en: "View and manage this newsletter subscriber." },
+	"subscribers.detail.removedSuccess": { en: "Subscriber removed successfully." },
+	"subscribers.detail.listmonkRequiredPrefix": {
+		en: "Subscriber details require Listmonk. Configure the",
+	},
+	"subscribers.detail.listmonkRequiredSuffix": { en: "environment variables to enable it." },
+	"subscribers.detail.emailLabel": { en: "Email" },
+	"subscribers.detail.nameLabel": { en: "Name" },
+	"subscribers.detail.subscribedLabel": { en: "Subscribed" },
+	"subscribers.detail.idLabel": { en: "Subscriber ID" },
+	"subscribers.detail.removeSubscriber": { en: "Remove subscriber" },
+	"subscribers.detail.removeWarning": {
+		en: "This permanently removes the subscriber from Listmonk. This action cannot be undone.",
+	},
+	"subscribers.detail.removeConfirmTitle": { en: "Remove subscriber?" },
+	"subscribers.detail.confirmRemovePrefix": { en: "Are you sure you want to remove" },
+	"subscribers.detail.actionCannotBeUndone": { en: "This action cannot be undone." },
+	"subscribers.detail.removeSubscriberSubmit": { en: "Remove Subscriber" },
+	"subscribers.detail.notFound": { en: "Subscriber not found." },
 } as const satisfies Record<string, LocaleMap>;
 
 /**

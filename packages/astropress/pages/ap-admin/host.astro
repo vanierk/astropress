@@ -1,9 +1,10 @@
 ---
 import AdminLayout from "@astropress-diy/astropress/components/AdminLayout.astro";
-import { isAuthUserAdmin } from "astropress";
+import { getPageT, isAuthUserAdmin, resolveAdminLocale } from "astropress";
 import { validateEmbedUrl } from "../../src/admin-embed-url";
 
 const adminUser = Astro.locals.adminUser;
+const t = getPageT(resolveAdminLocale(Astro));
 
 // Require authentication
 if (!adminUser) {
@@ -36,7 +37,7 @@ const embed = validateEmbedUrl(hostPanel.url);
   title={hostPanel.label}
   heading={hostPanel.label}
   currentPath="/ap-admin/host"
-  description={`Database provider infrastructure panel — ${hostPanel.label}`}
+  description={`${t("host.descriptionPrefix")} ${hostPanel.label}`}
   userName={adminUser.name}
   hasHostPanel={true}
 >
@@ -44,10 +45,10 @@ const embed = validateEmbedUrl(hostPanel.url);
     <section class="panel host-link-panel" data-host-invalid-url>
       <div class="section-header">
         <div>
-          <p class="admin-kicker">Database Provider</p>
+          <p class="admin-kicker">{t("host.kicker")}</p>
           <h2>{hostPanel.label}</h2>
-          <p class="error-notice">This provider panel is misconfigured and was not loaded: {embed.reason}</p>
-          <p class="admin-note">Set the provider panel URL to an https URL (http is allowed only for localhost).</p>
+          <p class="error-notice">{t("host.misconfiguredPrefix")} {embed.reason}</p>
+          <p class="admin-note">{t("host.setUrlNotice")}</p>
         </div>
       </div>
     </section>
@@ -56,7 +57,7 @@ const embed = validateEmbedUrl(hostPanel.url);
       <iframe
         src={embed.url}
         class="host-frame"
-        title={`${hostPanel.label} provider panel`}
+        title={`${hostPanel.label} ${t("host.iframeTitleSuffix")}`}
         allow="clipboard-write; fullscreen"
         data-host-panel
       />
@@ -65,9 +66,9 @@ const embed = validateEmbedUrl(hostPanel.url);
     <section class="panel host-link-panel">
       <div class="section-header">
         <div>
-          <p class="admin-kicker">Database Provider</p>
+          <p class="admin-kicker">{t("host.kicker")}</p>
           <h2>{hostPanel.label}</h2>
-          <p>The provider's infrastructure panel runs as a separate service. Click below to open it in a new tab.</p>
+          <p>{t("host.separateServiceNotice")}</p>
         </div>
       </div>
       <div class="host-link-actions">
@@ -78,10 +79,10 @@ const embed = validateEmbedUrl(hostPanel.url);
           class="admin-button"
           data-host-panel-link
         >
-          Open {hostPanel.label}
+          {t("embedPanel.openPrefix")} {hostPanel.label}
         </a>
         <p class="admin-note">
-          Opens <code>{embed.url}</code> in a new tab.
+          {t("embedPanel.opensPrefix")} <code>{embed.url}</code> {t("embedPanel.opensSuffix")}
         </p>
       </div>
     </section>

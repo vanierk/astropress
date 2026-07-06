@@ -53,7 +53,7 @@ const knownActions = listAccessActions().map((a) => a.id);
   {model.warnings.length > 0 && <p class="notice">{model.warnings.join(" ")}</p>}
   {lastAdminWarning && <p class="warning-notice">{t("access.lastAdminWarning")}</p>}
 
-  <nav class="tabs" role="tablist" aria-label="Access tabs">
+  <nav class="tabs" role="tablist" aria-label={t("access.tabsAria")}>
     <a
       role="tab"
       aria-selected={effectiveTab === "users" ? "true" : "false"}
