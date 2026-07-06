@@ -2,7 +2,12 @@
 import AdminLayout from "@astropress-diy/astropress/components/AdminLayout.astro";
 import AuditTrail from "@astropress-diy/astropress/components/AuditTrail.astro";
 import CsrfInput from "@astropress-diy/astropress/components/CsrfInput.astro";
-import { buildPostRevisionsPageModel, requiresAccess, resolveAdminLocale } from "astropress";
+import {
+	buildPostRevisionsPageModel,
+	getPageT,
+	requiresAccess,
+	resolveAdminLocale,
+} from "astropress";
 
 export const prerender = false;
 
@@ -12,6 +17,7 @@ if (guard) return guard;
 const adminUser = Astro.locals.adminUser;
 if (!adminUser) return Astro.redirect("/ap-admin/login");
 const adminLocale = resolveAdminLocale(Astro);
+const t = getPageT(adminLocale);
 const slug = Astro.params.slug ?? "";
 const model = await buildPostRevisionsPageModel(Astro.locals, slug);
 const { pageRecord, revisions, auditEvents, authors, categories, tags } = model.data;
@@ -41,35 +47,35 @@ if (model.status === "not_found") {
 
 {pageRecord && revisions ? (
   <AdminLayout
-    title={`Revisions | ${pageRecord.title}`}
-    heading="Revisions"
+    title={`${t("revisions.title")} | ${pageRecord.title}`}
+    heading={t("revisions.title")}
     currentPath="/ap-admin/posts"
-    description="Reviewed and imported revision history for a representative content record."
+    description={t("revisions.description")}
     userName={adminUser.name}
   >
-    {model.warnings.length > 0 && <p class="notice">Some revision data is temporarily unavailable. This page is showing partial results.</p>}
+    {model.warnings.length > 0 && <p class="notice">{t("revisions.partialResults")}</p>}
     <div class="toolbar">
-      <a href={`/ap-admin/posts/${pageRecord.slug}`}>Return to edit view</a>
+      <a href={`/ap-admin/posts/${pageRecord.slug}`}>{t("revisions.returnToEdit")}</a>
     </div>
-    {wasRestored && <p class="notice">Revision restored successfully.</p>}
+    {wasRestored && <p class="notice">{t("revisions.restoredSuccess")}</p>}
     {errorMessage && <p class="error-notice">{errorMessage}</p>}
     <section class="panel">
-      <p><strong>Revision history</strong></p>
-      <table aria-label="Revision history">
+      <p><strong>{t("revisions.historyHeading")}</strong></p>
+      <table aria-label={t("revisions.historyHeading")}>
         <thead>
           <tr>
-            <th>Source</th>
-            <th>Title</th>
-            <th>Status</th>
-            <th>Scheduled</th>
-            <th>SEO title</th>
-            <th>Authors</th>
-            <th>Categories</th>
-            <th>Tags</th>
-            <th>Note</th>
-            <th>By</th>
-            <th>Timestamp</th>
-            <th>Action</th>
+            <th>{t("revisions.thSource")}</th>
+            <th>{t("common.title")}</th>
+            <th>{t("common.status")}</th>
+            <th>{t("revisions.thScheduled")}</th>
+            <th>{t("revisions.thSeoTitle")}</th>
+            <th>{t("revisions.thAuthors")}</th>
+            <th>{t("revisions.thCategories")}</th>
+            <th>{t("revisions.thTags")}</th>
+            <th>{t("revisions.thNote")}</th>
+            <th>{t("revisions.thBy")}</th>
+            <th>{t("revisions.thTimestamp")}</th>
+            <th>{t("revisions.thAction")}</th>
           </tr>
         </thead>
         <tbody>
@@ -91,7 +97,7 @@ if (model.status === "not_found") {
                   <CsrfInput token={Astro.locals.csrfToken} />
                   <input type="hidden" name="slug" value={slug} />
                   <input type="hidden" name="revisionId" value={revision.id} />
-                  <button type="submit" class="restore-button">Restore</button>
+                  <button type="submit" class="restore-button">{t("revisions.restore")}</button>
                 </form>
               </td>
             </tr>
@@ -103,14 +109,14 @@ if (model.status === "not_found") {
   </AdminLayout>
 ) : (
   <AdminLayout
-    title="Not Found"
-    heading="Not Found"
+    title={t("revisions.notFound")}
+    heading={t("revisions.notFound")}
     currentPath="/ap-admin/posts"
-    description="The requested revision history could not be found."
+    description={t("revisions.notFoundDesc")}
     userName={adminUser.name}
   >
     <section class="panel">
-      <p>The requested revision history could not be found.</p>
+      <p>{t("revisions.notFoundDesc")}</p>
     </section>
   </AdminLayout>
 )}

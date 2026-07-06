@@ -10626,6 +10626,38 @@ export const pageLabels = {
 	// ── Page titles (dashboard / posts list) ─────────────────────────────────
 	"dashboard.pageTitle": { en: "Dashboard" },
 	"posts.pageTitle": { en: "Posts" },
+
+	// ── Batch 2 page titles + shared forbidden title ─────────────────────────
+	"pages.pageTitle": { en: "Pages" },
+	"media.pageTitle": { en: "Media" },
+	"comments.pageTitle": { en: "Comments" },
+	"redirects.pageTitle": { en: "Redirects" },
+	"pages.forbidden.title": { en: "Forbidden" },
+
+	// ── Post revisions ([slug]/revisions) ────────────────────────────────────
+	"revisions.title": { en: "Revisions" },
+	"revisions.description": {
+		en: "Reviewed and imported revision history for a representative content record.",
+	},
+	"revisions.partialResults": {
+		en: "Some revision data is temporarily unavailable. This page is showing partial results.",
+	},
+	"revisions.returnToEdit": { en: "Return to edit view" },
+	"revisions.restoredSuccess": { en: "Revision restored successfully." },
+	"revisions.historyHeading": { en: "Revision history" },
+	"revisions.thSource": { en: "Source" },
+	"revisions.thScheduled": { en: "Scheduled" },
+	"revisions.thSeoTitle": { en: "SEO title" },
+	"revisions.thAuthors": { en: "Authors" },
+	"revisions.thCategories": { en: "Categories" },
+	"revisions.thTags": { en: "Tags" },
+	"revisions.thNote": { en: "Note" },
+	"revisions.thBy": { en: "By" },
+	"revisions.thTimestamp": { en: "Timestamp" },
+	"revisions.thAction": { en: "Action" },
+	"revisions.restore": { en: "Restore" },
+	"revisions.notFound": { en: "Not Found" },
+	"revisions.notFoundDesc": { en: "The requested revision history could not be found." },
 } as const satisfies Record<string, LocaleMap>;
 
 /**

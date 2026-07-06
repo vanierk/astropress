@@ -21,8 +21,8 @@ if (model.status === "forbidden") {
 
 {model.status !== "forbidden" ? (
   <AdminLayout
-    title="Redirects"
-    heading="Redirects"
+    title={t("redirects.pageTitle")}
+    heading={t("redirects.pageTitle")}
     currentPath="/ap-admin/redirects"
     description={t("redirects.description")}
     userName={safeAdminUserName(adminUser)}
@@ -141,8 +141,8 @@ if (model.status === "forbidden") {
   </AdminLayout>
 ) : (
   <AdminLayout
-    title="Forbidden"
-    heading="Forbidden"
+    title={t("pages.forbidden.title")}
+    heading={t("pages.forbidden.title")}
     currentPath=""
     description={t("pages.forbidden.description")}
     userName={safeAdminUserName(adminUser)}

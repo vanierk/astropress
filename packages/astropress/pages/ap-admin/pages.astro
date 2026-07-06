@@ -105,8 +105,8 @@ const structuredExplanation = t("pages.structuredExplanation");
 
 {model.status !== "forbidden" ? (
   <AdminLayout
-    title="Pages"
-    heading="Pages"
+    title={t("pages.pageTitle")}
+    heading={t("pages.pageTitle")}
     currentPath="/ap-admin/pages"
     description={t("pages.description")}
     userName={safeAdminUserName(adminUser)}
@@ -208,8 +208,8 @@ const structuredExplanation = t("pages.structuredExplanation");
   </AdminLayout>
 ) : (
   <AdminLayout
-    title="Forbidden"
-    heading="Forbidden"
+    title={t("pages.forbidden.title")}
+    heading={t("pages.forbidden.title")}
     currentPath="/ap-admin/posts"
     description={t("pages.forbidden.description")}
     userName={safeAdminUserName(adminUser)}

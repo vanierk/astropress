@@ -20,8 +20,8 @@ const t = getPageT(resolveAdminLocale(Astro));
 ---
 
 <AdminLayout
-  title="Media"
-  heading="Media"
+  title={t("media.pageTitle")}
+  heading={t("media.pageTitle")}
   currentPath="/ap-admin/media"
   description={t("media.description")}
   userName={adminUser.name}
