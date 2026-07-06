@@ -18,6 +18,8 @@
  * render as `type="password"` so they're at least obscured in the
  * browser tab.
  */
+import type { AdminLocale } from "astropress";
+import { getPageT } from "astropress";
 import type { IntegrationDomain, RegisteredProvider } from "../src/integrations/registry";
 import { listProviders } from "../src/integrations/registry";
 import CsrfInput from "./CsrfInput.astro";
@@ -32,6 +34,7 @@ interface Props {
 	 * admin selects it here. Null/undefined when nothing is active yet.
 	 */
 	activeProviderId?: string | null;
+	locale: AdminLocale;
 }
 
 const {
@@ -39,7 +42,9 @@ const {
 	connectedProviderIds = [],
 	statusByProvider = {},
 	activeProviderId = null,
+	locale,
 } = Astro.props;
+const t = getPageT(locale);
 
 const providers = listProviders(domain);
 const connectedSet = new Set(connectedProviderIds);
@@ -68,8 +73,8 @@ function isSensitive(key: string): boolean {
 
 {providers.length === 0 && (
 	<p class="ap-empty">
-		No providers are registered for the <code>{domain}</code> domain yet. Call
-		<code>registerProvider("{domain}", &#123; ... &#125;)</code> from your setup module.
+		{t("integrationConnect.noProvidersPrefix")} <code>{domain}</code> {t("integrationConnect.noProvidersMiddle")}
+		<code>registerProvider("{domain}", &#123; ... &#125;)</code> {t("integrationConnect.noProvidersSuffix")}
 	</p>
 )}
 
@@ -94,12 +99,12 @@ function isSensitive(key: string): boolean {
 				<h3>{provider.label}</h3>
 				{isConnected ? (
 					isActive ? (
-						<span class="ap-status ap-status--active">Active</span>
+						<span class="ap-status ap-status--active">{t("integrationConnect.statusActive")}</span>
 					) : (
-						<span class="ap-status">Connected</span>
+						<span class="ap-status">{t("integrationConnect.statusConnected")}</span>
 					)
 				) : (
-					<span class="ap-status ap-status--muted">Not connected</span>
+					<span class="ap-status ap-status--muted">{t("integrationConnect.statusNotConnected")}</span>
 				)}
 			</header>
 			<form
@@ -122,7 +127,7 @@ function isSensitive(key: string): boolean {
 					</label>
 				))}
 				<button type="submit">
-					{isConnected ? "Reconnect" : "Connect"}
+					{isConnected ? t("integrationConnect.reconnect") : t("integrationConnect.connect")}
 				</button>
 			</form>
 			{isConnected && (
@@ -134,7 +139,7 @@ function isSensitive(key: string): boolean {
 					<CsrfInput />
 					<input type="hidden" name="domain" value={domain} />
 					<input type="hidden" name="providerId" value={provider.id} />
-					<button type="submit" class="ap-button-secondary">Disconnect</button>
+					<button type="submit" class="ap-button-secondary">{t("integrationConnect.disconnect")}</button>
 				</form>
 			)}
 			{isConnected && !isActive && connectedCount > 1 && (
@@ -146,7 +151,7 @@ function isSensitive(key: string): boolean {
 					<CsrfInput />
 					<input type="hidden" name="domain" value={domain} />
 					<input type="hidden" name="providerId" value={provider.id} />
-					<button type="submit" class="ap-button-secondary">Make active</button>
+					<button type="submit" class="ap-button-secondary">{t("integrationConnect.makeActive")}</button>
 				</form>
 			)}
 		</section>

@@ -10815,6 +10815,40 @@ export const pageLabels = {
 		en: "Reset-token validation is temporarily unavailable. This page is showing a safe fallback state.",
 	},
 	"resetPassword.resettingAccessForPrefix": { en: "Resetting access for" },
+
+	// ── Integration-connect pages (forms, newsletter, analytics, search, cdn-purge) ──
+	"forms.title": { en: "Forms" },
+	"forms.description": {
+		en: "Connect a forms provider to receive submissions from your site. Submissions land in the existing API tokens path.",
+	},
+	"newsletter.title": { en: "Newsletter" },
+	"newsletter.description": {
+		en: "Connect a newsletter provider to send campaigns. Subscribers are managed under Audience.",
+	},
+	"analytics.title": { en: "Analytics" },
+	"analytics.description": {
+		en: "Connect an analytics provider to read aggregate visitor stats from the dashboard.",
+	},
+	"search.title": { en: "Search" },
+	"search.description": {
+		en: "Connect a search provider to verify credentials. Indexing pipeline ships in a follow-up.",
+	},
+	"cdnPurge.title": { en: "CDN Purge" },
+	"cdnPurge.description": {
+		en: "Connect a CDN provider so content publishes automatically purge edge caches.",
+	},
+
+	// ── IntegrationConnect.astro (shared by the 5 pages above) ────────────────
+	"integrationConnect.noProvidersPrefix": { en: "No providers are registered for the" },
+	"integrationConnect.noProvidersMiddle": { en: "domain yet. Call" },
+	"integrationConnect.noProvidersSuffix": { en: "from your setup module." },
+	"integrationConnect.statusActive": { en: "Active" },
+	"integrationConnect.statusConnected": { en: "Connected" },
+	"integrationConnect.statusNotConnected": { en: "Not connected" },
+	"integrationConnect.connect": { en: "Connect" },
+	"integrationConnect.reconnect": { en: "Reconnect" },
+	"integrationConnect.disconnect": { en: "Disconnect" },
+	"integrationConnect.makeActive": { en: "Make active" },
 } as const satisfies Record<string, LocaleMap>;
 
 /**

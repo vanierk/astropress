@@ -8,7 +8,8 @@ const guard = await requiresAccess(Astro, "forms:view");
 if (guard) return guard;
 const adminUser = Astro.locals.adminUser;
 if (!adminUser) return Astro.redirect("/ap-admin/login");
-const t = getPageT(resolveAdminLocale(Astro));
+const adminLocale = resolveAdminLocale(Astro);
+const t = getPageT(adminLocale);
 
 interface StatusRow {
 	domain: string;
@@ -45,6 +46,7 @@ const activeProviderId =
 			connectedProviderIds={connectedIds}
 			statusByProvider={statusByProvider}
 			activeProviderId={activeProviderId}
+			locale={adminLocale}
 		/>
 	</section>
 </AdminLayout>
