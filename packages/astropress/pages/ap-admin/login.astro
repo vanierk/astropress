@@ -2,6 +2,7 @@
 import TurnstileField from "@astropress-diy/astropress/components/TurnstileField.astro";
 import {
 	buildAstropressAdminDocumentTitle,
+	getPageT,
 	localeDirection,
 	resolveAdminLocale,
 	resolveAstropressAdminUiConfig,
@@ -15,6 +16,7 @@ const invitationAccepted = Astro.url.searchParams.get("invited") === "1";
 const adminLocale = resolveAdminLocale(Astro);
 const adminDir = localeDirection(adminLocale);
 const adminUi = resolveAstropressAdminUiConfig(adminLocale);
+const t = getPageT(adminLocale);
 ---
 
 <!doctype html>
@@ -25,7 +27,7 @@ const adminUi = resolveAstropressAdminUiConfig(adminLocale);
     <meta name="robots" content="noindex, nofollow" />
     {adminUi.branding.faviconHref && <link rel="icon" href={adminUi.branding.faviconHref} />}
     {adminUi.branding.stylesheetHref && <link rel="stylesheet" href={adminUi.branding.stylesheetHref} />}
-    <title>{buildAstropressAdminDocumentTitle("Admin Login")}</title>
+    <title>{buildAstropressAdminDocumentTitle(t("login.docTitle"))}</title>
   </head>
   <body>
     <main class="login-shell">
@@ -51,7 +53,7 @@ const adminUi = resolveAstropressAdminUiConfig(adminLocale);
 
         {(isRateLimited || hasError || requiresChallenge) && (
           <div class="message-block error-summary" tabindex="-1" aria-live="polite" data-focus-summary>
-            <p class="message-heading">Sign-in issue</p>
+            <p class="message-heading">{t("login.signInIssue")}</p>
             {isRateLimited && <p class="error">{adminUi.labels.rateLimited}</p>}
             {hasError && !isRateLimited && <p class="error">{adminUi.labels.invalidCredentials}</p>}
             {requiresChallenge && <p class="error">{adminUi.labels.challengeRequired}</p>}

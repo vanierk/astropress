@@ -10785,6 +10785,36 @@ export const pageLabels = {
 	"subscribers.detail.actionCannotBeUndone": { en: "This action cannot be undone." },
 	"subscribers.detail.removeSubscriberSubmit": { en: "Remove Subscriber" },
 	"subscribers.detail.notFound": { en: "Subscriber not found." },
+
+	// ── Auth pages: login ─────────────────────────────────────────────────────
+	"login.docTitle": { en: "Admin Login" },
+	"login.signInIssue": { en: "Sign-in issue" },
+
+	// ── Auth pages: accept-invite ─────────────────────────────────────────────
+	"acceptInvite.docTitle": { en: "Accept Invitation" },
+	"acceptInvite.defaultErrorMessage": {
+		en: "That invitation link is invalid or has expired.",
+	},
+	"acceptInvite.tokenValidationFallback": {
+		en: "Invite-token validation is temporarily unavailable. This page is showing a safe fallback state.",
+	},
+	"acceptInvite.invitedAccountForPrefix": { en: "Invited account for" },
+	"acceptInvite.newPassword": { en: "New password" },
+	"acceptInvite.confirmNewPassword": { en: "Confirm new password" },
+
+	// ── Auth pages: reset-password ────────────────────────────────────────────
+	"resetPassword.docTitle": { en: "Reset Password" },
+	"resetPassword.defaultErrorMessage": {
+		en: "That password reset link is invalid or has expired.",
+	},
+	"resetPassword.mailSentNotice": {
+		en: "If that account exists, a password reset link has been issued.",
+	},
+	"resetPassword.openResetLink": { en: "Open the reset link" },
+	"resetPassword.tokenValidationFallback": {
+		en: "Reset-token validation is temporarily unavailable. This page is showing a safe fallback state.",
+	},
+	"resetPassword.resettingAccessForPrefix": { en: "Resetting access for" },
 } as const satisfies Record<string, LocaleMap>;
 
 /**

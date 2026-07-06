@@ -2,6 +2,7 @@
 import {
 	buildAcceptInvitePageModel,
 	buildAstropressAdminDocumentTitle,
+	getPageT,
 	localeDirection,
 	resolveAdminLocale,
 	resolveAstropressAdminUiConfig,
@@ -9,13 +10,13 @@ import {
 
 const token = Astro.url.searchParams.get("token") ?? "";
 const hasError = Astro.url.searchParams.get("error") === "1";
-const errorMessage =
-	Astro.url.searchParams.get("message") ?? "That invitation link is invalid or has expired.";
 const model = await buildAcceptInvitePageModel(Astro.locals, token);
 const { inviteRequest } = model.data;
 const adminLocale = resolveAdminLocale(Astro);
 const adminDir = localeDirection(adminLocale);
 const adminUi = resolveAstropressAdminUiConfig(adminLocale);
+const t = getPageT(adminLocale);
+const errorMessage = Astro.url.searchParams.get("message") ?? t("acceptInvite.defaultErrorMessage");
 ---
 
 <!doctype html>
@@ -26,7 +27,7 @@ const adminUi = resolveAstropressAdminUiConfig(adminLocale);
     <meta name="robots" content="noindex, nofollow" />
     {adminUi.branding.faviconHref && <link rel="icon" href={adminUi.branding.faviconHref} />}
     {adminUi.branding.stylesheetHref && <link rel="stylesheet" href={adminUi.branding.stylesheetHref} />}
-    <title>{buildAstropressAdminDocumentTitle("Accept Invitation")}</title>
+    <title>{buildAstropressAdminDocumentTitle(t("acceptInvite.docTitle"))}</title>
   </head>
   <body>
     <main class="login-shell">
@@ -52,7 +53,7 @@ const adminUi = resolveAstropressAdminUiConfig(adminLocale);
 
         {model.warnings.length > 0 && (
           <div class="message-block error-summary" tabindex="-1" aria-live="polite" data-focus-summary>
-            <p class="error">Invite-token validation is temporarily unavailable. This page is showing a safe fallback state.</p>
+            <p class="error">{t("acceptInvite.tokenValidationFallback")}</p>
           </div>
         )}
         {hasError && (
@@ -64,16 +65,16 @@ const adminUi = resolveAstropressAdminUiConfig(adminLocale);
         {inviteRequest ? (
           <>
             <p class="account-summary">
-              Invited account for <strong>{inviteRequest.name}</strong> ({inviteRequest.email}).
+              {t("acceptInvite.invitedAccountForPrefix")} <strong>{inviteRequest.name}</strong> ({inviteRequest.email}).
             </p>
             <form method="post" action="/ap-admin/actions/accept-invite">
               <input type="hidden" name="token" value={token} />
               <label>
-                <span>New password</span>
+                <span>{t("acceptInvite.newPassword")}</span>
                 <input type="password" name="password" autocomplete="new-password" minlength="12" required data-error-required="Password is required" data-error-minlength="Password must be at least 12 characters" />
               </label>
               <label>
-                <span>Confirm new password</span>
+                <span>{t("acceptInvite.confirmNewPassword")}</span>
                 <input type="password" name="confirmPassword" autocomplete="new-password" minlength="12" required data-error-required="Please confirm your password" data-error-minlength="Password must be at least 12 characters" />
               </label>
                 <button type="submit">{adminUi.labels.acceptInvitationSubmit}</button>
@@ -81,7 +82,7 @@ const adminUi = resolveAstropressAdminUiConfig(adminLocale);
             </>
           ) : (
             <div class="message-block error-summary" tabindex="-1" aria-live="polite" data-focus-summary>
-              <p class="error">That invitation link is invalid or has expired.</p>
+              <p class="error">{t("acceptInvite.defaultErrorMessage")}</p>
             </div>
           )}
 
