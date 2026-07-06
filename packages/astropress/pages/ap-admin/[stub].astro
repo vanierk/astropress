@@ -18,6 +18,7 @@ import RequiresIntegration from "@astropress-diy/astropress/components/RequiresI
 import {
 	adminStubs,
 	getAdminStubPage,
+	getPageT,
 	requiresAccess,
 	resolveAdminLocale,
 	resolveAstropressAdminUiConfig,
@@ -46,13 +47,15 @@ const locale = resolveAdminLocale(Astro);
 const ui = resolveAstropressAdminUiConfig(locale);
 const stub = adminStubs[entry.stubKey];
 const navLabel = (ui.navigation as Record<string, string>)[entry.navKey];
+const t = getPageT(locale);
+const description = t(`stub.${entry.stubKey}.description`, stub.description);
 ---
 
 <AdminLayout
   title={navLabel}
   heading={navLabel}
   currentPath={`/ap-admin/${slug}`}
-  description={stub.description}
+  description={description}
   userName={adminUser.name}
 >
   {entry.variant === "coming-soon" ? (
@@ -65,6 +68,7 @@ const navLabel = (ui.navigation as Record<string, string>)[entry.navKey];
       locale={locale}
       variant="coming-soon"
       roadmapHref={entry.roadmapHref}
+      stubKey={entry.stubKey}
     />
   ) : (
     <RequiresIntegration
@@ -74,6 +78,7 @@ const navLabel = (ui.navigation as Record<string, string>)[entry.navKey];
       providers={[...stub.providers]}
       docsHref={(stub as { docsHref?: string }).docsHref}
       locale={locale}
+      stubKey={entry.stubKey}
     />
   )}
 </AdminLayout>

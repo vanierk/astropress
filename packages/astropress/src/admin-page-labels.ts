@@ -10849,6 +10849,94 @@ export const pageLabels = {
 	"integrationConnect.reconnect": { en: "Reconnect" },
 	"integrationConnect.disconnect": { en: "Disconnect" },
 	"integrationConnect.makeActive": { en: "Make active" },
+
+	// ── Stub-catalog capability/description (20 live ADMIN_STUB_PAGES entries) ──
+	"stub.socialSyndication.capability": { en: "Social Syndication" },
+	"stub.socialSyndication.description": {
+		en: "Auto-post on publish to social networks. Configure a provider to enable cross-posting.",
+	},
+	"stub.referrals.capability": { en: "Referrals" },
+	"stub.referrals.description": {
+		en: "Run a refer-a-friend or affiliate program. Track referrers, payouts, and attribution.",
+	},
+	"stub.events.capability": { en: "Events" },
+	"stub.events.description": {
+		en: "Schedule events, manage RSVPs, and embed booking widgets. Choose a provider to enable an events page.",
+	},
+	"stub.reviews.capability": { en: "Reviews" },
+	"stub.reviews.description": {
+		en: "Aggregate reviews from third-party platforms and surface them on the site. Connect a provider to pull review data.",
+	},
+	"stub.memberships.capability": { en: "Memberships" },
+	"stub.memberships.description": {
+		en: "Gate content behind subscriptions or membership tiers. Manage member access and billing.",
+	},
+	"stub.community.capability": { en: "Community" },
+	"stub.community.description": {
+		en: "Embed a forum or discussion platform inside the admin shell. Configure a service URL to render an iframe panel.",
+	},
+	"stub.plugins.capability": { en: "Plugins" },
+	"stub.plugins.description": {
+		en: "Inspect lifecycle plugins registered via registerCms({ plugins: [...] }). Plugins extend Astropress with hooks and admin nav contributions.",
+	},
+	"stub.heatmaps.capability": { en: "Heatmaps & Session Replay" },
+	"stub.heatmaps.description": {
+		en: "Visualise on-page user behavior with click-maps and session replay. Configure a provider to embed.",
+	},
+	"stub.email.capability": { en: "Email" },
+	"stub.email.description": {
+		en: "Transactional email — password resets, invitations, contact form notifications. Configure a provider to send mail.",
+	},
+	"stub.liveChat.capability": { en: "Live Chat" },
+	"stub.liveChat.description": {
+		en: "Real-time customer chat embedded on the site. Configure a provider to render the widget.",
+	},
+	"stub.imageCdn.capability": { en: "Image CDN" },
+	"stub.imageCdn.description": {
+		en: "Offload image transforms and delivery to a CDN. Configure a provider to enable image-pipeline routing.",
+	},
+	"stub.deployHooks.capability": { en: "Deploy Hooks" },
+	"stub.deployHooks.description": {
+		en: "Trigger production builds from CI or vendor webhooks. Configure URLs for the platforms you ship to.",
+	},
+	"stub.data.capability": { en: "Data" },
+	"stub.data.description": {
+		en: "Backing data store — Cloudflare D1, Supabase, Neon, Turso, or others. Inspect connection health and migration status.",
+	},
+	"stub.backups.capability": { en: "Backups" },
+	"stub.backups.description": {
+		en: "Schedule snapshots of the data store and exports of the media bucket. View recent backup runs and restore points.",
+	},
+	"stub.mapsLocal.capability": { en: "Maps & Local" },
+	"stub.mapsLocal.description": {
+		en: "Manage your business presence on map and local-search platforms. Sync hours, photos, and posts where supported.",
+	},
+	"stub.structuredData.capability": { en: "Structured Data / AEO" },
+	"stub.structuredData.description": {
+		en: "Configure JSON-LD generation, llms.txt, and answer-engine optimization signals so AI assistants and search crawlers correctly attribute your content.",
+	},
+	"stub.shop.capability": { en: "Shop" },
+	"stub.shop.description": {
+		en: "Embed a commerce admin inside the shell. Configure a service URL to render an iframe panel.",
+	},
+	"stub.sitemaps.capability": { en: "Sitemaps" },
+	"stub.sitemaps.description": {
+		en: "Generate and submit XML sitemaps to search engines. View sitemap coverage and last submission status.",
+	},
+	"stub.abTesting.capability": { en: "A/B Testing & Feature Flags" },
+	"stub.abTesting.description": {
+		en: "Roll out features behind flags and split traffic between variants. Configure a provider to enable.",
+	},
+	"stub.monitoring.capability": { en: "Monitoring" },
+	"stub.monitoring.description": {
+		en: "Metrics, uptime, and alerting. Enable Prometheus to scrape /ap/metrics, or wire a SaaS uptime monitor.",
+	},
+
+	// ── Shared provider-tag enum (RequiresIntegration.astro) ─────────────────
+	"stubProviderTag.recommended": { en: "Recommended" },
+	"stubProviderTag.selfHosted": { en: "Self-hosted" },
+	"stubProviderTag.oss": { en: "OSS" },
+	"stubProviderTag.saas": { en: "SaaS" },
 } as const satisfies Record<string, LocaleMap>;
 
 /**

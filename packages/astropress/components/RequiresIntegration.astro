@@ -7,13 +7,20 @@ import type { AdminLocale } from "astropress";
  * with vendor links, and a copy-paste registerCms snippet so the operator can
  * enable the feature without leaving the page.
  */
-import { getAdminLabel } from "astropress";
+import { getAdminLabel, getPageT } from "astropress";
 
 interface Provider {
 	name: string;
 	href?: string;
 	tag?: "Recommended" | "Self-hosted" | "OSS" | "SaaS";
 }
+
+const STUB_PROVIDER_TAG_KEYS: Record<NonNullable<Provider["tag"]>, string> = {
+	Recommended: "stubProviderTag.recommended",
+	"Self-hosted": "stubProviderTag.selfHosted",
+	OSS: "stubProviderTag.oss",
+	SaaS: "stubProviderTag.saas",
+};
 
 /**
  * - "env-gated" (default): the integration is real but unconfigured.
@@ -34,6 +41,13 @@ interface Props {
 	locale: AdminLocale;
 	variant?: Variant;
 	roadmapHref?: string;
+	/**
+	 * When set, resolves `stub.<stubKey>.capability` / `.description` via
+	 * getPageT (English-seeded, other locales backfilled by translate-locale.ts
+	 * + native review) with the passed-in prop as the safety-net fallback.
+	 * Omitted by any future non-stub-catalog consumer of this component.
+	 */
+	stubKey?: string;
 }
 
 const {
@@ -45,7 +59,12 @@ const {
 	locale,
 	variant = "env-gated",
 	roadmapHref,
+	stubKey,
 } = Astro.props;
+
+const t = getPageT(locale);
+const translatedCapability = stubKey ? t(`stub.${stubKey}.capability`, capability) : capability;
+const translatedDescription = stubKey ? t(`stub.${stubKey}.description`, description) : description;
 
 const tHeading =
 	variant === "coming-soon"
@@ -61,8 +80,8 @@ const tRoadmapLink = variant === "coming-soon" ? getAdminLabel("stubComingSoonLi
 <section class="panel stub-panel" aria-labelledby="stub-heading">
   <header>
     <span class="stub-eyebrow">{tHeading}</span>
-    <h2 id="stub-heading">{capability}</h2>
-    <p>{description}</p>
+    <h2 id="stub-heading">{translatedCapability}</h2>
+    <p>{translatedDescription}</p>
   </header>
 
   <div class="stub-grid">
@@ -97,7 +116,7 @@ const tRoadmapLink = variant === "coming-soon" ? getAdminLabel("stubComingSoonLi
             ) : (
               <span>{p.name}</span>
             )}
-            {p.tag && <span class={`stub-tag stub-tag-${p.tag.toLowerCase().replace(/[^a-z]/g, "")}`}>{p.tag}</span>}
+            {p.tag && <span class={`stub-tag stub-tag-${p.tag.toLowerCase().replace(/[^a-z]/g, "")}`}>{t(STUB_PROVIDER_TAG_KEYS[p.tag])}</span>}
           </li>
         ))}
       </ul>
