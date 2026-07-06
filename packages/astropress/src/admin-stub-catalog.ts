@@ -382,7 +382,7 @@ export const adminStubs = {
 	data: {
 		capability: "Data",
 		description:
-			"Backing data store — Cloudflare D1, Supabase, Neon, Turso, or others. Inspect connection health and migration status.",
+			"Backing data store. The admin UI (/ap-admin/data) detects and reports health for Cloudflare D1 or local SQLite only — the two backends its runtime dispatch can distinguish. Supabase, Neon, Turso, PocketBase, Appwrite, and Nhost ship adapter code but aren't wired into that detection; connect them via custom adapter code, not through this admin UI.",
 		configHint:
 			"# Configured by your deployment target; see deployment-matrix.ts.\n# Example: Cloudflare D1 binding name in wrangler.toml.",
 		providers: [
@@ -537,11 +537,8 @@ export const ADMIN_STUB_PAGES = {
 	// search/cdnPurge precedent — those 5 also have real pages with no
 	// ADMIN_STUB_PAGES routing entry.
 	// Env-gated (manifest status="env-gated" or unconfigured allowlist).
-	data: {
-		stubKey: "data",
-		navKey: "data",
-		action: "data:view",
-	},
+	// data was promoted to a real page (data.astro) — see
+	// src/data-backend-health.ts for why only D1/local-SQLite are detectable.
 	backups: {
 		stubKey: "backups",
 		navKey: "backups",

@@ -1,0 +1,112 @@
+---
+import AdminLayout from "@astropress-diy/astropress/components/AdminLayout.astro";
+import { getPageT, requiresAccess, resolveAdminLocale } from "astropress";
+import { checkDataBackendHealth } from "../../src/data-backend-health.js";
+
+// Promoted from the [stub].astro route: the admin runtime can only ever
+// honestly detect two backends (D1 binding present, or the local SQLite
+// fallback) — see src/data-backend-health.ts for why the other six shipped
+// adapters (Supabase/Neon/Turso/PocketBase/Appwrite/Nhost) aren't presented
+// here as connectable: nothing wires them into this dispatch.
+const guard = await requiresAccess(Astro, "data:view");
+if (guard) return guard;
+const adminUser = Astro.locals.adminUser;
+if (!adminUser) return Astro.redirect("/ap-admin/login");
+const locale = resolveAdminLocale(Astro);
+const t = getPageT(locale);
+
+const status = await checkDataBackendHealth(Astro.locals);
+const backendLabel = status.backend === "d1" ? t("data.backendD1") : t("data.backendLocalSqlite");
+---
+
+<AdminLayout
+	title={t("data.title")}
+	heading={t("data.title")}
+	currentPath="/ap-admin/data"
+	description={t("data.description")}
+	userName={adminUser.name}
+>
+	<section class="panel">
+		<div class="section-header">
+			<div>
+				<p class="admin-kicker">{t("data.activeBackendHeading")}</p>
+				<h2>{backendLabel}</h2>
+			</div>
+		</div>
+		<span class={`status-chip ${status.reachable ? "active" : "suspended"}`}>
+			{status.reachable ? t("data.reachable") : t("data.unreachable")}
+		</span>
+	</section>
+
+	<section class="panel">
+		<div class="section-header">
+			<div>
+				<h2>{t("data.migrationsHeading")}</h2>
+			</div>
+		</div>
+		{!status.reachable ? (
+			<p class="field-note">{t("data.migrationsUnreachable")}</p>
+		) : status.appliedMigrations === null ? (
+			<p class="field-note">
+				{status.backend === "local-sqlite"
+					? t("data.migrationsUnavailable")
+					: t("data.migrationsEmpty")}
+			</p>
+		) : status.appliedMigrations.length === 0 ? (
+			<p class="field-note">{t("data.migrationsEmpty")}</p>
+		) : (
+			<div class="admin-table-shell">
+				<table aria-label={t("data.migrationsHeading")}>
+					<thead>
+						<tr>
+							<th>{t("data.migrationNameHeader")}</th>
+							<th>{t("data.migrationAppliedHeader")}</th>
+						</tr>
+					</thead>
+					<tbody>
+						{status.appliedMigrations.map((migration) => (
+							<tr>
+								<td><code>{migration.name}</code></td>
+								<td>{migration.appliedAt}</td>
+							</tr>
+						))}
+					</tbody>
+				</table>
+			</div>
+		)}
+	</section>
+
+	<section class="panel">
+		<div class="section-header">
+			<div>
+				<h2>{t("data.otherBackendsHeading")}</h2>
+				<p>{t("data.otherBackendsNote")}</p>
+			</div>
+		</div>
+	</section>
+</AdminLayout>
+
+<style>
+	.status-chip {
+		display: inline-flex;
+		padding: 0.25rem 0.6rem;
+		border-radius: 999px;
+		font-size: 0.85rem;
+		font-weight: 700;
+	}
+
+	.status-chip.active {
+		background: #e7f6ef;
+		color: #16543b;
+	}
+
+	.status-chip.suspended {
+		background: #fff0f2;
+		color: #8f1730;
+	}
+
+	.field-note {
+		color: var(--muted);
+		margin: 0;
+	}
+</style>

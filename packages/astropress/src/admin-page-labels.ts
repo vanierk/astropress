@@ -10989,6 +10989,29 @@ export const pageLabels = {
 	"abTesting.honestNote": {
 		en: "Astropress does not evaluate flags at runtime — connecting only gives you a place to manage them. Use your provider's own SDK to read flag values in your application.",
 	},
+
+	// ── Data (promoted: read-only backend detection + reachability) ─────────
+	"data.title": { en: "Data" },
+	"data.description": { en: "Detects and reports the health of your active data backend." },
+	"data.activeBackendHeading": { en: "Active backend" },
+	"data.backendD1": { en: "Cloudflare D1" },
+	"data.backendLocalSqlite": { en: "Local SQLite" },
+	"data.reachable": { en: "Reachable" },
+	"data.unreachable": { en: "Unreachable" },
+	"data.migrationsHeading": { en: "Applied migrations" },
+	"data.migrationNameHeader": { en: "Name" },
+	"data.migrationAppliedHeader": { en: "Applied" },
+	"data.migrationsEmpty": { en: "No migrations recorded yet." },
+	"data.migrationsUnavailable": {
+		en: "Applied migrations aren't available to inspect in local dev mode.",
+	},
+	"data.migrationsUnreachable": {
+		en: "Can't check applied migrations — the backend is unreachable.",
+	},
+	"data.otherBackendsHeading": { en: "Other supported backends" },
+	"data.otherBackendsNote": {
+		en: "Supabase, Neon, Turso, PocketBase, Appwrite, and Nhost ship adapter code in this framework, but aren't wired into this page's detection — connect them via custom adapter code, not through this admin UI.",
+	},
 } as const satisfies Record<string, LocaleMap>;
 
 /**
