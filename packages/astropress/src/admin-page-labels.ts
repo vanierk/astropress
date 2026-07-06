@@ -10962,6 +10962,24 @@ export const pageLabels = {
 		en: "Generated automatically from published posts and pages, listing titles, URLs, and descriptions for AI crawlers.",
 	},
 	"structuredData.viewLlmsTxt": { en: "View /llms.txt" },
+
+	// ── Sitemaps (promoted: real generation status + IndexNow submission) ──
+	"sitemaps.title": { en: "Sitemaps" },
+	"sitemaps.description": {
+		en: "Generate an XML sitemap from your published content and notify search engines via IndexNow when it changes.",
+	},
+	"sitemaps.generationHeading": { en: "Sitemap generation" },
+	"sitemaps.urlCount": { en: "{count} URLs currently in your sitemap" },
+	"sitemaps.viewSitemap": { en: "View /sitemap.xml" },
+	"sitemaps.editSettingsLink": { en: "Edit sitemap settings" },
+	"sitemaps.submitHeading": { en: "Submit to search engines" },
+	"sitemaps.submitBody": {
+		en: "Pings IndexNow (Bing, Yandex, and other participating engines) with every URL in your sitemap. IndexNow only confirms the ping was received — it does not report indexing status.",
+	},
+	"sitemaps.submitButton": { en: "Submit via IndexNow" },
+	"sitemaps.lastSubmitted": { en: "Last submitted {date}" },
+	"sitemaps.neverSubmitted": { en: "Not yet submitted" },
+	"sitemaps.submittedSuccess": { en: "Submitted to IndexNow." },
 } as const satisfies Record<string, LocaleMap>;
 
 /**

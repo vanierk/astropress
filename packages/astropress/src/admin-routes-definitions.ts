@@ -197,6 +197,11 @@ export const adminRouteDefinitions = [
 		kind: "action",
 	},
 	{
+		pattern: "/ap-admin/actions/sitemap-submit",
+		entrypoint: "actions/sitemap-submit.ts",
+		kind: "action",
+	},
+	{
 		pattern: "/ap-admin/actions/system-route-save",
 		entrypoint: "actions/system-route-save.ts",
 		kind: "action",
@@ -309,7 +314,7 @@ export const adminRouteDefinitions = [
 	},
 	{
 		pattern: "/ap-admin/sitemaps",
-		entrypoint: "[stub].astro",
+		entrypoint: "sitemaps.astro",
 		kind: "page",
 	},
 	{

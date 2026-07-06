@@ -1,4 +1,8 @@
-import { saveRuntimeSystemRoute, withAdminFormAction } from "@astropress-diy/astropress";
+import {
+	getRuntimeSystemRoute,
+	saveRuntimeSystemRoute,
+	withAdminFormAction,
+} from "@astropress-diy/astropress";
 import type { APIRoute } from "astro";
 
 function splitLines(value: FormDataEntryValue | null) {
@@ -31,7 +35,14 @@ export const POST: APIRoute = async (context) =>
 					contactHref: String(formData.get("contactHref") ?? "").trim() || "/en/contact",
 				};
 			} else if (path === "/sitemap.xml") {
+				// Preserve the indexNow sub-object (last-submitted-at timestamp)
+				// written by actions/sitemap-submit.ts — this form only ever
+				// submits excludedPaths/extraUrls, and a wholesale settings
+				// replacement here would silently wipe it on the next save.
+				const existing = await getRuntimeSystemRoute(path, locals);
+				const existingSettings = (existing?.settings ?? {}) as Record<string, unknown>;
 				settings = {
+					...(existingSettings.indexNow ? { indexNow: existingSettings.indexNow } : {}),
 					excludedPaths: splitLines(formData.get("excludedPaths")),
 					extraUrls: splitLines(formData.get("extraUrls")),
 				};

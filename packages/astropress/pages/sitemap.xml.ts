@@ -1,10 +1,14 @@
-import { listRuntimeContentStates, resolveCanonicalOrigin } from "@astropress-diy/astropress";
+import { resolveCanonicalOrigin } from "@astropress-diy/astropress";
 import type { APIRoute } from "astro";
+import { computeSitemapEntries } from "../src/sitemap-entries.js";
 
 /**
  * GET /sitemap.xml
  *
- * Generates a sitemap for published posts and pages.
+ * Generates a sitemap for published posts and pages, honoring the
+ * excludedPaths/extraUrls settings saved via the admin sitemap settings form
+ * (system.astro) — see `computeSitemapEntries` for the shared logic, also
+ * used by the admin sitemaps.astro page so the two never drift apart.
  * Works in both SSR (called at request time) and static (called at build time) modes.
  *
  * The origin is the configured canonical site origin (CmsConfig.siteUrl), falling
@@ -13,37 +17,7 @@ import type { APIRoute } from "astro";
  */
 export const GET: APIRoute = async ({ request, locals }) => {
 	const origin = resolveCanonicalOrigin(request);
-
-	const all = await listRuntimeContentStates(locals);
-	const published = all.filter((r) => r.status === "published");
-
-	const posts = published.filter((r) => r.kind === "post" || r.kind == null);
-	const pages = published.filter((r) => r.kind === "page");
-
-	const entries: Array<{
-		loc: string;
-		lastmod?: string;
-		changefreq: string;
-		priority: string;
-	}> = [{ loc: `${origin}/`, changefreq: "weekly", priority: "1.0" }];
-
-	for (const post of posts) {
-		entries.push({
-			loc: `${origin}/blog/${post.slug}/`,
-			lastmod: post.updatedAt ? post.updatedAt.slice(0, 10) : undefined,
-			changefreq: "monthly",
-			priority: "0.7",
-		});
-	}
-
-	for (const page of pages) {
-		entries.push({
-			loc: `${origin}/${page.slug}/`,
-			lastmod: page.updatedAt ? page.updatedAt.slice(0, 10) : undefined,
-			changefreq: "monthly",
-			priority: "0.8",
-		});
-	}
+	const entries = await computeSitemapEntries(origin, locals);
 
 	const urlElements = entries
 		.map((e) => {

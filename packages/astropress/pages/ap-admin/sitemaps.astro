@@ -1,0 +1,91 @@
+---
+import AdminLayout from "@astropress-diy/astropress/components/AdminLayout.astro";
+import CsrfInput from "@astropress-diy/astropress/components/CsrfInput.astro";
+import { getPageT, requiresAccess, resolveAdminLocale, resolveCanonicalOrigin } from "astropress";
+import { computeSitemapEntries } from "../../src/sitemap-entries.js";
+import { getIndexNowLastSubmittedAt } from "../../src/sitemap-indexnow.js";
+
+// Promoted from the [stub].astro coming-soon/env-gated route: sitemap
+// generation is real and automatic (pages/sitemap.xml.ts). The excludedPaths/
+// extraUrls settings form stays on system.astro (not duplicated here) — this
+// page links to it. IndexNow submission is real (an authenticated ping, see
+// src/sitemap-indexnow.ts); it is intentionally NOT indexing-coverage
+// tracking, which IndexNow itself does not provide.
+const guard = await requiresAccess(Astro, "sitemaps:view");
+if (guard) return guard;
+const adminUser = Astro.locals.adminUser;
+if (!adminUser) return Astro.redirect("/ap-admin/login");
+const locale = resolveAdminLocale(Astro);
+const t = getPageT(locale);
+function format(template: string, params: Record<string, string | number>) {
+	return template.replace(/\{(\w+)\}/g, (_, k) => String(params[k] ?? ""));
+}
+
+const origin = resolveCanonicalOrigin(Astro.request);
+const entries = await computeSitemapEntries(origin, Astro.locals);
+const lastSubmittedAt = await getIndexNowLastSubmittedAt(Astro.locals);
+
+const wasSubmitted = Astro.url.searchParams.get("submitted") === "1";
+const errorMessage =
+	Astro.url.searchParams.get("error") === "1" ? Astro.url.searchParams.get("message") : "";
+---
+
+<AdminLayout
+  title={t("sitemaps.title")}
+  heading={t("sitemaps.title")}
+  currentPath="/ap-admin/sitemaps"
+  description={t("sitemaps.description")}
+  userName={adminUser.name}
+>
+  {wasSubmitted && <p class="notice">{t("sitemaps.submittedSuccess")}</p>}
+  {errorMessage && <p class="error-notice">{errorMessage}</p>}
+
+  <section class="panel">
+    <div class="section-header">
+      <div>
+        <p class="admin-kicker">{t("integrationConnect.statusActive")}</p>
+        <h2>{t("sitemaps.generationHeading")}</h2>
+        <p>{format(t("sitemaps.urlCount"), { count: entries.length })}</p>
+      </div>
+    </div>
+    <div class="sitemap-links">
+      <a href="/sitemap.xml" target="_blank" rel="noreferrer" class="admin-button-ghost">
+        {t("sitemaps.viewSitemap")}
+      </a>
+      <a href="/ap-admin/system" class="admin-button-ghost">
+        {t("sitemaps.editSettingsLink")}
+      </a>
+    </div>
+  </section>
+
+  <section class="panel">
+    <div class="section-header">
+      <div>
+        <h2>{t("sitemaps.submitHeading")}</h2>
+        <p>{t("sitemaps.submitBody")}</p>
+      </div>
+    </div>
+    <p class="field-note">
+      {lastSubmittedAt
+        ? format(t("sitemaps.lastSubmitted"), { date: new Date(lastSubmittedAt).toLocaleString(locale) })
+        : t("sitemaps.neverSubmitted")}
+    </p>
+    <form method="post" action="/ap-admin/actions/sitemap-submit">
+      <CsrfInput token={Astro.locals.csrfToken} />
+      <button type="submit" class="admin-button">{t("sitemaps.submitButton")}</button>
+    </form>
+  </section>
+</AdminLayout>
+
+<style>
+  .sitemap-links {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+  }
+
+  .field-note {
+    color: var(--muted);
+    margin: 0 0 0.75rem;
+  }
+</style>
