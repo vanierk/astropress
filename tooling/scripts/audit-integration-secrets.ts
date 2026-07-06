@@ -76,16 +76,23 @@ async function main() {
 	const report = new AuditReport("integration-secrets");
 
 	// Rule 1: column-name leaks outside the allowlist.
+	// Normalize to forward slashes before anything downstream compares against
+	// ALLOWED_SECRET_COLUMN_FILES / REPO_FILE / SANITIZER_FILE etc. — listFiles()
+	// yields OS-native separators (backslash on Windows), so an unnormalized
+	// subpath joined with the hardcoded forward-slash prefix below never equals
+	// those forward-slash-only literals, false-flagging legitimate allowlisted
+	// files on Windows (same fix already applied in arch-lint.ts and
+	// audit-admin-route-coverage.ts).
 	const tsFiles = (
 		await Promise.all([
 			listFiles(SRC_DIR, { recursive: true, extensions: [".ts"] }).then((rs) =>
-				rs.map((r) => `packages/astropress/src/${r}`),
+				rs.map((r) => `packages/astropress/src/${r.replaceAll("\\", "/")}`),
 			),
 			listFiles(TESTS_DIR, { recursive: true, extensions: [".ts"] }).then((rs) =>
-				rs.map((r) => `packages/astropress/tests/${r}`),
+				rs.map((r) => `packages/astropress/tests/${r.replaceAll("\\", "/")}`),
 			),
 			listFiles(TOOLING_DIR, { recursive: true, extensions: [".ts"] }).then((rs) =>
-				rs.map((r) => `tooling/scripts/${r}`),
+				rs.map((r) => `tooling/scripts/${r.replaceAll("\\", "/")}`),
 			),
 		])
 	).flat();
