@@ -1,21 +1,23 @@
 ---
 import AdminLayout from "@astropress-diy/astropress/components/AdminLayout.astro";
+import { getPageT, resolveAdminLocale } from "astropress";
 
 const adminUser = Astro.locals.adminUser;
+const t = getPageT(resolveAdminLocale(Astro));
 
 Astro.response.status = 404;
 ---
 
 <AdminLayout
-  title="Page not found"
-  heading="Page not found"
+  title={t("notFound.pageNotFound")}
+  heading={t("notFound.pageNotFound")}
   currentPath=""
-  description="The admin page you requested does not exist."
+  description={t("notFound.description")}
   userName={adminUser?.name ?? ""}
 >
   <div class="panel" style="padding: 2rem; text-align: center; margin-top: 2rem;">
     <p style="font-size: 3rem; margin: 0; line-height: 1;">404</p>
-    <p>That admin page doesn't exist.</p>
-    <a href="/ap-admin" class="button">Back to Dashboard</a>
+    <p>{t("notFound.body")}</p>
+    <a href="/ap-admin" class="button">{t("notFound.backToDashboard")}</a>
   </div>
 </AdminLayout>
