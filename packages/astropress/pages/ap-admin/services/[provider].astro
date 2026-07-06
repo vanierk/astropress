@@ -5,12 +5,16 @@ import {
 	getAstropressService,
 	type ServiceProvider,
 } from "@astropress-diy/astropress/services-config";
-import { getPageT, isAuthUserAdmin, resolveAdminLocale } from "astropress";
+import { getPageT, requiresAccess, resolveAdminLocale } from "astropress";
 
+// Matches the services hub's own guard (services.astro): leaf service pages
+// must enforce the same services:manage ABAC action. The previous inline
+// isAuthUserAdmin check set a 403 status with no early return, so the panel
+// (and the iframe pointed at service.adminPath) still rendered regardless.
+const guard = await requiresAccess(Astro, "services:manage");
+if (guard) return guard;
 const adminUser = Astro.locals.adminUser;
-if (!adminUser || !isAuthUserAdmin(adminUser)) {
-	Astro.response.status = 403;
-}
+if (!adminUser) return Astro.redirect("/ap-admin/login");
 
 const { provider } = Astro.params as { provider: string };
 const service = getAstropressService(provider as ServiceProvider);
