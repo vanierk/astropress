@@ -356,7 +356,7 @@ export const adminRouteDefinitions = [
 	},
 	{
 		pattern: "/ap-admin/deploy-hooks",
-		entrypoint: "[stub].astro",
+		entrypoint: "deploy-hooks.astro",
 		kind: "page",
 	},
 	{ pattern: "/ap-admin/plugins", entrypoint: "[stub].astro", kind: "page" },

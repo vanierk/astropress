@@ -530,13 +530,12 @@ export const ADMIN_STUB_PAGES = {
 		variant: "coming-soon",
 		roadmapHref: ROADMAP_ISSUE,
 	},
-	"deploy-hooks": {
-		stubKey: "deployHooks",
-		navKey: "deployHooks",
-		action: "settings:edit",
-		variant: "coming-soon",
-		roadmapHref: ROADMAP_ISSUE,
-	},
+	// deploy-hooks was promoted to a real page (deploy-hooks.astro) since
+	// providers/github-deploy.ts already implements registerDeployHooks(...).
+	// adminStubs.deployHooks (capability/description copy) stays as an
+	// orphaned catalog entry, matching the forms/newsletter/analytics/
+	// search/cdnPurge precedent — those 5 also have real pages with no
+	// ADMIN_STUB_PAGES routing entry.
 	// Env-gated (manifest status="env-gated" or unconfigured allowlist).
 	data: {
 		stubKey: "data",

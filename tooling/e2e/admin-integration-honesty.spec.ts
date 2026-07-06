@@ -18,7 +18,6 @@ const COMING_SOON_HREFS = [
 	"/ap-admin/email",
 	"/ap-admin/live-chat",
 	"/ap-admin/image-cdn",
-	"/ap-admin/deploy-hooks",
 	"/ap-admin/plugins",
 ];
 
@@ -31,6 +30,7 @@ const REAL_OR_ENV_GATED_HREFS = [
 	"/ap-admin/search",
 	"/ap-admin/cdn-purge",
 	"/ap-admin/monitoring",
+	"/ap-admin/deploy-hooks",
 ];
 
 test.describe("admin integration honesty", () => {

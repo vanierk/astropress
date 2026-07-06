@@ -121,6 +121,14 @@ export const INTEGRATIONS: readonly IntegrationEntry[] = [
 		requiredAction: "forms:view",
 		adminOnly: true,
 	},
+	{
+		href: "/ap-admin/deploy-hooks",
+		navKey: "deployHooks",
+		status: "real",
+		domain: "deploy-hooks",
+		requiredAction: "settings:edit",
+		adminOnly: true,
+	},
 
 	// Env-gated — implementation exists; page surfaces RequiresIntegration
 	// until the matching CmsConfig field is set.
@@ -173,14 +181,6 @@ export const INTEGRATIONS: readonly IntegrationEntry[] = [
 		status: "coming-soon",
 		roadmapHref: ROADMAP_ISSUE,
 		requiredAction: "services:manage",
-		adminOnly: true,
-	},
-	{
-		href: "/ap-admin/deploy-hooks",
-		navKey: "deployHooks",
-		status: "coming-soon",
-		roadmapHref: ROADMAP_ISSUE,
-		requiredAction: "settings:edit",
 		adminOnly: true,
 	},
 ];

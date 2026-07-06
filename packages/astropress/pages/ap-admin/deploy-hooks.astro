@@ -1,0 +1,52 @@
+---
+import AdminLayout from "@astropress-diy/astropress/components/AdminLayout.astro";
+import IntegrationConnect from "@astropress-diy/astropress/components/IntegrationConnect.astro";
+import { getPageT, requiresAccess, resolveAdminLocale } from "astropress";
+import { withLocalStoreFallback } from "../../src/admin-store-dispatch.js";
+
+const guard = await requiresAccess(Astro, "settings:edit");
+if (guard) return guard;
+const adminUser = Astro.locals.adminUser;
+if (!adminUser) return Astro.redirect("/ap-admin/login");
+const adminLocale = resolveAdminLocale(Astro);
+const t = getPageT(adminLocale);
+
+interface StatusRow {
+	domain: string;
+	provider: string;
+	status: "connected" | "error" | "paused";
+	isActive: boolean;
+}
+const statuses = await withLocalStoreFallback<StatusRow[]>(
+	Astro.locals,
+	async () => [],
+	async (store) => (store.integrations?.listStatuses() ?? []) as StatusRow[],
+);
+const inDomain = statuses.filter((s) => s.domain === "deploy-hooks");
+const connectedIds = inDomain.filter((s) => s.status === "connected").map((s) => s.provider);
+const statusByProvider: Record<string, StatusRow["status"]> = {};
+for (const s of inDomain) statusByProvider[s.provider] = s.status;
+const activeProviderId =
+	inDomain.find((s) => s.status === "connected" && s.isActive)?.provider ?? null;
+---
+
+<AdminLayout
+	title={t("deployHooks.title", "Deploy Hooks")}
+	heading={t("deployHooks.title", "Deploy Hooks")}
+	currentPath="/ap-admin/deploy-hooks"
+	description={t(
+		"deployHooks.description",
+		"Connect a deploy-hooks provider to trigger production builds from CI or vendor webhooks.",
+	)}
+	userName={adminUser.name}
+>
+	<section class="panel">
+		<IntegrationConnect
+			domain="deploy-hooks"
+			connectedProviderIds={connectedIds}
+			statusByProvider={statusByProvider}
+			activeProviderId={activeProviderId}
+			locale={adminLocale}
+		/>
+	</section>
+</AdminLayout>

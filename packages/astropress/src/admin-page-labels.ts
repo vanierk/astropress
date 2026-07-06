@@ -10937,6 +10937,12 @@ export const pageLabels = {
 	"stubProviderTag.selfHosted": { en: "Self-hosted" },
 	"stubProviderTag.oss": { en: "OSS" },
 	"stubProviderTag.saas": { en: "SaaS" },
+
+	// ── Deploy Hooks (promoted from the coming-soon stub to a real page) ────
+	"deployHooks.title": { en: "Deploy Hooks" },
+	"deployHooks.description": {
+		en: "Connect a deploy-hooks provider to trigger production builds from CI or vendor webhooks.",
+	},
 } as const satisfies Record<string, LocaleMap>;
 
 /**
