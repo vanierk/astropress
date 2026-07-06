@@ -132,7 +132,7 @@ const sitemapPage = routeMap.get("/sitemap.xml");
         </label>
         <label class="admin-field">
           <span>{t("system.fieldExtraUrls")}</span>
-          <textarea class="admin-textarea code-textarea" name="extraUrls" rows="4" placeholder="https://example.com/custom-url/">{Array.isArray(sitemapPage?.settings?.extraUrls) ? (sitemapPage?.settings?.extraUrls as string[]).join("\n") : ""}</textarea>
+          <textarea class="admin-textarea code-textarea" name="extraUrls" rows="4" placeholder={t("system.extraUrlsPlaceholder")}>{Array.isArray(sitemapPage?.settings?.extraUrls) ? (sitemapPage?.settings?.extraUrls as string[]).join("\n") : ""}</textarea>
         </label>
         <label class="admin-field">
           <span>{t("system.fieldRevisionNote")}</span>
@@ -144,8 +144,8 @@ const sitemapPage = routeMap.get("/sitemap.xml");
   </AdminLayout>
 ) : (
   <AdminLayout
-    title="Forbidden"
-    heading="Forbidden"
+    title={t("pages.forbidden.title")}
+    heading={t("pages.forbidden.title")}
     currentPath=""
     description={t("pages.forbidden.description")}
     userName={safeAdminUserName(adminUser)}

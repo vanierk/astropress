@@ -265,8 +265,8 @@ if (model.status === "forbidden") {
   </AdminLayout>
 ) : (
   <AdminLayout
-    title="Forbidden"
-    heading="Forbidden"
+    title={t("pages.forbidden.title")}
+    heading={t("pages.forbidden.title")}
     currentPath=""
     description={t("pages.forbidden.description")}
     userName={safeAdminUserName(adminUser)}

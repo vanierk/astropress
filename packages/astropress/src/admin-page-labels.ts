@@ -10658,6 +10658,63 @@ export const pageLabels = {
 	"revisions.restore": { en: "Restore" },
 	"revisions.notFound": { en: "Not Found" },
 	"revisions.notFoundDesc": { en: "The requested revision history could not be found." },
+
+	// ── System: sitemap extra-URLs placeholder (plain text, safe to key) ────
+	"system.extraUrlsPlaceholder": { en: "https://example.com/custom-url/" },
+
+	// ── Import wizard (import/[source]) ──────────────────────────────────────
+	"import.wordpress.label": { en: "WordPress" },
+	"import.wordpress.description": {
+		en: "Import posts, pages, media, authors, and taxonomies from WordPress.",
+	},
+	"import.wordpress.fileLabel": { en: "WordPress XML export file (.xml)" },
+	"import.wordpress.fileHint": {
+		en: "Export via WordPress Admin → Tools → Export → All content.",
+	},
+	"import.wordpress.urlHint": {
+		en: "Provide a live WordPress site URL to trigger an authenticated export download.",
+	},
+	"import.wix.label": { en: "Wix" },
+	"import.wix.description": { en: "Import blog posts, pages, authors, and media from Wix." },
+	"import.wix.fileLabel": { en: "Wix CSV export file (.csv)" },
+	"import.wix.fileHint": { en: "Export via Wix Dashboard → Blog → Posts → Export." },
+	"import.wix.urlHint": {
+		en: "Provide a live Wix site URL to trigger an authenticated export download.",
+	},
+	"import.crawl.label": { en: "Web crawl" },
+	"import.crawl.description": {
+		en: "Crawl any publicly accessible website and import its pages as content records.",
+	},
+	"import.crawl.urlHint": {
+		en: "Provide the starting URL of the site to crawl. Only publicly accessible pages are imported.",
+	},
+	"import.importFrom": { en: "Import from" },
+	"import.breadcrumbImport": { en: "Import" },
+	"import.sourceStep": { en: "1. Source" },
+	"import.optionsStep": { en: "2. Options" },
+	"import.runStep": { en: "3. Run import" },
+	"import.resultStep": { en: "4. Result" },
+	"import.sourceTypeAria": { en: "Import source type" },
+	"import.uploadFile": { en: "Upload file" },
+	"import.liveSiteUrl": { en: "Live site URL" },
+	"import.siteUrl": { en: "Site URL" },
+	"import.startUrl": { en: "Start URL" },
+	"import.maxPagesLabel": { en: "Max pages (default: 100)" },
+	"import.exampleUrlCom": { en: "https://mysite.com" },
+	"import.exampleUrlWix": { en: "https://mysite.wixsite.com/site" },
+	"import.downloadMediaFiles": { en: "Download media files" },
+	"import.dryRunLabel": { en: "Dry run (preview only — no content will be saved)" },
+	"import.applyLocalLabel": { en: "Apply to local database (uncheck for dry run)" },
+	"import.runImport": { en: "Run import" },
+	"import.orConnector": { en: "or" },
+	"import.showCliCommand": { en: "Show CLI command" },
+	"import.copyCommand": { en: "Copy command" },
+	"import.copyCommandAria": { en: "Copy command to clipboard" },
+	"import.readyPrefix": { en: "Ready — configure options above and click" },
+	"import.notFoundTitle": { en: "Not found" },
+	"import.unknownSourceHeading": { en: "Unknown import source" },
+	"import.unknownSourceDesc": { en: "The requested import source is not supported." },
+	"import.supportedSourcesPrefix": { en: "Supported sources:" },
 } as const satisfies Record<string, LocaleMap>;
 
 /**

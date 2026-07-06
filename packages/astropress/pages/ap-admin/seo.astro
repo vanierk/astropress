@@ -135,8 +135,8 @@ const rowsMissingMetadata = rows.filter((row) => row.missingMetadata).length;
   </AdminLayout>
 ) : (
   <AdminLayout
-    title="Forbidden"
-    heading="Forbidden"
+    title={t("pages.forbidden.title")}
+    heading={t("pages.forbidden.title")}
     currentPath="/ap-admin/posts"
     description={t("pages.forbidden.description")}
     userName={safeAdminUserName(adminUser)}
