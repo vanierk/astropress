@@ -1,0 +1,53 @@
+---
+import AdminLayout from "@astropress-diy/astropress/components/AdminLayout.astro";
+import IntegrationConnect from "@astropress-diy/astropress/components/IntegrationConnect.astro";
+import { getPageT, requiresAccess, resolveAdminLocale } from "astropress";
+import { withLocalStoreFallback } from "../../src/admin-store-dispatch.js";
+
+const guard = await requiresAccess(Astro, "services:manage");
+if (guard) return guard;
+const adminUser = Astro.locals.adminUser;
+if (!adminUser) return Astro.redirect("/ap-admin/login");
+const adminLocale = resolveAdminLocale(Astro);
+const t = getPageT(adminLocale);
+
+interface StatusRow {
+	domain: string;
+	provider: string;
+	status: "connected" | "error" | "paused";
+	isActive: boolean;
+}
+const statuses = await withLocalStoreFallback<StatusRow[]>(
+	Astro.locals,
+	async () => [],
+	async (store) => (store.integrations?.listStatuses() ?? []) as StatusRow[],
+);
+const inDomain = statuses.filter((s) => s.domain === "ab-testing");
+const connectedIds = inDomain.filter((s) => s.status === "connected").map((s) => s.provider);
+const statusByProvider: Record<string, StatusRow["status"]> = {};
+for (const s of inDomain) statusByProvider[s.provider] = s.status;
+const activeProviderId =
+	inDomain.find((s) => s.status === "connected" && s.isActive)?.provider ?? null;
+---
+
+<AdminLayout
+	title={t("abTesting.title", "A/B Testing & Feature Flags")}
+	heading={t("abTesting.title", "A/B Testing & Feature Flags")}
+	currentPath="/ap-admin/ab-testing"
+	description={t(
+		"abTesting.description",
+		"Connect a feature-flag provider to manage experiments in its own dashboard.",
+	)}
+	userName={adminUser.name}
+>
+	<p class="notice">{t("abTesting.honestNote")}</p>
+	<section class="panel">
+		<IntegrationConnect
+			domain="ab-testing"
+			connectedProviderIds={connectedIds}
+			statusByProvider={statusByProvider}
+			activeProviderId={activeProviderId}
+			locale={adminLocale}
+		/>
+	</section>
+</AdminLayout>

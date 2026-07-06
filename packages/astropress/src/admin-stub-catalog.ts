@@ -552,17 +552,12 @@ export const ADMIN_STUB_PAGES = {
 		navKey: "mapsLocal",
 		action: "seo:edit",
 	},
-	// structured-data, shop, monitoring, and sitemaps were promoted to real
-	// pages (structured-data.astro, shop.astro, monitoring.astro,
-	// sitemaps.astro). Their adminStubs entries (capability/description/
-	// configHint/providers copy) stay as orphaned catalog entries —
-	// structured-data.astro/monitoring.astro still reuse that copy directly —
-	// matching the deploy-hooks precedent.
-	"ab-testing": {
-		stubKey: "abTesting",
-		navKey: "abTesting",
-		action: "services:manage",
-	},
+	// structured-data, shop, monitoring, sitemaps, and ab-testing were
+	// promoted to real pages (structured-data.astro, shop.astro,
+	// monitoring.astro, sitemaps.astro, ab-testing.astro). Their adminStubs
+	// entries (capability/description/configHint/providers copy) stay as
+	// orphaned catalog entries — structured-data.astro/monitoring.astro
+	// still reuse that copy directly — matching the deploy-hooks precedent.
 } as const satisfies Record<string, AdminStubPageEntry>;
 
 export type AdminStubPageSlug = keyof typeof ADMIN_STUB_PAGES;

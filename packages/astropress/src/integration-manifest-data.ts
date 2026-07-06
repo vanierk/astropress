@@ -129,17 +129,17 @@ export const INTEGRATIONS: readonly IntegrationEntry[] = [
 		requiredAction: "settings:edit",
 		adminOnly: true,
 	},
-
-	// Env-gated — implementation exists; page surfaces RequiresIntegration
-	// until the matching CmsConfig field is set.
 	{
 		href: "/ap-admin/ab-testing",
 		navKey: "abTesting",
-		status: "env-gated",
-		configField: "abTesting",
+		status: "real",
+		domain: "ab-testing",
 		requiredAction: "services:manage",
 		adminOnly: true,
 	},
+
+	// Env-gated — implementation exists; page surfaces RequiresIntegration
+	// until the matching CmsConfig field is set.
 	{
 		href: "/ap-admin/monitoring",
 		navKey: "monitoring",

@@ -334,7 +334,7 @@ export const adminRouteDefinitions = [
 	},
 	{
 		pattern: "/ap-admin/ab-testing",
-		entrypoint: "[stub].astro",
+		entrypoint: "ab-testing.astro",
 		kind: "page",
 	},
 	{ pattern: "/ap-admin/email", entrypoint: "[stub].astro", kind: "page" },

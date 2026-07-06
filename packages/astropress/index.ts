@@ -432,6 +432,13 @@ export {
 	registerGithubDeploy,
 	verifyGithubDeploy,
 } from "./src/integrations/providers/github-deploy.js";
+export type { GrowthbookFields } from "./src/integrations/providers/growthbook";
+export {
+	GROWTHBOOK_FIELDS,
+	GrowthbookVerifyError,
+	registerGrowthbook,
+	verifyGrowthbook,
+} from "./src/integrations/providers/growthbook.js";
 export type { ListmonkFields } from "./src/integrations/providers/listmonk";
 // Phase 4 push-button providers — hosts call these once at boot to
 // register the corresponding registry entry. Each provider exports

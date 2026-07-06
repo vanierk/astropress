@@ -10980,6 +10980,15 @@ export const pageLabels = {
 	"sitemaps.lastSubmitted": { en: "Last submitted {date}" },
 	"sitemaps.neverSubmitted": { en: "Not yet submitted" },
 	"sitemaps.submittedSuccess": { en: "Submitted to IndexNow." },
+
+	// ── A/B Testing & Feature Flags (promoted: real connect/verify page) ────
+	"abTesting.title": { en: "A/B Testing & Feature Flags" },
+	"abTesting.description": {
+		en: "Connect a feature-flag provider to manage experiments in its own dashboard.",
+	},
+	"abTesting.honestNote": {
+		en: "Astropress does not evaluate flags at runtime — connecting only gives you a place to manage them. Use your provider's own SDK to read flag values in your application.",
+	},
 } as const satisfies Record<string, LocaleMap>;
 
 /**
