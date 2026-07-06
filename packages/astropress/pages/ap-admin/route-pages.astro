@@ -1,6 +1,7 @@
 ---
 import { safeAdminUserName } from "astropress";
 import AdminLayout from "@astropress-diy/astropress/components/AdminLayout.astro";
+import CsrfInput from "@astropress-diy/astropress/components/CsrfInput.astro";
 import { buildRouteTablePageModel, getPageT, resolveAdminLocale } from "astropress";
 
 const adminUser = Astro.locals.adminUser;
@@ -53,7 +54,7 @@ const t = getPageT(adminLocale);
       )}
 
       <form method="post" action="/ap-admin/actions/admin-slug-save" class="slug-form">
-        <input type="hidden" name="_csrf" value={Astro.locals.csrfToken ?? ""} />
+        <CsrfInput token={Astro.locals.csrfToken} />
         <div class="slug-field">
           <label for="adminSlug">{t("routePages.adminUrlPrefixLabel")}</label>
           <div class="slug-input-row">
