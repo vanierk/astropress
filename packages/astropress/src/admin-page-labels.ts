@@ -10715,6 +10715,17 @@ export const pageLabels = {
 	"import.unknownSourceHeading": { en: "Unknown import source" },
 	"import.unknownSourceDesc": { en: "The requested import source is not supported." },
 	"import.supportedSourcesPrefix": { en: "Supported sources:" },
+
+	// ── Preview (preview/[...slug]) ──────────────────────────────────────────
+	"preview.titlePrefix": { en: "Preview:" },
+	"preview.contentPreview": { en: "Content Preview" },
+	"preview.draftPreviewPrefix": { en: "Draft preview for" },
+	"preview.notice": {
+		en: "This preview shows the current saved state including drafts. Only published content appears on the production site.",
+	},
+	"preview.editInAdmin": { en: "Edit in admin" },
+	"preview.noRecordPrefix": { en: "No content record was found for slug" },
+	"preview.backToDashboard": { en: "Back to dashboard" },
 } as const satisfies Record<string, LocaleMap>;
 
 /**

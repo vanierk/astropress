@@ -66,26 +66,26 @@ const safeBody = record?.body
 ---
 
 <AdminLayout
-  title={record?.title ? `Preview: ${record.title}` : "Preview"}
-  heading={record?.title ?? "Content Preview"}
+  title={record?.title ? `${t("preview.titlePrefix")} ${record.title}` : t("postEditor.sectionPreview")}
+  heading={record?.title ?? t("preview.contentPreview")}
   currentPath={Astro.url.pathname}
-  description={`Draft preview for /${contentSlug}`}
+  description={`${t("preview.draftPreviewPrefix")} /${contentSlug}`}
   userName={adminUser.name}
 >
   {record ? (
     <div class="preview-shell">
       <div class="preview-meta panel">
         <div class="preview-meta-row">
-          <span class="admin-kicker">Preview</span>
+          <span class="admin-kicker">{t("postEditor.sectionPreview")}</span>
           <span class="preview-slug">{contentSlug}</span>
           <span class={`admin-chip status-${record.status ?? "published"}`}>{statusLabel(record.status)}</span>
         </div>
         <p class="admin-note">
-          This preview shows the current saved state including drafts. Only published content appears on the production site.
+          {t("preview.notice")}
         </p>
         {record.kind && (
           <a href={`/ap-admin/${record.kind === "post" ? "posts" : "pages"}/${contentSlug}`} class="admin-button-ghost small">
-            Edit in admin
+            {t("preview.editInAdmin")}
           </a>
         )}
       </div>
@@ -93,8 +93,8 @@ const safeBody = record?.body
     </div>
   ) : (
     <section class="panel preview-empty">
-      <p class="admin-note">No content record was found for slug <code>{contentSlug}</code>.</p>
-      <a href="/ap-admin" class="admin-button-ghost small">Back to dashboard</a>
+      <p class="admin-note">{t("preview.noRecordPrefix")} <code>{contentSlug}</code>.</p>
+      <a href="/ap-admin" class="admin-button-ghost small">{t("preview.backToDashboard")}</a>
     </section>
   )}
 </AdminLayout>
