@@ -496,13 +496,11 @@ export const ADMIN_STUB_PAGES = {
 		variant: "coming-soon",
 		roadmapHref: ROADMAP_ISSUE,
 	},
-	plugins: {
-		stubKey: "plugins",
-		navKey: "plugins",
-		action: "plugins:view",
-		variant: "coming-soon",
-		roadmapHref: ROADMAP_ISSUE,
-	},
+	// plugins was promoted to a real page (plugins.astro) — CmsConfig.plugins,
+	// AstropressPlugin, and plugin-dispatch.ts were already real and
+	// dispatching hooks; "coming-soon" was wrong about the underlying
+	// capability, not just the copy. adminStubs.plugins stays as an orphaned
+	// catalog entry per precedent.
 	heatmaps: {
 		stubKey: "heatmaps",
 		navKey: "heatmaps",

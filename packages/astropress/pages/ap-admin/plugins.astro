@@ -1,0 +1,145 @@
+---
+import AdminLayout from "@astropress-diy/astropress/components/AdminLayout.astro";
+import {
+	getPageT,
+	getPluginDispatchStats,
+	peekCmsConfig,
+	requiresAccess,
+	resolveAdminLocale,
+} from "astropress";
+
+// Promoted from the [stub].astro route: CmsConfig.plugins, AstropressPlugin
+// (cms-plugins.ts), and the plugin-dispatch.ts runtime are already real,
+// tested, and dispatching hooks today — "coming soon" was wrong about the
+// underlying capability, not just the copy. This page is read-only
+// introspection over that already-live system, not a new subsystem.
+const guard = await requiresAccess(Astro, "plugins:view");
+if (guard) return guard;
+const adminUser = Astro.locals.adminUser;
+if (!adminUser) return Astro.redirect("/ap-admin/login");
+const adminLocale = resolveAdminLocale(Astro);
+const t = getPageT(adminLocale);
+function format(template: string, params: Record<string, string | number>) {
+	return template.replace(/\{(\w+)\}/g, (_, k) => String(params[k] ?? ""));
+}
+
+const plugins = peekCmsConfig()?.plugins ?? [];
+const stats = getPluginDispatchStats();
+
+const hookKeys = ["onContentSave", "onContentPublish", "onMediaUpload", "onError"] as const;
+const hookLabelKeys: Record<(typeof hookKeys)[number], string> = {
+	onContentSave: "plugins.hookOnContentSave",
+	onContentPublish: "plugins.hookOnContentPublish",
+	onMediaUpload: "plugins.hookOnMediaUpload",
+	onError: "plugins.hookOnError",
+};
+---
+
+<AdminLayout
+	title={t("plugins.title")}
+	heading={t("plugins.title")}
+	currentPath="/ap-admin/plugins"
+	description={t("plugins.description")}
+	userName={adminUser.name}
+>
+	{plugins.length === 0 ? (
+		<section class="panel">
+			<p class="field-note">{t("plugins.emptyState")}</p>
+		</section>
+	) : (
+		plugins.map((plugin) => {
+			const pluginStats = stats[plugin.name];
+			return (
+				<section class="panel">
+					<div class="section-header">
+						<div>
+							<h2>{plugin.name}</h2>
+						</div>
+					</div>
+
+					<div class="section-header">
+						<div>
+							<h3>{t("plugins.hooksHeading")}</h3>
+						</div>
+					</div>
+					<ul class="plugin-hook-list">
+						{hookKeys.map((hookKey) => (
+							<li>
+								<code>{t(hookLabelKeys[hookKey])}</code>
+								{" — "}
+								<span class={plugin[hookKey] ? "hook-yes" : "hook-no"}>
+									{plugin[hookKey] ? t("plugins.hookImplemented") : t("plugins.hookNotImplemented")}
+								</span>
+							</li>
+						))}
+					</ul>
+
+					<div class="section-header">
+						<div>
+							<h3>{t("plugins.navItemsHeading")}</h3>
+						</div>
+					</div>
+					{plugin.navItems && plugin.navItems.length > 0 ? (
+						<ul class="plugin-hook-list">
+							{plugin.navItems.map((item) => (
+								<li>{item.label} — <code>{item.href}</code></li>
+							))}
+						</ul>
+					) : (
+						<p class="field-note">{t("plugins.navItemsEmpty")}</p>
+					)}
+
+					<div class="section-header">
+						<div>
+							<h3>{t("plugins.adminRoutesHeading")}</h3>
+						</div>
+					</div>
+					{plugin.adminRoutes && plugin.adminRoutes.length > 0 ? (
+						<ul class="plugin-hook-list">
+							{plugin.adminRoutes.map((route) => (
+								<li><code>{route.pattern}</code> → <code>{route.entrypoint}</code></li>
+							))}
+						</ul>
+					) : (
+						<p class="field-note">{t("plugins.adminRoutesEmpty")}</p>
+					)}
+
+					<div class="section-header">
+						<div>
+							<h3>{t("plugins.statsHeading")}</h3>
+						</div>
+					</div>
+					<p>
+						{format(t("plugins.statsHooksRun"), { count: pluginStats?.hooksRun ?? 0 })}
+						{", "}
+						{format(t("plugins.statsErrorsSwallowed"), {
+							count: pluginStats?.errorsSwallowed ?? 0,
+						})}
+					</p>
+					<p class="field-note">{t("plugins.statsNote")}</p>
+				</section>
+			);
+		})
+	)}
+</AdminLayout>
+
+<style>
+	.plugin-hook-list {
+		list-style: none;
+		margin: 0 0 1rem;
+		padding: 0;
+		display: grid;
+		gap: 0.35rem;
+	}
+	.field-note {
+		color: var(--muted);
+		margin: 0 0 1rem;
+	}
+	.hook-yes {
+		color: #16543b;
+		font-weight: 600;
+	}
+	.hook-no {
+		color: var(--muted);
+	}
+</style>

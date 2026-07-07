@@ -11070,6 +11070,32 @@ export const pageLabels = {
 	"mapsLocal.notConfiguredNotice": {
 		en: "Save your business details above to generate the component snippet.",
 	},
+
+	// ── Plugins (promoted: read-only introspection over the live plugin system) ──
+	"plugins.title": { en: "Plugins" },
+	"plugins.description": {
+		en: "Lifecycle plugins registered via registerCms({ plugins: [...] }).",
+	},
+	"plugins.emptyState": {
+		en: "No plugins are currently registered. Register one via registerCms({ plugins: [myPlugin] }).",
+	},
+	"plugins.hooksHeading": { en: "Lifecycle hooks" },
+	"plugins.hookOnContentSave": { en: "onContentSave" },
+	"plugins.hookOnContentPublish": { en: "onContentPublish" },
+	"plugins.hookOnMediaUpload": { en: "onMediaUpload" },
+	"plugins.hookOnError": { en: "onError" },
+	"plugins.hookImplemented": { en: "Implemented" },
+	"plugins.hookNotImplemented": { en: "Not implemented" },
+	"plugins.navItemsHeading": { en: "Nav items contributed" },
+	"plugins.navItemsEmpty": { en: "None" },
+	"plugins.adminRoutesHeading": { en: "Admin routes contributed" },
+	"plugins.adminRoutesEmpty": { en: "None" },
+	"plugins.statsHeading": { en: "Activity this process" },
+	"plugins.statsHooksRun": { en: "{count} hook calls" },
+	"plugins.statsErrorsSwallowed": { en: "{count} errors swallowed" },
+	"plugins.statsNote": {
+		en: "Counts since this server process started — resets on restart or redeploy, not a historical log.",
+	},
 } as const satisfies Record<string, LocaleMap>;
 
 /**

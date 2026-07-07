@@ -252,6 +252,7 @@ export type {
 	CmsConfig,
 	ContentTypeDefinition,
 	FieldDefinition,
+	PluginDispatchStats,
 	TestimonialsConfig,
 } from "./src/config";
 // Core configuration seam
@@ -259,6 +260,7 @@ export {
 	dispatchPluginContentEvent,
 	dispatchPluginMediaEvent,
 	getCmsConfig,
+	getPluginDispatchStats,
 	peekCmsConfig,
 	registerCms,
 	validateContentFields,

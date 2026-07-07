@@ -343,8 +343,10 @@ export function peekCmsConfig(): CmsConfig | null {
 }
 
 // ─── Plugin dispatch — extracted to plugin-dispatch.ts ───────────────────────
+export type { PluginDispatchStats } from "./plugin-dispatch";
 export {
 	dispatchPluginContentEvent,
 	dispatchPluginMediaEvent,
+	getPluginDispatchStats,
 	reportAstropressError,
 } from "./plugin-dispatch";

@@ -379,7 +379,7 @@ export const adminRouteDefinitions = [
 		entrypoint: "deploy-hooks.astro",
 		kind: "page",
 	},
-	{ pattern: "/ap-admin/plugins", entrypoint: "[stub].astro", kind: "page" },
+	{ pattern: "/ap-admin/plugins", entrypoint: "plugins.astro", kind: "page" },
 	{ pattern: "/ap-admin/data", entrypoint: "data.astro", kind: "page" },
 	{ pattern: "/ap-admin/backups", entrypoint: "backups.astro", kind: "page" },
 ] as const satisfies readonly AstropressAdminRouteDefinition[];

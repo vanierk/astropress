@@ -72,8 +72,7 @@ export const INTEGRATIONS: readonly IntegrationEntry[] = [
 	{
 		href: "/ap-admin/plugins",
 		navKey: "plugins",
-		status: "coming-soon",
-		roadmapHref: ROADMAP_ISSUE,
+		status: "real",
 		requiredAction: "plugins:view",
 		adminOnly: true,
 	},
