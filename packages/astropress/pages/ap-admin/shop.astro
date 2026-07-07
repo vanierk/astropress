@@ -1,7 +1,12 @@
 ---
+import { requiresAccess } from "astropress";
+
 // Shop is fully implemented via the Services hub: registerAstropressService({
 // provider: "shop", ... }) already renders a working card at /ap-admin/services.
-// Auth is resolved by middleware; we read adminUser to satisfy ZTA invariant.
-const _adminUser = Astro.locals.adminUser;
+// Gated the same as services.astro itself, since this redirects there.
+const guard = await requiresAccess(Astro, "services:manage");
+if (guard) return guard;
+const adminUser = Astro.locals.adminUser;
+if (!adminUser) return Astro.redirect("/ap-admin/login");
 return Astro.redirect("/ap-admin/services", 301);
 ---
