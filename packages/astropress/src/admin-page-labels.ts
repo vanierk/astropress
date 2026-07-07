@@ -11012,6 +11012,24 @@ export const pageLabels = {
 	"data.otherBackendsNote": {
 		en: "Supabase, Neon, Turso, PocketBase, Appwrite, and Nhost ship adapter code in this framework, but aren't wired into this page's detection — connect them via custom adapter code, not through this admin UI.",
 	},
+
+	// ── Backups (promoted: backend backup guidance + on-demand export) ──────
+	"backups.title": { en: "Backups" },
+	"backups.description": {
+		en: "On-demand content export, plus guidance on your active backend's real backup mechanism.",
+	},
+	"backups.mechanismHeading": { en: "Backup mechanism" },
+	"backups.mechanismD1": {
+		en: "Cloudflare D1 Time Travel is always on for this database — point-in-time recovery for the last 7–30 days depending on your Workers plan. Restore is a Cloudflare operator action (wrangler d1 time-travel restore, or the dashboard) — not available from this admin UI.",
+	},
+	"backups.mechanismLocalSqlite": {
+		en: "No automatic backup mechanism is available for local SQLite. Back up the database file yourself as part of your own deployment process.",
+	},
+	"backups.exportHeading": { en: "Content export" },
+	"backups.exportDescription": {
+		en: "Download a JSON snapshot of your content, settings, users, media metadata, redirects, and comments — for your own records or portability. This is not a backup: Astropress does not currently support importing it back in.",
+	},
+	"backups.exportButton": { en: "Download export" },
 } as const satisfies Record<string, LocaleMap>;
 
 /**

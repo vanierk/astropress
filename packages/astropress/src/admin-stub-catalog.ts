@@ -402,8 +402,9 @@ export const adminStubs = {
 	backups: {
 		capability: "Backups",
 		description:
-			"Schedule snapshots of the data store and exports of the media bucket. View recent backup runs and restore points.",
-		configHint: 'registerCms({\n  backups: { schedule: "daily", target: "r2://backups" },\n});',
+			"On-demand JSON export of your content, settings, users, media metadata, redirects, and comments — plus guidance on your active backend's own backup mechanism (e.g. Cloudflare D1 Time Travel). This is not a scheduled backup system: no scheduling, no run history, and no restore path from within Astropress.",
+		configHint:
+			"# No configuration needed — /ap-admin/backups is always available; it detects your active backend automatically.",
 		providers: [
 			{
 				name: "Cloudflare D1 + R2",
@@ -539,11 +540,9 @@ export const ADMIN_STUB_PAGES = {
 	// Env-gated (manifest status="env-gated" or unconfigured allowlist).
 	// data was promoted to a real page (data.astro) — see
 	// src/data-backend-health.ts for why only D1/local-SQLite are detectable.
-	backups: {
-		stubKey: "backups",
-		navKey: "backups",
-		action: "backups:manage",
-	},
+	// backups was promoted to a real page (backups.astro) — an on-demand
+	// content export + backend backup-mechanism guidance, not a scheduled
+	// backup/restore system. See admin-action-backup-export.ts.
 	"maps-local": {
 		stubKey: "mapsLocal",
 		navKey: "mapsLocal",

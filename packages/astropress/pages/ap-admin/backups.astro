@@ -1,0 +1,53 @@
+---
+import AdminLayout from "@astropress-diy/astropress/components/AdminLayout.astro";
+import CsrfInput from "@astropress-diy/astropress/components/CsrfInput.astro";
+import { getPageT, requiresAccess, resolveAdminLocale } from "astropress";
+import { getAdminDb } from "../../src/admin-store-dispatch.js";
+
+// Promoted from the [stub].astro route. Cloudflare D1 Time Travel details
+// verified live against developers.cloudflare.com/d1/reference/time-travel/
+// (2026-07-06): always-on point-in-time recovery, 30-day retention on the
+// Workers Paid plan / 7-day on Workers Free, restore is CLI/dashboard-only
+// (wrangler d1 time-travel restore) — never callable from a running Worker.
+// The export button mirrors actions/user-purge.ts's file-download pattern
+// exactly (withAdminFormAction handles CSRF/ABAC/audit).
+const guard = await requiresAccess(Astro, "backups:manage");
+if (guard) return guard;
+const adminUser = Astro.locals.adminUser;
+if (!adminUser) return Astro.redirect("/ap-admin/login");
+const locale = resolveAdminLocale(Astro);
+const t = getPageT(locale);
+
+const isD1 = Boolean(getAdminDb(Astro.locals));
+const mechanismCopy = isD1 ? t("backups.mechanismD1") : t("backups.mechanismLocalSqlite");
+---
+
+<AdminLayout
+	title={t("backups.title")}
+	heading={t("backups.title")}
+	currentPath="/ap-admin/backups"
+	description={t("backups.description")}
+	userName={adminUser.name}
+>
+	<section class="panel">
+		<div class="section-header">
+			<div>
+				<h2>{t("backups.mechanismHeading")}</h2>
+				<p>{mechanismCopy}</p>
+			</div>
+		</div>
+	</section>
+
+	<section class="panel">
+		<div class="section-header">
+			<div>
+				<h2>{t("backups.exportHeading")}</h2>
+				<p>{t("backups.exportDescription")}</p>
+			</div>
+		</div>
+		<form method="post" action="/ap-admin/actions/backup-export">
+			<CsrfInput token={Astro.locals.csrfToken} />
+			<button type="submit" class="button-primary">{t("backups.exportButton")}</button>
+		</form>
+	</section>
+</AdminLayout>
