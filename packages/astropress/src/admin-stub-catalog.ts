@@ -256,7 +256,7 @@ export const adminStubs = {
 		capability: "Email",
 		description:
 			"Transactional email — password resets, invitations, contact form notifications. Configure a provider to send mail.",
-		configHint: "# .env\nEMAIL_PROVIDER=resend\nRESEND_API_KEY=re_...",
+		configHint: "# .env\nEMAIL_DELIVERY_MODE=resend\nRESEND_API_KEY=re_...\nRESEND_FROM_EMAIL=...",
 		providers: [
 			{ name: "Resend", href: "https://resend.com", tag: "Recommended" },
 			{ name: "SMTP (any server)", tag: "Self-hosted" },
@@ -508,13 +508,11 @@ export const ADMIN_STUB_PAGES = {
 		variant: "coming-soon",
 		roadmapHref: ROADMAP_ISSUE,
 	},
-	email: {
-		stubKey: "email",
-		navKey: "email",
-		action: "services:manage",
-		variant: "coming-soon",
-		roadmapHref: ROADMAP_ISSUE,
-	},
+	// email was promoted to a real page (email.astro) — transactional-email.ts
+	// + getTransactionalEmailConfig() were already real, tested, and
+	// load-bearing (reset-password.ts/user-invite.ts send live mail through
+	// them); "coming-soon" was wrong about the underlying capability, not
+	// just the copy. adminStubs.email stays as an orphaned catalog entry.
 	"live-chat": {
 		stubKey: "liveChat",
 		navKey: "liveChat",

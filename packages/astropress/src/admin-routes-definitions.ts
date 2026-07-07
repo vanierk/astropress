@@ -152,6 +152,11 @@ export const adminRouteDefinitions = [
 		kind: "action",
 	},
 	{
+		pattern: "/ap-admin/actions/email-test-send",
+		entrypoint: "actions/email-test-send.ts",
+		kind: "action",
+	},
+	{
 		pattern: "/ap-admin/actions/media-delete",
 		entrypoint: "actions/media-delete.ts",
 		kind: "action",
@@ -352,7 +357,7 @@ export const adminRouteDefinitions = [
 		entrypoint: "ab-testing.astro",
 		kind: "page",
 	},
-	{ pattern: "/ap-admin/email", entrypoint: "[stub].astro", kind: "page" },
+	{ pattern: "/ap-admin/email", entrypoint: "email.astro", kind: "page" },
 	{
 		pattern: "/ap-admin/live-chat",
 		entrypoint: "[stub].astro",

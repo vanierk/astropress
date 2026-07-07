@@ -11096,6 +11096,40 @@ export const pageLabels = {
 	"plugins.statsNote": {
 		en: "Counts since this server process started — resets on restart or redeploy, not a historical log.",
 	},
+
+	// ── Email (promoted: transactional-email config status, not newsletter) ──
+	"email.title": { en: "Email" },
+	"email.description": {
+		en: "Transactional email — password resets, invitations, and contact-form notifications. Distinct from Newsletter, which handles broadcast email via Listmonk.",
+	},
+	"email.modeHeading": { en: "Delivery mode" },
+	"email.modeMock": { en: "Mock (preview only, nothing sent)" },
+	"email.modeResend": { en: "Resend" },
+	"email.modeSmtp": { en: "SMTP" },
+	"email.mockNote": {
+		en: "No real email is sent in mock mode — messages are generated but only previewed, never delivered. Set EMAIL_DELIVERY_MODE to switch to a real provider.",
+	},
+	"email.resendApiKeyLabel": { en: "Resend API key" },
+	"email.resendFromLabel": { en: "From address" },
+	"email.smtpHostLabel": { en: "SMTP host" },
+	"email.smtpPortLabel": { en: "SMTP port" },
+	"email.smtpUsernameLabel": { en: "SMTP username" },
+	"email.smtpPasswordLabel": { en: "SMTP password" },
+	"email.smtpFromLabel": { en: "From address" },
+	"email.contactDestinationLabel": { en: "Contact-form notifications go to" },
+	"email.present": { en: "Present" },
+	"email.missing": { en: "Missing" },
+	"email.notConfigured": { en: "Not configured" },
+	"email.testHeading": { en: "Send a test email" },
+	"email.testDescription": {
+		en: "Sends a real message through the current delivery mode above, using the exact same send path as password resets and invitations.",
+	},
+	"email.testToLabel": { en: "Send to" },
+	"email.testButton": { en: "Send test email" },
+	"email.testedNoticeDelivered": { en: "Test email sent." },
+	"email.testedNoticePreview": {
+		en: "Test email generated in mock mode — nothing was actually delivered.",
+	},
 } as const satisfies Record<string, LocaleMap>;
 
 /**

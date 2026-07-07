@@ -1,0 +1,141 @@
+---
+import AdminLayout from "@astropress-diy/astropress/components/AdminLayout.astro";
+import CsrfInput from "@astropress-diy/astropress/components/CsrfInput.astro";
+import {
+	getPageT,
+	getTransactionalEmailConfig,
+	requiresAccess,
+	resolveAdminLocale,
+} from "astropress";
+
+// Promoted from the [stub].astro route: transactional-email.ts +
+// getTransactionalEmailConfig() are already real, tested, and load-bearing
+// today (reset-password.ts, user-invite.ts, user-reset-link.ts all send
+// live mail through them) — "coming soon" was wrong about the underlying
+// capability, not just the copy. This page detects and displays that real
+// state (mirrors data.astro's "detect the real backend" pattern), plus a
+// test-send action that reuses sendTransactionalEmail rather than
+// reimplementing delivery.
+//
+// This is TRANSACTIONAL email only (system-triggered: password resets,
+// invitations, contact-form notifications) — a different code path from
+// Newsletter (broadcast/Listmonk, /ap-admin/newsletter). Deliberately not
+// merged with it.
+const guard = await requiresAccess(Astro, "services:manage");
+if (guard) return guard;
+const adminUser = Astro.locals.adminUser;
+if (!adminUser) return Astro.redirect("/ap-admin/login");
+const adminLocale = resolveAdminLocale(Astro);
+const t = getPageT(adminLocale);
+
+const config = getTransactionalEmailConfig(Astro.locals);
+
+const wasTested = Astro.url.searchParams.get("tested") === "1";
+const wasDelivered = Astro.url.searchParams.get("delivered") === "1";
+const errorMessage =
+	Astro.url.searchParams.get("error") === "1" ? Astro.url.searchParams.get("message") : "";
+
+function presence(value: string | undefined): string {
+	return value ? t("email.present") : t("email.missing");
+}
+---
+
+<AdminLayout
+	title={t("email.title")}
+	heading={t("email.title")}
+	currentPath="/ap-admin/email"
+	description={t("email.description")}
+	userName={adminUser.name}
+>
+	{wasTested && (
+		<p class="notice">
+			{wasDelivered ? t("email.testedNoticeDelivered") : t("email.testedNoticePreview")}
+		</p>
+	)}
+	{errorMessage && <p class="error-notice">{errorMessage}</p>}
+
+	<section class="panel">
+		<div class="section-header">
+			<div>
+				<p class="admin-kicker">{t("email.modeHeading")}</p>
+				<h2>
+					{config.mode === "resend"
+						? t("email.modeResend")
+						: config.mode === "smtp"
+							? t("email.modeSmtp")
+							: t("email.modeMock")}
+				</h2>
+			</div>
+		</div>
+
+		{config.mode === "mock" && <p class="field-note">{t("email.mockNote")}</p>}
+
+		{config.mode === "resend" && (
+			<dl class="config-status-list">
+				<dt>{t("email.resendApiKeyLabel")}</dt>
+				<dd>{presence(config.resendApiKey)}</dd>
+				<dt>{t("email.resendFromLabel")}</dt>
+				<dd>{config.resendFrom || t("email.notConfigured")}</dd>
+			</dl>
+		)}
+
+		{config.mode === "smtp" && (
+			<dl class="config-status-list">
+				<dt>{t("email.smtpHostLabel")}</dt>
+				<dd>{config.smtpHost || t("email.notConfigured")}</dd>
+				<dt>{t("email.smtpPortLabel")}</dt>
+				<dd>{config.smtpPort || t("email.notConfigured")}</dd>
+				<dt>{t("email.smtpUsernameLabel")}</dt>
+				<dd>{presence(config.smtpUsername)}</dd>
+				<dt>{t("email.smtpPasswordLabel")}</dt>
+				<dd>{presence(config.smtpPassword)}</dd>
+				<dt>{t("email.smtpFromLabel")}</dt>
+				<dd>{config.smtpFrom || t("email.notConfigured")}</dd>
+			</dl>
+		)}
+
+		<dl class="config-status-list">
+			<dt>{t("email.contactDestinationLabel")}</dt>
+			<dd>{config.contactDestination || t("email.notConfigured")}</dd>
+		</dl>
+	</section>
+
+	<section class="panel">
+		<div class="section-header">
+			<div>
+				<h2>{t("email.testHeading")}</h2>
+				<p>{t("email.testDescription")}</p>
+			</div>
+		</div>
+		<form method="post" action="/ap-admin/actions/email-test-send" class="admin-field">
+			<CsrfInput token={Astro.locals.csrfToken} />
+			<label class="admin-field">
+				<span>{t("email.testToLabel")}</span>
+				<input type="email" name="to" required class="admin-input" />
+			</label>
+			<div class="actions admin-actions-row">
+				<button type="submit" class="admin-button">{t("email.testButton")}</button>
+			</div>
+		</form>
+	</section>
+</AdminLayout>
+
+<style>
+	.config-status-list {
+		display: grid;
+		grid-template-columns: max-content 1fr;
+		gap: 0.4rem 1rem;
+		margin: 0 0 1rem;
+	}
+	.config-status-list dt {
+		font-weight: 600;
+		color: var(--muted);
+	}
+	.config-status-list dd {
+		margin: 0;
+	}
+	.field-note {
+		color: var(--muted);
+		margin: 0 0 1rem;
+	}
+</style>

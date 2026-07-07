@@ -76,6 +76,13 @@ export const INTEGRATIONS: readonly IntegrationEntry[] = [
 		requiredAction: "plugins:view",
 		adminOnly: true,
 	},
+	{
+		href: "/ap-admin/email",
+		navKey: "email",
+		status: "real",
+		requiredAction: "services:manage",
+		adminOnly: true,
+	},
 
 	// Real — Phase 5 admin pages render IntegrationConnect against the
 	// per-domain provider registry; admin connect actions persist via
@@ -153,14 +160,6 @@ export const INTEGRATIONS: readonly IntegrationEntry[] = [
 	{
 		href: "/ap-admin/heatmaps",
 		navKey: "heatmaps",
-		status: "coming-soon",
-		roadmapHref: ROADMAP_ISSUE,
-		requiredAction: "services:manage",
-		adminOnly: true,
-	},
-	{
-		href: "/ap-admin/email",
-		navKey: "email",
 		status: "coming-soon",
 		roadmapHref: ROADMAP_ISSUE,
 		requiredAction: "services:manage",
