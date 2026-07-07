@@ -47,7 +47,9 @@ export const NAV_ACTION_MAP: readonly NavActionEntry[] = [
 	{ href: "/ap-admin/memberships", requiredAction: "services:manage", adminOnly: true },
 	{ href: "/ap-admin/fundraising", requiredAction: "fundraising:manage", adminOnly: true },
 	{ href: "/ap-admin/community", requiredAction: "services:manage", adminOnly: true },
-	{ href: "/ap-admin/shop", requiredAction: "services:manage", adminOnly: true },
+	// No entry for /ap-admin/shop: it has no nav leaf of its own (see
+	// AdminLayout.astro) — it 301-redirects to /ap-admin/services, whose
+	// leaf comes from INTEGRATIONS instead.
 	{ href: "/ap-admin/social-syndication", requiredAction: "services:manage", adminOnly: true },
 
 	// Discoverability
