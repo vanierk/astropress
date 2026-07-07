@@ -40,7 +40,6 @@ export const NAV_ACTION_MAP: readonly NavActionEntry[] = [
 	{ href: "/ap-admin/subscribers", requiredAction: "subscribers:view", adminOnly: true },
 	{ href: "/ap-admin/newsletter", requiredAction: "newsletter:send", adminOnly: true },
 	{ href: "/ap-admin/comments", requiredAction: "comments:moderate" },
-	{ href: "/ap-admin/events", requiredAction: "events:manage", adminOnly: true },
 	{ href: "/ap-admin/testimonials", requiredAction: "testimonials:manage", adminOnly: true },
 	{ href: "/ap-admin/reviews", requiredAction: "testimonials:manage", adminOnly: true },
 	{ href: "/ap-admin/referrals", requiredAction: "services:manage", adminOnly: true },
@@ -50,6 +49,9 @@ export const NAV_ACTION_MAP: readonly NavActionEntry[] = [
 	// No entry for /ap-admin/shop: it has no nav leaf of its own (see
 	// AdminLayout.astro) — it 301-redirects to /ap-admin/services, whose
 	// leaf comes from INTEGRATIONS instead.
+	// No entry for /ap-admin/events: promoted to an env-gated INTEGRATIONS
+	// entry (like monitoring/heatmaps) — its leaf now comes from there,
+	// avoiding a duplicate sidebar entry.
 	{ href: "/ap-admin/social-syndication", requiredAction: "services:manage", adminOnly: true },
 
 	// Discoverability

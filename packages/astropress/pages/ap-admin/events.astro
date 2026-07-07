@@ -1,0 +1,87 @@
+---
+import AdminLayout from "@astropress-diy/astropress/components/AdminLayout.astro";
+import RequiresIntegration from "@astropress-diy/astropress/components/RequiresIntegration.astro";
+import {
+	adminStubs,
+	getPageT,
+	peekCmsConfig,
+	requiresAccess,
+	resolveAdminLocale,
+} from "astropress";
+
+// Promoted from the [stub].astro coming-soon route: CmsConfig.events and
+// <AstropressEventsEmbed> now exist, following the same config+emit shape
+// resolveAnalyticsSnippet()/resolveHeatmapsSnippet() already established —
+// the host renders the embed component in their own site layout (same
+// host-wires-it shape as AstropressLocalBusinessJsonLd).
+//
+// events:manage and resourceKind: "event" already existed before this
+// build, but they were generic ABAC boilerplate every domain gets — not
+// evidence of native event CRUD. This page is config+embed only; it does
+// not create, store, or manage events, and it never shows RSVP/attendee
+// data, which lives entirely in the provider's own dashboard.
+const guard = await requiresAccess(Astro, "events:manage");
+if (guard) return guard;
+const adminUser = Astro.locals.adminUser;
+if (!adminUser) return Astro.redirect("/ap-admin/login");
+const locale = resolveAdminLocale(Astro);
+const t = getPageT(locale);
+const stub = adminStubs.events;
+const config = peekCmsConfig()?.events;
+
+const providerLabel = config
+	? (config.label ?? t(`events.provider.${config.provider}`, config.provider))
+	: undefined;
+const embedPropsSnippet = config
+	? config.provider === "cal"
+		? `<AstropressEventsEmbed provider="cal" calLink="${config.calLink ?? "your-team/30min"}" />`
+		: config.provider === "calendly"
+			? `<AstropressEventsEmbed provider="calendly" url="${config.url ?? "https://calendly.com/your-team"}" />`
+			: `<AstropressEventsEmbed provider="custom" embedSrc="..." />`
+	: undefined;
+---
+
+<AdminLayout
+	title={t("stub.events.capability", stub.capability)}
+	heading={t("stub.events.capability", stub.capability)}
+	currentPath="/ap-admin/events"
+	description={t("stub.events.description", stub.description)}
+	userName={adminUser.name}
+>
+	<p class="field-note">{t("events.attendeeDataNote")}</p>
+
+	{config ? (
+		<section class="panel">
+			<p class="admin-kicker">{t("integrationConnect.statusActive")}</p>
+			<h2>{providerLabel}</h2>
+			<p>{t("events.activeStatusLine")}</p>
+			<pre class="admin-code-block"><code>{embedPropsSnippet}</code></pre>
+		</section>
+	) : (
+		<RequiresIntegration
+			capability={stub.capability}
+			description={stub.description}
+			configHint={stub.configHint}
+			providers={[...stub.providers]}
+			docsHref={(stub as { docsHref?: string }).docsHref}
+			locale={locale}
+			stubKey="events"
+		/>
+	)}
+</AdminLayout>
+
+<style>
+	.field-note {
+		color: var(--muted);
+		margin: 0 0 1rem;
+	}
+	.admin-code-block {
+		background: var(--surface-muted, #f3f4f6);
+		border: 1px solid var(--border, #e5e7eb);
+		border-radius: 8px;
+		padding: 1rem;
+		overflow-x: auto;
+		font-size: 0.85rem;
+		white-space: pre-wrap;
+	}
+</style>

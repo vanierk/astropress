@@ -172,7 +172,6 @@ const navItems: NavItem[] = [
 	mappedLeaf("/ap-admin/subscribers", adminUi.navigation.subscribers),
 	mappedLeaf("/ap-admin/newsletter", adminUi.navigation.newsletter),
 	mappedLeaf("/ap-admin/comments", adminUi.navigation.comments),
-	mappedLeaf("/ap-admin/events", adminUi.navigation.events),
 	mappedLeaf("/ap-admin/testimonials", adminUi.navigation.testimonials),
 	mappedLeaf("/ap-admin/reviews", adminUi.navigation.reviews),
 	mappedLeaf("/ap-admin/referrals", adminUi.navigation.referrals),
@@ -182,6 +181,9 @@ const navItems: NavItem[] = [
 	// No "Shop" leaf: shop.astro is a 301 redirect to /ap-admin/services,
 	// which already has its own real nav entry (INTEGRATIONS status="real").
 	// A separate "Shop" leaf would just duplicate that destination.
+	// No "Events" leaf either: promoted to an env-gated INTEGRATIONS entry
+	// (like Monitoring/Heatmaps) — its leaf now comes from
+	// integrationLeavesForGroup below, not this static array.
 	mappedLeaf("/ap-admin/social-syndication", adminUi.navigation.socialSyndication),
 
 	groupSep(adminUi.navigation.groupDiscoverability),

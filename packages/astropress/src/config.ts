@@ -16,6 +16,7 @@ import type {
 	AnalyticsConfig,
 	AstropressApiConfig,
 	DonationsConfig,
+	EventsConfig,
 	HeatmapsConfig,
 	LocalBusinessConfig,
 	TestimonialsConfig,
@@ -34,6 +35,7 @@ export type {
 	AnalyticsConfig,
 	AstropressApiConfig,
 	DonationsConfig,
+	EventsConfig,
 	GiveLivelyConfig,
 	HeatmapsConfig,
 	LiberapayConfig,
@@ -144,6 +146,16 @@ export interface CmsConfig {
 	 * get session replay/heatmaps from that same snippet with no extra config.
 	 */
 	heatmaps?: HeatmapsConfig;
+
+	/**
+	 * Optional scheduling/booking widget integration (Cal.com, Calendly, or a
+	 * custom embed). This is a data declaration only — Astropress does not
+	 * auto-emit it; render `<AstropressEventsEmbed>` in your own site layout
+	 * (see the component's doc comment). RSVP/attendee data always lives in
+	 * the provider's own dashboard — Astropress has no visibility into
+	 * bookings made through the widget.
+	 */
+	events?: EventsConfig;
 
 	/**
 	 * Optional donation / fundraising integrations.

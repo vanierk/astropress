@@ -32,6 +32,19 @@ export interface HeatmapsConfig {
 	label?: string;
 }
 
+export interface EventsConfig {
+	/** Scheduling/booking widget provider. */
+	provider: "cal" | "calendly" | "custom";
+	/** Cal.com scheduling link, e.g. "your-team/30min" (provider: "cal" only — no full URL, just the link). */
+	calLink?: string;
+	/** Calendly scheduling URL, e.g. "https://calendly.com/your-team" (provider: "calendly" only). */
+	url?: string;
+	/** For "custom": the full embed markup to render as-is (host is responsible for sanitization). */
+	embedSrc?: string;
+	/** Override the display label shown on the events status page. */
+	label?: string;
+}
+
 export interface GiveLivelyConfig {
 	/** GiveLively organization slug (GIVELIVELY_ORG_SLUG). */
 	orgSlug: string;

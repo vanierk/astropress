@@ -57,14 +57,17 @@ export const adminStubs = {
 	events: {
 		capability: "Events",
 		description:
-			"Schedule events, manage RSVPs, and embed booking widgets. Choose a provider to enable an events page.",
-		configHint:
-			'registerCms({\n  events: { provider: "cal", url: "https://cal.com/your-team" },\n});',
+			"Embed a scheduling/booking widget so visitors can book a slot. RSVP and attendee data always live in the provider's own dashboard — Astropress never sees or manages bookings.",
+		configHint: 'registerCms({\n  events: { provider: "cal", calLink: "your-team/30min" },\n});',
 		providers: [
 			{ name: "Cal.com", href: "https://cal.com", tag: "Recommended" },
 			{ name: "Calendly", href: "https://calendly.com", tag: "SaaS" },
-			{ name: "Eventbrite", href: "https://eventbrite.com", tag: "SaaS" },
-			{ name: "Luma", href: "https://lu.ma", tag: "SaaS" },
+			{
+				name: "Eventbrite (embed shape not yet confirmed)",
+				href: "https://eventbrite.com",
+				tag: "SaaS",
+			},
+			{ name: "Luma (embed shape not yet confirmed)", href: "https://lu.ma", tag: "SaaS" },
 		],
 	},
 	reviews: {
@@ -473,13 +476,14 @@ export const ADMIN_STUB_PAGES = {
 		variant: "coming-soon",
 		roadmapHref: ROADMAP_ISSUE,
 	},
-	events: {
-		stubKey: "events",
-		navKey: "events",
-		action: "events:manage",
-		variant: "coming-soon",
-		roadmapHref: ROADMAP_ISSUE,
-	},
+	// events was promoted to a real, env-gated page (events.astro) —
+	// CmsConfig.events + <AstropressEventsEmbed> now exist, following the
+	// exact config+emit pattern resolveAnalyticsSnippet()/
+	// resolveHeatmapsSnippet() already established; "coming-soon" was wrong
+	// about the underlying capability, not just the copy. events:manage /
+	// resourceKind:"event" existed before this build but were generic ABAC
+	// boilerplate, not native event CRUD evidence. adminStubs.events stays
+	// as an orphaned catalog entry per precedent.
 	reviews: {
 		stubKey: "reviews",
 		navKey: "reviews",

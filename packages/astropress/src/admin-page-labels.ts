@@ -10869,7 +10869,7 @@ export const pageLabels = {
 	},
 	"stub.events.capability": { en: "Events" },
 	"stub.events.description": {
-		en: "Schedule events, manage RSVPs, and embed booking widgets. Choose a provider to enable an events page.",
+		en: "Embed a scheduling/booking widget so visitors can book a slot. RSVP and attendee data always live in the provider's own dashboard — Astropress never sees or manages bookings.",
 	},
 	"stub.reviews.capability": { en: "Reviews" },
 	"stub.reviews.description": {
@@ -11157,6 +11157,16 @@ export const pageLabels = {
 	},
 	"heatmaps.postHogNote": {
 		en: "Already using PostHog for analytics? Session replay and heatmaps come from that same tracking snippet — no separate heatmaps configuration needed.",
+	},
+
+	// ── Events (promoted: config+embed status page, no RSVP management) ──
+	"events.provider.cal": { en: "Cal.com" },
+	"events.provider.calendly": { en: "Calendly" },
+	"events.activeStatusLine": {
+		en: "Place this component in your site layout to render the booking widget:",
+	},
+	"events.attendeeDataNote": {
+		en: "This only embeds a booking widget — RSVP and attendee data always live in the provider's own dashboard, never in Astropress.",
 	},
 } as const satisfies Record<string, LocaleMap>;
 

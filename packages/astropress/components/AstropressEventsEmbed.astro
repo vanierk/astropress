@@ -1,0 +1,123 @@
+---
+/**
+ * AstropressEventsEmbed.astro
+ *
+ * Embeds a Cal.com or Calendly scheduling widget so visitors can book a
+ * slot directly on the page. Astropress does not render this on its own;
+ * this component only emits markup from the props you pass it — the same
+ * host-wires-it shape as <AstropressLocalBusinessJsonLd>.
+ *
+ * RSVP/attendee data always lives in the provider's own dashboard —
+ * Astropress has no visibility into bookings made through this widget.
+ *
+ * Usage:
+ *   <AstropressEventsEmbed provider="cal" calLink="your-team/30min" />
+ *   <AstropressEventsEmbed provider="calendly" url="https://calendly.com/your-team" />
+ */
+
+interface Props {
+	provider: "cal" | "calendly" | "custom";
+	/** Cal.com scheduling link, e.g. "your-team/30min" (provider: "cal" only — no full URL, just the link). */
+	calLink?: string;
+	/** Calendly scheduling URL, e.g. "https://calendly.com/your-team" (provider: "calendly" only). */
+	url?: string;
+	/** For provider: "custom" — the full embed markup to render as-is (host is responsible for sanitization). */
+	embedSrc?: string;
+	/** Widget width. Defaults to "100%". */
+	width?: string;
+	/** Widget height. Defaults to "700px". */
+	height?: string;
+}
+
+const { provider, calLink, url, embedSrc, width = "100%", height = "700px" } = Astro.props;
+
+/** Loose format guard: non-empty, no markup-breaking characters. Astro also HTML-escapes attribute values automatically — this catches honest mistakes, not a hostile input (the prop comes from the site operator's own config, not a visitor). */
+function looksLikeSafeToken(value: string | undefined): value is string {
+	return typeof value === "string" && value.trim().length > 0 && !/[<>"']/.test(value);
+}
+
+const validCalLink = provider === "cal" && looksLikeSafeToken(calLink) ? calLink : undefined;
+
+let validCalendlyUrl: string | undefined;
+if (provider === "calendly" && typeof url === "string") {
+	try {
+		const parsed = new URL(url);
+		if (parsed.protocol === "https:") validCalendlyUrl = url;
+	} catch {
+		validCalendlyUrl = undefined;
+	}
+}
+
+const sizeStyle = `width:${width};height:${height};overflow:auto;`;
+const mountId = `astropress-events-embed-${Math.random().toString(36).slice(2, 10)}`;
+---
+
+{provider === "cal" && validCalLink && (
+	<Fragment>
+		<div id={mountId} class="astropress-events-embed-cal" data-cal-link={validCalLink} style={sizeStyle} />
+		<script>
+			// @ts-nocheck -- Cal.com's own bootstrap loader, embedded verbatim
+			// (https://cal.com/docs/developing/embed/embed-snippet-generator).
+			// Third-party vendor code with its own untyped `window.Cal` global;
+			// only the querySelectorAll loop below is Astropress's own code.
+			(function (C, A, L) {
+				let p = function (a, ar) {
+					a.q.push(ar);
+				};
+				let d = C.document;
+				C.Cal =
+					C.Cal ||
+					function () {
+						let cal = C.Cal;
+						let ar = arguments;
+						if (!cal.loaded) {
+							cal.ns = {};
+							cal.q = cal.q || [];
+							d.head.appendChild(d.createElement("script")).src = A;
+							cal.loaded = true;
+						}
+						if (ar[0] === L) {
+							const api = function () {
+								p(api, arguments);
+							};
+							const namespace = ar[1];
+							api.q = api.q || [];
+							if (typeof namespace === "string") {
+								cal.ns[namespace] = cal.ns[namespace] || api;
+								p(cal.ns[namespace], ar);
+								p(cal, ["initNamespace", namespace]);
+							} else p(cal, ar);
+							return;
+						}
+						p(cal, ar);
+					};
+			})(window, "https://app.cal.com/embed/embed.js", "init");
+
+			Cal("init");
+			document.querySelectorAll(".astropress-events-embed-cal").forEach((el) => {
+				Cal("inline", {
+					elementOrSelector: `#${el.id}`,
+					calLink: el.dataset.calLink,
+				});
+			});
+		</script>
+	</Fragment>
+)}
+
+{provider === "calendly" && validCalendlyUrl && (
+	<Fragment>
+		<div class="calendly-inline-widget" data-url={validCalendlyUrl} style={`min-width:320px;${sizeStyle}`} />
+		<script src="https://assets.calendly.com/assets/external/widget.js" async />
+	</Fragment>
+)}
+
+{/*
+	"custom" is a documented host-escape-hatch (mirrors analytics.ts's and
+	heatmaps.ts's "custom" case) — the host who sets provider:"custom"
+	explicitly supplies and is responsible for their own embed markup;
+	Astropress cannot sanitize a snippet for a provider it doesn't know about.
+*/}
+{provider === "custom" && embedSrc && (
+	// audit-ok: host-supplied "custom" embed markup — see comment above
+	<Fragment set:html={embedSrc} />
+)}
