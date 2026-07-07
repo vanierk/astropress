@@ -224,13 +224,18 @@ export const adminStubs = {
 	heatmaps: {
 		capability: "Heatmaps & Session Replay",
 		description:
-			"Visualise on-page user behavior with click-maps and session replay. Configure a provider to embed.",
-		configHint:
-			'registerCms({\n  heatmaps: { provider: "openreplay", url: process.env.OPENREPLAY_URL },\n});',
+			"Configure a heatmaps/session-replay tracking snippet. Heatmaps are always viewed in the provider's own dashboard — Astropress only injects the tracking snippet, it never renders heatmaps itself.",
+		configHint: 'registerCms({\n  heatmaps: { type: "clarity", projectId: "..." },\n});',
 		providers: [
-			{ name: "OpenReplay", href: "https://openreplay.com", tag: "OSS" },
+			{ name: "Microsoft Clarity", href: "https://clarity.microsoft.com", tag: "Recommended" },
+			{ name: "Hotjar", href: "https://hotjar.com", tag: "SaaS" },
 			{
-				name: "PostHog Session Replay",
+				name: "OpenReplay (self-hosted, needs npm + a JS bundler — not a snippet)",
+				href: "https://openreplay.com",
+				tag: "OSS",
+			},
+			{
+				name: "PostHog Session Replay (included with analytics — no extra config)",
 				href: "https://posthog.com",
 				tag: "OSS",
 			},
@@ -500,13 +505,12 @@ export const ADMIN_STUB_PAGES = {
 	// dispatching hooks; "coming-soon" was wrong about the underlying
 	// capability, not just the copy. adminStubs.plugins stays as an orphaned
 	// catalog entry per precedent.
-	heatmaps: {
-		stubKey: "heatmaps",
-		navKey: "heatmaps",
-		action: "services:manage",
-		variant: "coming-soon",
-		roadmapHref: ROADMAP_ISSUE,
-	},
+	// heatmaps was promoted to a real, env-gated page (heatmaps.astro) —
+	// CmsConfig.heatmaps + resolveHeatmapsSnippet() (heatmaps.ts) now exist,
+	// following the exact config+emit pattern resolveAnalyticsSnippet()
+	// already established; "coming-soon" was wrong about the underlying
+	// capability, not just the copy. adminStubs.heatmaps stays as an
+	// orphaned catalog entry per precedent.
 	// email was promoted to a real page (email.astro) — transactional-email.ts
 	// + getTransactionalEmailConfig() were already real, tested, and
 	// load-bearing (reset-password.ts/user-invite.ts send live mail through

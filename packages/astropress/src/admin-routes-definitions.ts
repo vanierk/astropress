@@ -349,7 +349,7 @@ export const adminRouteDefinitions = [
 	},
 	{
 		pattern: "/ap-admin/heatmaps",
-		entrypoint: "[stub].astro",
+		entrypoint: "heatmaps.astro",
 		kind: "page",
 	},
 	{

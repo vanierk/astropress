@@ -10889,7 +10889,7 @@ export const pageLabels = {
 	},
 	"stub.heatmaps.capability": { en: "Heatmaps & Session Replay" },
 	"stub.heatmaps.description": {
-		en: "Visualise on-page user behavior with click-maps and session replay. Configure a provider to embed.",
+		en: "Configure a heatmaps/session-replay tracking snippet. Heatmaps are always viewed in the provider's own dashboard — Astropress only injects the tracking snippet, it never renders heatmaps itself.",
 	},
 	"stub.email.capability": { en: "Email" },
 	"stub.email.description": {
@@ -11144,6 +11144,20 @@ export const pageLabels = {
 	"community.docsLink": { en: "Plugin & service authoring guide" },
 	"community.openInNewTab": { en: "Open in new tab" },
 	"community.frameTitle": { en: "admin panel" },
+
+	// ── Heatmaps (promoted: config+emit status page, no embedded view) ──
+	"heatmaps.provider.clarity": { en: "Microsoft Clarity" },
+	"heatmaps.provider.hotjar": { en: "Hotjar" },
+	"heatmaps.activeStatusLine": {
+		en: "The tracking snippet is configured. Heatmaps and session replays are viewed in the provider's own dashboard, not here.",
+	},
+	"heatmaps.viewDashboardLink": { en: "View heatmaps in provider dashboard" },
+	"heatmaps.customProviderNote": {
+		en: "Custom snippet configured — view heatmaps in whichever dashboard your snippet reports to.",
+	},
+	"heatmaps.postHogNote": {
+		en: "Already using PostHog for analytics? Session replay and heatmaps come from that same tracking snippet — no separate heatmaps configuration needed.",
+	},
 } as const satisfies Record<string, LocaleMap>;
 
 /**

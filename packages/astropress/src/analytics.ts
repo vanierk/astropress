@@ -102,7 +102,7 @@ export function resolveAnalyticsSnippetConsentAware(
 }
 
 /** Escape a string for use inside an HTML attribute value (double-quoted). */
-function escAttr(value: string): string {
+export function escAttr(value: string): string {
 	return value
 		.replace(/&/g, "&amp;")
 		.replace(/"/g, "&quot;")
@@ -111,6 +111,6 @@ function escAttr(value: string): string {
 }
 
 /** Escape a string for embedding as a JS string literal (single-quoted). */
-function escJs(value: string): string {
+export function escJs(value: string): string {
 	return value.replace(/\\/g, "\\\\").replace(/'/g, "\\'").replace(/\n/g, "\\n");
 }

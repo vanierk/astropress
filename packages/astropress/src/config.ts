@@ -16,6 +16,7 @@ import type {
 	AnalyticsConfig,
 	AstropressApiConfig,
 	DonationsConfig,
+	HeatmapsConfig,
 	LocalBusinessConfig,
 	TestimonialsConfig,
 } from "./config-service-types.js";
@@ -34,6 +35,7 @@ export type {
 	AstropressApiConfig,
 	DonationsConfig,
 	GiveLivelyConfig,
+	HeatmapsConfig,
 	LiberapayConfig,
 	LocalBusinessConfig,
 	PledgeCryptoConfig,
@@ -131,6 +133,17 @@ export interface CmsConfig {
 	 * When configured, an "Analytics" entry appears in the admin services sidebar.
 	 */
 	analytics?: AnalyticsConfig;
+
+	/**
+	 * Optional heatmaps / session-replay integration (Microsoft Clarity, Hotjar,
+	 * or a custom snippet). This is a data declaration only — Astropress does
+	 * not auto-emit it; render `resolveHeatmapsSnippet()`'s output in your own
+	 * site layout `<head>` (see the `heatmaps.ts` module doc comment). Heatmaps
+	 * themselves are always viewed in the provider's own dashboard, never
+	 * inside Astropress admin. Hosts already using `analytics: { type: "posthog" }`
+	 * get session replay/heatmaps from that same snippet with no extra config.
+	 */
+	heatmaps?: HeatmapsConfig;
 
 	/**
 	 * Optional donation / fundraising integrations.

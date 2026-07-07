@@ -154,17 +154,17 @@ export const INTEGRATIONS: readonly IntegrationEntry[] = [
 		requiredAction: "services:manage",
 		adminOnly: true,
 	},
-
-	// Coming-soon — no implementation. Sidebar must visually demote;
-	// page must use variant="coming-soon" (no env-var hints).
 	{
 		href: "/ap-admin/heatmaps",
 		navKey: "heatmaps",
-		status: "coming-soon",
-		roadmapHref: ROADMAP_ISSUE,
+		status: "env-gated",
+		configField: "heatmaps",
 		requiredAction: "services:manage",
 		adminOnly: true,
 	},
+
+	// Coming-soon — no implementation. Sidebar must visually demote;
+	// page must use variant="coming-soon" (no env-var hints).
 	{
 		href: "/ap-admin/live-chat",
 		navKey: "liveChat",

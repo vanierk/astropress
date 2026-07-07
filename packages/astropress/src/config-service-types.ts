@@ -17,6 +17,21 @@ export interface AnalyticsConfig {
 	label?: string;
 }
 
+export interface HeatmapsConfig {
+	/** Heatmaps / session-replay provider identifier. */
+	type: "clarity" | "hotjar" | "custom";
+	/** Microsoft Clarity project ID (Settings → Setup → Get tracking code). */
+	projectId?: string;
+	/** Hotjar Site ID (Settings → Sites & Organizations). */
+	hjid?: string;
+	/** Hotjar snippet version. Defaults to "6" (the current, long-stable value) when omitted. */
+	hjsv?: string;
+	/** For "custom": the full <script> snippet to inject as-is (host is responsible for sanitization). */
+	snippetSrc?: string;
+	/** Override the display label shown on the heatmaps status page. */
+	label?: string;
+}
+
 export interface GiveLivelyConfig {
 	/** GiveLively organization slug (GIVELIVELY_ORG_SLUG). */
 	orgSlug: string;

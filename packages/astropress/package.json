@@ -447,6 +447,10 @@
 			"types": "./src/analytics.ts",
 			"default": "./dist/src/analytics.js"
 		},
+		"./heatmaps": {
+			"types": "./src/heatmaps.ts",
+			"default": "./dist/src/heatmaps.js"
+		},
 		"./donations": {
 			"types": "./src/donations.ts",
 			"default": "./dist/src/donations.js"

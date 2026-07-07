@@ -1,0 +1,81 @@
+---
+import AdminLayout from "@astropress-diy/astropress/components/AdminLayout.astro";
+import RequiresIntegration from "@astropress-diy/astropress/components/RequiresIntegration.astro";
+import {
+	adminStubs,
+	getPageT,
+	peekCmsConfig,
+	requiresAccess,
+	resolveAdminLocale,
+} from "astropress";
+
+// Promoted from the [stub].astro coming-soon route: CmsConfig.heatmaps and
+// resolveHeatmapsSnippet() (heatmaps.ts) now exist, following the exact
+// config+emit shape resolveAnalyticsSnippet() already established — the
+// host renders the resolved snippet in their own layout <head> (same
+// host-wires-it shape as analytics / AstropressLocalBusinessJsonLd).
+//
+// This page only ever shows configuration status, never an embedded
+// heatmap view: none of Clarity/Hotjar/OpenReplay offer an embeddable
+// panel worth inlining. Real heatmaps are always viewed in the provider's
+// own dashboard.
+const guard = await requiresAccess(Astro, "services:manage");
+if (guard) return guard;
+const adminUser = Astro.locals.adminUser;
+if (!adminUser) return Astro.redirect("/ap-admin/login");
+const locale = resolveAdminLocale(Astro);
+const t = getPageT(locale);
+const stub = adminStubs.heatmaps;
+const config = peekCmsConfig()?.heatmaps;
+
+const DASHBOARD_URLS: Record<string, string> = {
+	clarity: "https://clarity.microsoft.com/",
+	hotjar: "https://insights.hotjar.com/",
+};
+const dashboardUrl = config ? DASHBOARD_URLS[config.type] : undefined;
+const providerLabel = config
+	? (config.label ?? t(`heatmaps.provider.${config.type}`, config.type))
+	: undefined;
+---
+
+<AdminLayout
+	title={t("stub.heatmaps.capability", stub.capability)}
+	heading={t("stub.heatmaps.capability", stub.capability)}
+	currentPath="/ap-admin/heatmaps"
+	description={t("stub.heatmaps.description", stub.description)}
+	userName={adminUser.name}
+>
+	<p class="field-note">{t("heatmaps.postHogNote")}</p>
+
+	{config ? (
+		<section class="panel">
+			<p class="admin-kicker">{t("integrationConnect.statusActive")}</p>
+			<h2>{providerLabel}</h2>
+			<p>{t("heatmaps.activeStatusLine")}</p>
+			{dashboardUrl ? (
+				<a href={dashboardUrl} target="_blank" rel="noreferrer" class="admin-button-ghost">
+					{t("heatmaps.viewDashboardLink")}
+				</a>
+			) : (
+				<p class="field-note">{t("heatmaps.customProviderNote")}</p>
+			)}
+		</section>
+	) : (
+		<RequiresIntegration
+			capability={stub.capability}
+			description={stub.description}
+			configHint={stub.configHint}
+			providers={[...stub.providers]}
+			docsHref={(stub as { docsHref?: string }).docsHref}
+			locale={locale}
+			stubKey="heatmaps"
+		/>
+	)}
+</AdminLayout>
+
+<style>
+	.field-note {
+		color: var(--muted);
+		margin: 0 0 1rem;
+	}
+</style>
