@@ -297,8 +297,9 @@ export const adminStubs = {
 	search: {
 		capability: "Search",
 		description:
-			"Site-wide content search. The built-in SQLite FTS5 index works out of the box; switch to a hosted provider for larger catalogs.",
-		configHint: "registerCms({\n  search: { enabled: true },\n});",
+			"Site-wide content search. The built-in SQLite FTS5 index works out of the box; connect a hosted provider from /ap-admin/search for larger catalogs, then push content into it with a manual reindex.",
+		configHint:
+			'// Two different mechanisms:\n// 1. Built-in FTS5 (config-driven): registerCms({ search: { enabled: true } });\n// 2. Hosted provider (registry-driven, e.g. Typesense): import { registerTypesense } from "astropress"; registerTypesense();',
 		providers: [
 			{ name: "SQLite FTS5 (built-in)", tag: "Recommended" },
 			{ name: "Pagefind", href: "https://pagefind.app", tag: "OSS" },

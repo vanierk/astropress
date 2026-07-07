@@ -7,6 +7,7 @@ import { _resetRegistryForTests, registerProvider } from "../src/integrations/re
 import {
 	connectIntegrationAction,
 	disconnectIntegrationAction,
+	getRuntimeActiveIntegrationFields,
 	reverifyIntegrationAction,
 	setActiveIntegrationProviderAction,
 } from "../src/runtime-actions-integrations";
@@ -284,6 +285,96 @@ describe("setActiveIntegrationProviderAction (#127)", () => {
 		const db = makeDb();
 		withD1Backed(db);
 		const r = await setActiveIntegrationProviderAction(null, "newsletter", "ghost");
+		expect(r).toEqual({ ok: false, code: "INTEGRATION_NOT_CONNECTED" });
+	});
+});
+
+describe("getRuntimeActiveIntegrationFields", () => {
+	it("returns INTEGRATIONS_NOT_AVAILABLE when the local store has no integrations repo", async () => {
+		withRepo(null);
+		const r = await getRuntimeActiveIntegrationFields(null, "newsletter");
+		expect(r).toEqual({ ok: false, code: "INTEGRATIONS_NOT_AVAILABLE" });
+	});
+
+	it("returns INTEGRATION_NOT_CONNECTED when nothing is connected in the domain", async () => {
+		withRepo(makeRepo());
+		const r = await getRuntimeActiveIntegrationFields(null, "newsletter");
+		expect(r).toEqual({ ok: false, code: "INTEGRATION_NOT_CONNECTED" });
+	});
+
+	it("returns INTEGRATION_NOT_CONNECTED when a provider is connected but not active", async () => {
+		const repo = makeRepo();
+		repo.listStatuses.mockReturnValue([
+			{ domain: "newsletter", provider: "fake-listmonk", status: "connected", isActive: false },
+		]);
+		withRepo(repo);
+		const r = await getRuntimeActiveIntegrationFields(null, "newsletter");
+		expect(r).toEqual({ ok: false, code: "INTEGRATION_NOT_CONNECTED" });
+	});
+
+	it("returns INTEGRATION_NOT_CONNECTED when findSecret can't decrypt (no matching root secret)", async () => {
+		const repo = makeRepo();
+		repo.listStatuses.mockReturnValue([
+			{ domain: "newsletter", provider: "fake-listmonk", status: "connected", isActive: true },
+		]);
+		repo.findSecret.mockResolvedValue(undefined);
+		withRepo(repo);
+		const r = await getRuntimeActiveIntegrationFields(null, "newsletter");
+		expect(r).toEqual({ ok: false, code: "INTEGRATION_NOT_CONNECTED" });
+	});
+
+	it("local path: returns the active provider's decrypted fields", async () => {
+		const repo = makeRepo();
+		repo.listStatuses.mockReturnValue([
+			{ domain: "newsletter", provider: "fake-listmonk", status: "connected", isActive: true },
+		]);
+		repo.findSecret.mockResolvedValue({ apiKey: "k-active" });
+		withRepo(repo);
+		const r = await getRuntimeActiveIntegrationFields(null, "newsletter");
+		expect(r).toEqual({ ok: true, providerId: "fake-listmonk", fields: { apiKey: "k-active" } });
+	});
+
+	it("D1 path: reads the active provider's real sealed secret end-to-end", async () => {
+		const db = makeDb();
+		const d1 = withD1Backed(db);
+		const repo = createD1IntegrationsRepository({
+			getDb: () => d1,
+			now: () => "2026-05-18T00:00:00Z",
+		});
+		await repo.connect(
+			{
+				domain: "newsletter",
+				provider: "fake-listmonk",
+				configJson: "{}",
+				secretFields: { apiKey: "k-d1-canary" },
+				now: "2026-05-18T00:00:00Z",
+			},
+			"root-secret",
+		);
+		await repo.setActiveProvider("newsletter", "fake-listmonk");
+		vi.spyOn(runtimeEnv, "getAstropressRootSecret").mockReturnValue("root-secret");
+		const r = await getRuntimeActiveIntegrationFields(null, "newsletter");
+		expect(r).toEqual({
+			ok: true,
+			providerId: "fake-listmonk",
+			fields: { apiKey: "k-d1-canary" },
+		});
+	});
+
+	it("returns ROOT_SECRET_UNCONFIGURED when the root-secret resolver fails closed (#126)", async () => {
+		const spy = vi.spyOn(runtimeEnv, "getAstropressRootSecret").mockImplementation(() => {
+			throw new Error("ASTROPRESS_ROOT_SECRET must be configured in production");
+		});
+		withRepo(makeRepo());
+		const r = await getRuntimeActiveIntegrationFields(null, "newsletter");
+		expect(r).toEqual({ ok: false, code: "ROOT_SECRET_UNCONFIGURED" });
+		spy.mockRestore();
+	});
+
+	it("D1 path: returns INTEGRATION_NOT_CONNECTED when nothing is active", async () => {
+		const db = makeDb();
+		withD1Backed(db);
+		const r = await getRuntimeActiveIntegrationFields(null, "newsletter");
 		expect(r).toEqual({ ok: false, code: "INTEGRATION_NOT_CONNECTED" });
 	});
 });

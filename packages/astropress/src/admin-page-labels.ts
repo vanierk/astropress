@@ -10831,7 +10831,15 @@ export const pageLabels = {
 	},
 	"search.title": { en: "Search" },
 	"search.description": {
-		en: "Connect a search provider to verify credentials. Indexing pipeline ships in a follow-up.",
+		en: "Connect a search provider to verify credentials, then push published content into its index with a manual reindex.",
+	},
+	"search.reindexHeading": { en: "Reindex" },
+	"search.reindexDescription": {
+		en: "Push all published content into the connected provider's index. This runs only when you click it — Astropress does not sync automatically on publish.",
+	},
+	"search.reindexButton": { en: "Reindex now" },
+	"search.reindexedNotice": {
+		en: "Indexed {indexed} of {total} documents ({failed} failed).",
 	},
 	"cdnPurge.title": { en: "CDN Purge" },
 	"cdnPurge.description": {

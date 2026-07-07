@@ -13,9 +13,9 @@ describe("admin routes", () => {
 		const routes = listAstropressAdminRoutes();
 
 		expect(ASTROPRESS_ADMIN_BASE_PATH).toBe("/ap-admin");
-		expect(routes).toHaveLength(96);
+		expect(routes).toHaveLength(97);
 		expect(routes.filter((route) => route.kind === "page")).toHaveLength(58);
-		expect(routes.filter((route) => route.kind === "action")).toHaveLength(37);
+		expect(routes.filter((route) => route.kind === "action")).toHaveLength(38);
 		expect(routes.filter((route) => route.kind === "endpoint")).toHaveLength(1);
 		expect(routes.map((route) => route.pattern)).toEqual([
 			"/ap-admin",
@@ -70,6 +70,7 @@ describe("admin routes", () => {
 			"/ap-admin/actions/revision-restore",
 			"/ap-admin/actions/route-page-create",
 			"/ap-admin/actions/route-page-save",
+			"/ap-admin/actions/search-reindex",
 			"/ap-admin/actions/settings-save",
 			"/ap-admin/actions/sitemap-submit",
 			"/ap-admin/actions/system-route-save",
@@ -147,6 +148,6 @@ describe("admin routes", () => {
 		});
 
 		expect(injectedRoutes).toEqual(plan);
-		expect(injectedRoutes).toHaveLength(96);
+		expect(injectedRoutes).toHaveLength(97);
 	});
 });

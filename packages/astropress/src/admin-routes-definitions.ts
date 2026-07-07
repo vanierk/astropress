@@ -202,6 +202,11 @@ export const adminRouteDefinitions = [
 		kind: "action",
 	},
 	{
+		pattern: "/ap-admin/actions/search-reindex",
+		entrypoint: "actions/search-reindex.ts",
+		kind: "action",
+	},
+	{
 		pattern: "/ap-admin/actions/settings-save",
 		entrypoint: "actions/settings-save.ts",
 		kind: "action",

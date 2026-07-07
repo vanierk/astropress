@@ -464,6 +464,13 @@ export {
 	TallyVerifyError,
 	verifyTally,
 } from "./src/integrations/providers/tally.js";
+export type { TypesenseFields } from "./src/integrations/providers/typesense";
+export {
+	registerTypesense,
+	TYPESENSE_FIELDS,
+	TypesenseVerifyError,
+	verifyTypesense,
+} from "./src/integrations/providers/typesense.js";
 export type {
 	IntegrationDomain,
 	ProviderDefinition,
@@ -672,6 +679,7 @@ export {
 	updateRuntimeRole,
 } from "./src/runtime-actions-access.js";
 export type {
+	ActiveIntegrationFieldsResult,
 	ConnectIntegrationActionInput,
 	RuntimeIntegrationActionResult,
 } from "./src/runtime-actions-integrations";
@@ -682,6 +690,7 @@ export type {
 export {
 	connectIntegrationAction,
 	disconnectIntegrationAction,
+	getRuntimeActiveIntegrationFields,
 	reverifyIntegrationAction,
 	setActiveIntegrationProviderAction,
 } from "./src/runtime-actions-integrations.js";

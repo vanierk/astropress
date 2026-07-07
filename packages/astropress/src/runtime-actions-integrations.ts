@@ -26,7 +26,7 @@ import {
 	reverifyIntegration,
 } from "./integrations/connect-flow.js";
 import { getProvider, type IntegrationDomain } from "./integrations/registry.js";
-import { getAstropressRootSecret } from "./runtime-env.js";
+import { getAstropressRootSecret, getAstropressRootSecretCandidates } from "./runtime-env.js";
 import { createD1IntegrationsRepository } from "./sqlite-runtime/integrations-d1.js";
 
 export type RuntimeIntegrationActionResult =
@@ -171,6 +171,69 @@ export async function setActiveIntegrationProviderAction(
 			if (!repo) return { ok: false, code: "INTEGRATIONS_NOT_AVAILABLE" };
 			const ok = repo.setActiveProvider(domain, providerId);
 			return ok ? { ok: true } : { ok: false, code: "INTEGRATION_NOT_CONNECTED" };
+		},
+	);
+}
+
+export type ActiveIntegrationFieldsResult<TFields extends Record<string, string>> =
+	| { readonly ok: true; readonly providerId: string; readonly fields: TFields }
+	| {
+			readonly ok: false;
+			readonly code:
+				| "INTEGRATION_NOT_CONNECTED"
+				| "INTEGRATIONS_NOT_AVAILABLE"
+				| "ROOT_SECRET_UNCONFIGURED";
+	  };
+
+/**
+ * Reads the stored credential fields for whichever provider is currently
+ * active in `domain` — the seam an action needs when it must actually USE a
+ * connected integration's credentials (not just verify/reverify them), e.g.
+ * a manual reindex push. No existing caller needed this before; `findSecret`
+ * itself predates this function but had no consumer.
+ */
+export async function getRuntimeActiveIntegrationFields<TFields extends Record<string, string>>(
+	locals: App.Locals | null | undefined,
+	domain: IntegrationDomain,
+): Promise<ActiveIntegrationFieldsResult<TFields>> {
+	// RootSecretCandidates is `{ current: string; previous?: string }` — the
+	// shape openIntegrationSecret actually reads (it does `.current`/
+	// `.previous`, not array indexing) — distinct from
+	// getAstropressRootSecretCandidates()'s plain `string[]`. getAstropressRootSecret
+	// already has the #126 fail-closed-in-production behavior for "current";
+	// reuse it here instead of re-deriving it, so seal and open agree.
+	let rootSecrets: { current: string; previous?: string };
+	try {
+		const candidates = getAstropressRootSecretCandidates(locals);
+		rootSecrets = { current: getAstropressRootSecret(locals), previous: candidates[1] };
+	} catch {
+		return { ok: false, code: "ROOT_SECRET_UNCONFIGURED" };
+	}
+	const now = new Date().toISOString();
+	return withLocalStoreFallback<ActiveIntegrationFieldsResult<TFields>>(
+		locals,
+		async (db) => {
+			const repo = createD1IntegrationsRepository({ getDb: () => db, now });
+			const statuses = await repo.listStatuses();
+			const active = statuses.find(
+				(s) => s.domain === domain && s.status === "connected" && s.isActive,
+			);
+			if (!active) return { ok: false, code: "INTEGRATION_NOT_CONNECTED" };
+			const fields = await repo.findSecret<TFields>(domain, active.provider, rootSecrets);
+			if (!fields) return { ok: false, code: "INTEGRATION_NOT_CONNECTED" };
+			return { ok: true, providerId: active.provider, fields };
+		},
+		async (store) => {
+			const repo = store.integrations;
+			if (!repo) return { ok: false, code: "INTEGRATIONS_NOT_AVAILABLE" };
+			const statuses = repo.listStatuses();
+			const active = statuses.find(
+				(s) => s.domain === domain && s.status === "connected" && s.isActive,
+			);
+			if (!active) return { ok: false, code: "INTEGRATION_NOT_CONNECTED" };
+			const fields = await repo.findSecret<TFields>(domain, active.provider, rootSecrets);
+			if (!fields) return { ok: false, code: "INTEGRATION_NOT_CONNECTED" };
+			return { ok: true, providerId: active.provider, fields };
 		},
 	);
 }

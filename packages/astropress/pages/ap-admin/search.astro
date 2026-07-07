@@ -1,5 +1,6 @@
 ---
 import AdminLayout from "@astropress-diy/astropress/components/AdminLayout.astro";
+import CsrfInput from "@astropress-diy/astropress/components/CsrfInput.astro";
 import IntegrationConnect from "@astropress-diy/astropress/components/IntegrationConnect.astro";
 import { getPageT, requiresAccess, resolveAdminLocale } from "astropress";
 import { withLocalStoreFallback } from "../../src/admin-store-dispatch.js";
@@ -10,6 +11,9 @@ const adminUser = Astro.locals.adminUser;
 if (!adminUser) return Astro.redirect("/ap-admin/login");
 const adminLocale = resolveAdminLocale(Astro);
 const t = getPageT(adminLocale);
+function format(template: string, params: Record<string, string | number>) {
+	return template.replace(/\{(\w+)\}/g, (_, k) => String(params[k] ?? ""));
+}
 
 interface StatusRow {
 	domain: string;
@@ -28,6 +32,13 @@ const statusByProvider: Record<string, StatusRow["status"]> = {};
 for (const s of inDomain) statusByProvider[s.provider] = s.status;
 const activeProviderId =
 	inDomain.find((s) => s.status === "connected" && s.isActive)?.provider ?? null;
+
+const wasReindexed = Astro.url.searchParams.get("reindexed") === "1";
+const indexedCount = Astro.url.searchParams.get("indexed");
+const failedCount = Astro.url.searchParams.get("failed");
+const totalCount = Astro.url.searchParams.get("total");
+const errorMessage =
+	Astro.url.searchParams.get("error") === "1" ? Astro.url.searchParams.get("message") : "";
 ---
 
 <AdminLayout
@@ -36,10 +47,21 @@ const activeProviderId =
 	currentPath="/ap-admin/search"
 	description={t(
 		"search.description",
-		"Connect a search provider to verify credentials. Indexing pipeline ships in a follow-up.",
+		"Connect a search provider to verify credentials, then push published content into its index with a manual reindex.",
 	)}
 	userName={adminUser.name}
 >
+	{wasReindexed && (
+		<p class="notice">
+			{format(t("search.reindexedNotice"), {
+				indexed: indexedCount ?? "0",
+				total: totalCount ?? "0",
+				failed: failedCount ?? "0",
+			})}
+		</p>
+	)}
+	{errorMessage && <p class="error-notice">{errorMessage}</p>}
+
 	<section class="panel">
 		<IntegrationConnect
 			domain="search"
@@ -49,4 +71,19 @@ const activeProviderId =
 			locale={adminLocale}
 		/>
 	</section>
+
+	{activeProviderId && (
+		<section class="panel">
+			<div class="section-header">
+				<div>
+					<h2>{t("search.reindexHeading")}</h2>
+					<p>{t("search.reindexDescription")}</p>
+				</div>
+			</div>
+			<form method="post" action="/ap-admin/actions/search-reindex">
+				<CsrfInput token={Astro.locals.csrfToken} />
+				<button type="submit" class="admin-button">{t("search.reindexButton")}</button>
+			</form>
+		</section>
+	)}
 </AdminLayout>
