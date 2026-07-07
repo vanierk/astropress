@@ -331,6 +331,22 @@ CREATE TABLE IF NOT EXISTS site_settings (
   updated_by TEXT NOT NULL
 );
 
+CREATE TABLE IF NOT EXISTS local_business_config (
+  id INTEGER PRIMARY KEY CHECK(id = 1),
+  name TEXT,
+  street_address TEXT,
+  address_locality TEXT,
+  address_region TEXT,
+  postal_code TEXT,
+  address_country TEXT,
+  telephone TEXT,
+  opening_hours TEXT,
+  geo_latitude REAL,
+  geo_longitude REAL,
+  updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_by TEXT NOT NULL
+);
+
 CREATE TABLE IF NOT EXISTS cms_route_groups (
   id TEXT PRIMARY KEY,
   kind TEXT NOT NULL CHECK(kind IN ('page', 'post', 'archive', 'redirect', 'system')),

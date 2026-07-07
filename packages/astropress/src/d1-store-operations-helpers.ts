@@ -1,3 +1,4 @@
+import type { LocalBusinessConfig } from "./config-service-types";
 import type { D1DatabaseLike } from "./d1-database";
 import {
 	deriveAdminUserStatus,
@@ -81,10 +82,27 @@ export type SettingsRow = {
 	admin_slug: string;
 };
 
+export type LocalBusinessConfigRow = {
+	name: string | null;
+	street_address: string | null;
+	address_locality: string | null;
+	address_region: string | null;
+	postal_code: string | null;
+	address_country: string | null;
+	telephone: string | null;
+	opening_hours: string | null;
+	geo_latitude: number | null;
+	geo_longitude: number | null;
+};
+
 /* ── Constants ── */
 
 export const SQL_AUDIT_EVENTS = SQL_LIST_AUDIT_EVENTS;
 export const SQL_ADMIN_USERS = SQL_LIST_ADMIN_USERS_WITH_INVITE;
+
+export const SQL_LOCAL_BUSINESS_CONFIG = `SELECT name, street_address, address_locality, address_region,
+          postal_code, address_country, telephone, opening_hours, geo_latitude, geo_longitude
+   FROM local_business_config WHERE id = 1 LIMIT 1`;
 
 export const SQL_REDIRECT_RULES = `SELECT source_path, target_path, status_code FROM redirect_rules
    WHERE deleted_at IS NULL ORDER BY source_path ASC`;
@@ -173,6 +191,34 @@ export function mapSettingsRow(row: SettingsRow): SiteSettings {
 		newsletterEnabled: row.newsletter_enabled === 1,
 		commentsDefaultPolicy: row.comments_default_policy,
 		adminSlug: row.admin_slug ?? "ap-admin",
+	};
+}
+
+/** Returns null when no business has been configured yet (name is unset). */
+export function mapLocalBusinessConfigRow(
+	row: LocalBusinessConfigRow | null | undefined,
+): LocalBusinessConfig | null {
+	if (!row?.name) return null;
+	let openingHours: string[] | undefined;
+	if (row.opening_hours) {
+		try {
+			const parsed = JSON.parse(row.opening_hours);
+			if (Array.isArray(parsed)) openingHours = parsed.filter((v) => typeof v === "string");
+		} catch {
+			openingHours = undefined;
+		}
+	}
+	return {
+		name: row.name,
+		streetAddress: row.street_address ?? "",
+		addressLocality: row.address_locality ?? "",
+		addressRegion: row.address_region ?? "",
+		postalCode: row.postal_code ?? "",
+		addressCountry: row.address_country ?? "",
+		telephone: row.telephone ?? undefined,
+		openingHours,
+		geoLatitude: row.geo_latitude ?? undefined,
+		geoLongitude: row.geo_longitude ?? undefined,
 	};
 }
 

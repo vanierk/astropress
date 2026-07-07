@@ -1,0 +1,214 @@
+---
+import AdminLayout from "@astropress-diy/astropress/components/AdminLayout.astro";
+import CsrfInput from "@astropress-diy/astropress/components/CsrfInput.astro";
+import {
+	getPageT,
+	getRuntimeLocalBusinessConfig,
+	requiresAccess,
+	resolveAdminLocale,
+} from "astropress";
+
+// Promoted from the [stub].astro route. Tier (a) only — see
+// src/config-service-types.ts's LocalBusinessConfig doc comment: this page
+// saves the business data, but Astropress does not auto-emit it anywhere.
+// The host must render <AstropressLocalBusinessJsonLd> in their own layout,
+// the same host-wires-it convention already used by AstropressWebSiteJsonLd
+// (neither is auto-wired into AstropressContentLayout.astro).
+const guard = await requiresAccess(Astro, "seo:edit");
+if (guard) return guard;
+const adminUser = Astro.locals.adminUser;
+if (!adminUser) return Astro.redirect("/ap-admin/login");
+const locale = resolveAdminLocale(Astro);
+const t = getPageT(locale);
+
+const business = await getRuntimeLocalBusinessConfig(Astro.locals);
+const wasSaved = Astro.url.searchParams.get("saved") === "1";
+const errorMessage =
+	Astro.url.searchParams.get("error") === "1" ? Astro.url.searchParams.get("message") : "";
+
+const openingHoursText = business?.openingHours?.join("\n") ?? "";
+
+function snippetProp(propName: string, value: string | number | undefined): string {
+	if (value === undefined || value === "") return "";
+	return typeof value === "number" ? `\n  ${propName}={${value}}` : `\n  ${propName}="${value}"`;
+}
+
+const snippet = business
+	? `<AstropressLocalBusinessJsonLd${snippetProp("name", business.name)}${snippetProp(
+			"streetAddress",
+			business.streetAddress,
+		)}${snippetProp("addressLocality", business.addressLocality)}${snippetProp(
+			"addressRegion",
+			business.addressRegion,
+		)}${snippetProp("postalCode", business.postalCode)}${snippetProp(
+			"addressCountry",
+			business.addressCountry,
+		)}${snippetProp("telephone", business.telephone)}${
+			business.openingHours && business.openingHours.length > 0
+				? `\n  openingHours={${JSON.stringify(business.openingHours)}}`
+				: ""
+		}${snippetProp("geoLatitude", business.geoLatitude)}${snippetProp(
+			"geoLongitude",
+			business.geoLongitude,
+		)}\n/>`
+	: "";
+---
+
+<AdminLayout
+	title={t("mapsLocal.title")}
+	heading={t("mapsLocal.title")}
+	currentPath="/ap-admin/maps-local"
+	description={t("mapsLocal.description")}
+	userName={adminUser.name}
+>
+	{wasSaved && <p class="notice">{t("mapsLocal.savedNotice")}</p>}
+	{errorMessage && <p class="error-notice">{errorMessage}</p>}
+
+	<form method="post" action="/ap-admin/actions/maps-local-save" class="settings-form">
+		<CsrfInput token={Astro.locals.csrfToken} />
+
+		<section class="panel settings-section">
+			<div class="section-header">
+				<div>
+					<h2>{t("mapsLocal.formHeading")}</h2>
+					<p>{t("mapsLocal.formDescription")}</p>
+				</div>
+			</div>
+
+			<label class="admin-field">
+				<span>{t("mapsLocal.name")}</span>
+				<input type="text" name="name" value={business?.name ?? ""} required class="admin-input" />
+			</label>
+			<label class="admin-field">
+				<span>{t("mapsLocal.streetAddress")}</span>
+				<input
+					type="text"
+					name="streetAddress"
+					value={business?.streetAddress ?? ""}
+					required
+					class="admin-input"
+				/>
+			</label>
+			<label class="admin-field">
+				<span>{t("mapsLocal.addressLocality")}</span>
+				<input
+					type="text"
+					name="addressLocality"
+					value={business?.addressLocality ?? ""}
+					required
+					class="admin-input"
+				/>
+			</label>
+			<label class="admin-field">
+				<span>{t("mapsLocal.addressRegion")}</span>
+				<input
+					type="text"
+					name="addressRegion"
+					value={business?.addressRegion ?? ""}
+					required
+					class="admin-input"
+				/>
+			</label>
+			<label class="admin-field">
+				<span>{t("mapsLocal.postalCode")}</span>
+				<input
+					type="text"
+					name="postalCode"
+					value={business?.postalCode ?? ""}
+					required
+					class="admin-input"
+				/>
+			</label>
+			<label class="admin-field">
+				<span>{t("mapsLocal.addressCountry")}</span>
+				<input
+					type="text"
+					name="addressCountry"
+					value={business?.addressCountry ?? ""}
+					required
+					class="admin-input"
+				/>
+			</label>
+			<label class="admin-field">
+				<span>{t("mapsLocal.telephone")}</span>
+				<input
+					type="tel"
+					name="telephone"
+					value={business?.telephone ?? ""}
+					class="admin-input"
+				/>
+			</label>
+			<label class="admin-field">
+				<span>{t("mapsLocal.openingHours")}</span>
+				<textarea name="openingHours" class="admin-input" rows="3">{openingHoursText}</textarea>
+				<span class="field-note">{t("mapsLocal.openingHoursHint")}</span>
+			</label>
+			<label class="admin-field">
+				<span>{t("mapsLocal.geoLatitude")}</span>
+				<input
+					type="number"
+					step="any"
+					name="geoLatitude"
+					value={business?.geoLatitude ?? ""}
+					class="admin-input"
+				/>
+			</label>
+			<label class="admin-field">
+				<span>{t("mapsLocal.geoLongitude")}</span>
+				<input
+					type="number"
+					step="any"
+					name="geoLongitude"
+					value={business?.geoLongitude ?? ""}
+					class="admin-input"
+				/>
+			</label>
+		</section>
+
+		<div class="actions admin-actions-row">
+			<button type="submit" class="admin-button">{t("mapsLocal.saveButton")}</button>
+		</div>
+	</form>
+
+	<section class="panel settings-section">
+		<div class="section-header">
+			<div>
+				<h2>{t("mapsLocal.snippetHeading")}</h2>
+				<p>{t("mapsLocal.snippetDescription")}</p>
+			</div>
+		</div>
+		{business ? (
+			<pre class="admin-code-block"><code>{snippet}</code></pre>
+		) : (
+			<p class="field-note">{t("mapsLocal.notConfiguredNotice")}</p>
+		)}
+	</section>
+</AdminLayout>
+
+<style>
+	.settings-form {
+		display: grid;
+		gap: 1rem;
+	}
+	.settings-section {
+		display: grid;
+		gap: 1rem;
+	}
+	.settings-section h2 {
+		margin: 0;
+		font-size: 1.1rem;
+	}
+	.field-note {
+		color: var(--muted);
+		font-size: 0.85rem;
+	}
+	.admin-code-block {
+		background: var(--surface-muted, #f3f4f6);
+		border: 1px solid var(--border, #e5e7eb);
+		border-radius: 8px;
+		padding: 1rem;
+		overflow-x: auto;
+		font-size: 0.85rem;
+		white-space: pre-wrap;
+	}
+</style>

@@ -10,11 +10,13 @@ import {
 	COMMENT_INSERT_SQL,
 	CONTACT_INSERT_SQL,
 	type CommentRow,
+	type LocalBusinessConfigRow,
 	type MediaRow,
 	mapAdminUserRow,
 	mapAuditEventRow,
 	mapCommentRow,
 	mapContactRow,
+	mapLocalBusinessConfigRow,
 	mapMediaRow,
 	mapRedirectRow,
 	mapSettingsRow,
@@ -24,6 +26,7 @@ import {
 	SQL_AUDIT_EVENTS,
 	SQL_COMMENTS,
 	SQL_CONTACT_SUBMISSIONS,
+	SQL_LOCAL_BUSINESS_CONFIG,
 	SQL_MEDIA_ASSETS,
 	SQL_REDIRECT_RULES,
 	SQL_SITE_SETTINGS,
@@ -125,6 +128,12 @@ export function createD1OperationsReadPart(
 				const row = await db.prepare(SQL_SITE_SETTINGS).first<SettingsRow>();
 				if (!row) return { ...defaultSiteSettings };
 				return mapSettingsRow(row);
+			},
+		},
+		localBusiness: {
+			async getLocalBusinessConfig() {
+				const row = await db.prepare(SQL_LOCAL_BUSINESS_CONFIG).first<LocalBusinessConfigRow>();
+				return mapLocalBusinessConfigRow(row);
 			},
 		},
 		rateLimits: createD1RateLimitPart(db),

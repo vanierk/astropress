@@ -99,6 +99,12 @@ async function getReadStore(locals?: App.Locals | null) {
 		settings: {
 			getSettings: wf(d1.settings.getSettings, fb.settings.getSettings),
 		},
+		localBusiness: {
+			getLocalBusinessConfig: wf(
+				d1.localBusiness.getLocalBusinessConfig,
+				fb.localBusiness.getLocalBusinessConfig,
+			),
+		},
 		rateLimits: {
 			checkRateLimit: wf(d1.rateLimits.checkRateLimit, fb.rateLimits.checkRateLimit),
 			peekRateLimit: wf(d1.rateLimits.peekRateLimit, fb.rateLimits.peekRateLimit),
@@ -188,6 +194,10 @@ export async function getRuntimeTranslationState(
 
 export async function getRuntimeSettings(locals?: App.Locals | null) {
 	return (await getReadStore(locals)).settings.getSettings();
+}
+
+export async function getRuntimeLocalBusinessConfig(locals?: App.Locals | null) {
+	return (await getReadStore(locals)).localBusiness.getLocalBusinessConfig();
 }
 
 export async function getRuntimeContactSubmissions(locals?: App.Locals | null) {

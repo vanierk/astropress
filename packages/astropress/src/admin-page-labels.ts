@@ -11030,6 +11030,38 @@ export const pageLabels = {
 		en: "Download a JSON snapshot of your content, settings, users, media metadata, redirects, and comments — for your own records or portability. This is not a backup: Astropress does not currently support importing it back in.",
 	},
 	"backups.exportButton": { en: "Download export" },
+
+	// ── Maps & Local (promoted: LocalBusiness JSON-LD config) ───────────────
+	"mapsLocal.title": { en: "Maps & Local" },
+	"mapsLocal.description": {
+		en: "Business details for schema.org/LocalBusiness structured data.",
+	},
+	"mapsLocal.savedNotice": { en: "Business details saved." },
+	"mapsLocal.formHeading": { en: "Business details" },
+	"mapsLocal.formDescription": {
+		en: "Saved here and available to your site's layout as LocalBusiness structured data.",
+	},
+	"mapsLocal.name": { en: "Business name" },
+	"mapsLocal.streetAddress": { en: "Street address" },
+	"mapsLocal.addressLocality": { en: "City" },
+	"mapsLocal.addressRegion": { en: "State / region" },
+	"mapsLocal.postalCode": { en: "Postal code" },
+	"mapsLocal.addressCountry": { en: "Country" },
+	"mapsLocal.telephone": { en: "Phone number" },
+	"mapsLocal.openingHours": { en: "Opening hours" },
+	"mapsLocal.openingHoursHint": {
+		en: 'One entry per line, e.g. "Mo-Fr 09:00-17:00".',
+	},
+	"mapsLocal.geoLatitude": { en: "Latitude" },
+	"mapsLocal.geoLongitude": { en: "Longitude" },
+	"mapsLocal.saveButton": { en: "Save business details" },
+	"mapsLocal.snippetHeading": { en: "Add to your site" },
+	"mapsLocal.snippetDescription": {
+		en: "Astropress does not auto-emit this — render <AstropressLocalBusinessJsonLd> in your own site layout (the same way you'd add AstropressWebSiteJsonLd), passing it the props below.",
+	},
+	"mapsLocal.notConfiguredNotice": {
+		en: "Save your business details above to generate the component snippet.",
+	},
 } as const satisfies Record<string, LocaleMap>;
 
 /**

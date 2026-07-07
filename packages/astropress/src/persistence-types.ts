@@ -287,6 +287,16 @@ export interface SettingsRepository {
 	saveSettings: PersistenceModule["saveSettings"];
 }
 
+export interface LocalBusinessRepository {
+	getLocalBusinessConfig: () => import("./config-service-types").LocalBusinessConfig | null;
+	saveLocalBusinessConfig: (
+		config: import("./config-service-types").LocalBusinessConfig,
+		actor: Actor,
+	) =>
+		| { ok: true; config: import("./config-service-types").LocalBusinessConfig }
+		| { ok: false; error: string };
+}
+
 export interface RateLimitRepository {
 	checkRateLimit: PersistenceModule["checkRateLimit"];
 	peekRateLimit: PersistenceModule["peekRateLimit"];
@@ -330,4 +340,11 @@ export interface AdminStoreAdapter {
 	 * to the operator.
 	 */
 	integrations?: import("./sqlite-runtime/integrations").IntegrationsRepository;
+	/**
+	 * schema.org/LocalBusiness config, edited from /ap-admin/maps-local.
+	 * Optional because existing local-store implementations predate this
+	 * table; the admin runtime treats an absent repository as "not
+	 * configured" rather than erroring.
+	 */
+	localBusiness?: LocalBusinessRepository;
 }

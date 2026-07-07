@@ -62,6 +62,9 @@ export function createStaticReadStore(
 		settings: {
 			getSettings: async () => defaultSiteSettings,
 		},
+		localBusiness: {
+			getLocalBusinessConfig: async () => null,
+		},
 		rateLimits: {
 			checkRateLimit: async () => true,
 			peekRateLimit: async () => true,
@@ -129,6 +132,10 @@ export function createFallbackReadStore(
 		},
 		settings: {
 			getSettings: async () => localAdminStore.getSettings(),
+		},
+		localBusiness: {
+			getLocalBusinessConfig: async () =>
+				(await localAdminStore.localBusiness?.getLocalBusinessConfig()) ?? null,
 		},
 		rateLimits: {
 			checkRateLimit: async () => true,

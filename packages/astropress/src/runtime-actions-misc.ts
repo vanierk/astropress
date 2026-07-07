@@ -1,5 +1,6 @@
 import { normalizeRedirectPath } from "./admin-normalizers";
 import { withLocalStoreFallback } from "./admin-store-dispatch";
+import type { LocalBusinessConfig } from "./config-service-types";
 import { recordD1Audit } from "./d1-audit";
 import type { Actor } from "./persistence-types";
 import { defaultSiteSettings, type SiteSettings } from "./site-settings";
@@ -298,5 +299,71 @@ export async function saveRuntimeSettings(
 		},
 		/* v8 ignore next 1 */
 		(localStore) => localStore.saveSettings(partial, actor),
+	);
+}
+
+export async function saveRuntimeLocalBusinessConfig(
+	config: LocalBusinessConfig,
+	actor: Actor,
+	locals?: App.Locals | null,
+) {
+	return withLocalStoreFallback(
+		locals,
+		async (db) => {
+			await db
+				.prepare(
+					`
+            INSERT INTO local_business_config (
+              id, name, street_address, address_locality, address_region, postal_code,
+              address_country, telephone, opening_hours, geo_latitude, geo_longitude,
+              updated_at, updated_by
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP, ?)
+            ON CONFLICT(id) DO UPDATE SET
+              name = excluded.name,
+              street_address = excluded.street_address,
+              address_locality = excluded.address_locality,
+              address_region = excluded.address_region,
+              postal_code = excluded.postal_code,
+              address_country = excluded.address_country,
+              telephone = excluded.telephone,
+              opening_hours = excluded.opening_hours,
+              geo_latitude = excluded.geo_latitude,
+              geo_longitude = excluded.geo_longitude,
+              updated_at = CURRENT_TIMESTAMP,
+              updated_by = excluded.updated_by
+          `,
+				)
+				.bind(
+					1,
+					config.name,
+					config.streetAddress,
+					config.addressLocality,
+					config.addressRegion,
+					config.postalCode,
+					config.addressCountry,
+					config.telephone ?? null,
+					config.openingHours ? JSON.stringify(config.openingHours) : null,
+					config.geoLatitude ?? null,
+					config.geoLongitude ?? null,
+					actor.email,
+				)
+				.run();
+
+			await recordD1Audit(
+				locals,
+				actor,
+				"local-business.update",
+				"auth",
+				"local-business-config",
+				"Updated LocalBusiness details.",
+			);
+			return { ok: true as const, config };
+		},
+		/* v8 ignore next 3 */
+		(localStore) =>
+			localStore.localBusiness?.saveLocalBusinessConfig(config, actor) ?? {
+				ok: false as const,
+				error: "Local dev store does not support saving business details yet.",
+			},
 	);
 }

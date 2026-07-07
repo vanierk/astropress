@@ -167,6 +167,11 @@ export const adminRouteDefinitions = [
 		kind: "action",
 	},
 	{
+		pattern: "/ap-admin/actions/maps-local-save",
+		entrypoint: "actions/maps-local-save.ts",
+		kind: "action",
+	},
+	{
 		pattern: "/ap-admin/actions/redirect-create",
 		entrypoint: "actions/redirect-create.ts",
 		kind: "action",
@@ -324,7 +329,7 @@ export const adminRouteDefinitions = [
 	},
 	{
 		pattern: "/ap-admin/maps-local",
-		entrypoint: "[stub].astro",
+		entrypoint: "maps-local.astro",
 		kind: "page",
 	},
 	{

@@ -78,6 +78,36 @@ export interface AbTestingConfig {
 	label?: string;
 }
 
+/**
+ * Business details for schema.org/LocalBusiness JSON-LD. Purely a data
+ * declaration — Astropress does not emit this on its own; render
+ * `<AstropressLocalBusinessJsonLd>` (built on the same `JsonLd.astro` base
+ * as the other typed JSON-LD components) in your own site layout, the same
+ * way you would for `AstropressWebSiteJsonLd`.
+ */
+export interface LocalBusinessConfig {
+	/** Business name. */
+	name: string;
+	/** Street address line, e.g. "123 Main St". */
+	streetAddress: string;
+	/** City / locality. */
+	addressLocality: string;
+	/** State / region. */
+	addressRegion: string;
+	/** Postal / ZIP code. */
+	postalCode: string;
+	/** ISO 3166-1 country code or country name, e.g. "US". */
+	addressCountry: string;
+	/** Phone number in the format customers would dial. */
+	telephone?: string;
+	/** Opening hours specs, e.g. ["Mo-Fr 09:00-17:00", "Sa 10:00-14:00"]. */
+	openingHours?: readonly string[];
+	/** Latitude in decimal degrees. */
+	geoLatitude?: number;
+	/** Longitude in decimal degrees. */
+	geoLongitude?: number;
+}
+
 export interface AstropressApiConfig {
 	/** Enable /ap-api/v1/* REST endpoints. When false (default), all API routes return 404. */
 	enabled: boolean;

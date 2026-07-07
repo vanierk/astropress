@@ -1,0 +1,95 @@
+---
+/**
+ * AstropressLocalBusinessJsonLd.astro
+ *
+ * Emits JSON-LD for schema.org/LocalBusiness with a nested PostalAddress and
+ * (optionally) GeoCoordinates. Suitable for inclusion in a site-wide layout
+ * (once, in the <head>) — the same way you'd place
+ * <AstropressWebSiteJsonLd>. Astropress does not render this on its own;
+ * this component only emits markup from the props you pass it.
+ *
+ * Usage:
+ *   <AstropressLocalBusinessJsonLd
+ *     name="My Shop"
+ *     streetAddress="123 Main St"
+ *     addressLocality="Springfield"
+ *     addressRegion="IL"
+ *     postalCode="62701"
+ *     addressCountry="US"
+ *     telephone="+1-555-555-0100"
+ *     openingHours={["Mo-Fr 09:00-17:00", "Sa 10:00-14:00"]}
+ *     geoLatitude={39.7817}
+ *     geoLongitude={-89.6501}
+ *   />
+ */
+
+interface Props {
+	/** Business name. */
+	name: string;
+	/** Street address line, e.g. "123 Main St". */
+	streetAddress: string;
+	/** City / locality. */
+	addressLocality: string;
+	/** State / region. */
+	addressRegion: string;
+	/** Postal / ZIP code. */
+	postalCode: string;
+	/** ISO 3166-1 country code or country name, e.g. "US". */
+	addressCountry: string;
+	/** Phone number in the format customers would dial. */
+	telephone?: string;
+	/** Opening hours specs, e.g. ["Mo-Fr 09:00-17:00", "Sa 10:00-14:00"]. */
+	openingHours?: readonly string[];
+	/** Latitude in decimal degrees. */
+	geoLatitude?: number;
+	/** Longitude in decimal degrees. */
+	geoLongitude?: number;
+}
+
+const {
+	name,
+	streetAddress,
+	addressLocality,
+	addressRegion,
+	postalCode,
+	addressCountry,
+	telephone,
+	openingHours,
+	geoLatitude,
+	geoLongitude,
+} = Astro.props;
+
+const businessSchema: Record<string, unknown> = {
+	"@context": "https://schema.org",
+	"@type": "LocalBusiness",
+	name,
+	address: {
+		"@type": "PostalAddress",
+		streetAddress,
+		addressLocality,
+		addressRegion,
+		postalCode,
+		addressCountry,
+	},
+};
+
+if (telephone) businessSchema.telephone = telephone;
+
+if (openingHours && openingHours.length > 0) {
+	businessSchema.openingHours = openingHours;
+}
+
+if (geoLatitude !== undefined && geoLongitude !== undefined) {
+	businessSchema.geo = {
+		"@type": "GeoCoordinates",
+		latitude: geoLatitude,
+		longitude: geoLongitude,
+	};
+}
+
+const json = JSON.stringify(businessSchema)
+	.replace(/<\/(script)/gi, "<\\/$1")
+	.replace(/<(script)/gi, "<$1");
+---
+
+<script type="application/ld+json" set:html={json}></script>

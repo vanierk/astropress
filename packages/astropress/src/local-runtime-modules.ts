@@ -97,6 +97,9 @@ export interface LocalAdminStoreModule extends AdminStoreAdapter {
 	// Phase 3/4 connected-integrations surface (optional — only present
 	// when the host has applied the connected_integrations migration).
 	integrations?: AdminStoreAdapter["integrations"];
+	// schema.org/LocalBusiness config (optional — only present when the host
+	// has applied the local_business_config table migration).
+	localBusiness?: AdminStoreAdapter["localBusiness"];
 	// Content scheduling
 	schedulePublish?: AdminStoreAdapter["content"]["schedulePublish"];
 	listScheduled?: AdminStoreAdapter["content"]["listScheduled"];

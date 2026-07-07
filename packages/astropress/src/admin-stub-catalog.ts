@@ -192,9 +192,9 @@ export const adminStubs = {
 	mapsLocal: {
 		capability: "Maps & Local",
 		description:
-			"Manage your business presence on map and local-search platforms. Sync hours, photos, and posts where supported.",
+			"LocalBusiness structured-data configuration — name, address, phone, opening hours, and geo coordinates, saved from /ap-admin/maps-local and rendered via <AstropressLocalBusinessJsonLd> in your own layout. No live sync with Google/Apple/Bing — those platforms are managed directly on their own dashboards.",
 		configHint:
-			"registerCms({\n  mapsLocal: { google: { placeId: process.env.GOOGLE_PLACE_ID } },\n});",
+			'registerCms({\n  localBusiness: { name: "My Shop", streetAddress: "123 Main St", addressLocality: "Springfield", addressRegion: "IL", postalCode: "62701", addressCountry: "US" },\n});',
 		providers: [
 			{
 				name: "Google Business Profile",
@@ -543,11 +543,9 @@ export const ADMIN_STUB_PAGES = {
 	// backups was promoted to a real page (backups.astro) — an on-demand
 	// content export + backend backup-mechanism guidance, not a scheduled
 	// backup/restore system. See admin-action-backup-export.ts.
-	"maps-local": {
-		stubKey: "mapsLocal",
-		navKey: "mapsLocal",
-		action: "seo:edit",
-	},
+	// maps-local was promoted to a real page (maps-local.astro) — LocalBusiness
+	// JSON-LD config only, no live Google/Apple/Bing sync. See
+	// AstropressLocalBusinessJsonLd.astro and config-service-types.ts.
 	// structured-data, shop, monitoring, sitemaps, and ab-testing were
 	// promoted to real pages (structured-data.astro, shop.astro,
 	// monitoring.astro, sitemaps.astro, ab-testing.astro). Their adminStubs

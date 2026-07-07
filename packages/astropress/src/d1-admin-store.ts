@@ -1,3 +1,4 @@
+import type { LocalBusinessConfig } from "./config-service-types";
 import type { D1DatabaseLike } from "./d1-database";
 import { createD1ContentReadPart } from "./d1-store-content";
 import { createD1OperationsMutationPart, createD1OperationsReadPart } from "./d1-store-operations";
@@ -37,6 +38,7 @@ export type {
 	ContentOverride,
 	ContentRecord,
 	ContentRevision,
+	LocalBusinessConfig,
 	ManagedAdminUser,
 	MediaAsset,
 	RedirectRule,
@@ -87,6 +89,9 @@ export interface D1AdminReadStore {
 	};
 	settings: {
 		getSettings(): Promise<SiteSettings>;
+	};
+	localBusiness: {
+		getLocalBusinessConfig(): Promise<LocalBusinessConfig | null>;
 	};
 	rateLimits: {
 		checkRateLimit(key: string, max: number, windowMs: number): Promise<boolean>;

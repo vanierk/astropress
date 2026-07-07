@@ -16,6 +16,7 @@ import type {
 	AnalyticsConfig,
 	AstropressApiConfig,
 	DonationsConfig,
+	LocalBusinessConfig,
 	TestimonialsConfig,
 } from "./config-service-types.js";
 import type { ContentTypeDefinition } from "./content-modeling.js";
@@ -34,6 +35,7 @@ export type {
 	DonationsConfig,
 	GiveLivelyConfig,
 	LiberapayConfig,
+	LocalBusinessConfig,
 	PledgeCryptoConfig,
 	TestimonialsConfig,
 } from "./config-service-types.js";
@@ -149,6 +151,14 @@ export interface CmsConfig {
 	 * When configured, an "A/B Testing" entry appears in the admin services sidebar.
 	 */
 	abTesting?: AbTestingConfig;
+
+	/**
+	 * Optional business details for schema.org/LocalBusiness JSON-LD, editable
+	 * from /ap-admin/maps-local. This is a data declaration only — Astropress
+	 * does not auto-emit it; render `<AstropressLocalBusinessJsonLd>` in your
+	 * own site layout (see the component's doc comment).
+	 */
+	localBusiness?: LocalBusinessConfig;
 
 	/**
 	 * Optional REST API configuration.
