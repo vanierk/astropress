@@ -26,9 +26,8 @@ export const adminStubs = {
 	forms: {
 		capability: "Forms",
 		description:
-			"Receive form submissions from your site. Configure a provider to capture, store, and notify on submissions.",
-		configHint:
-			'registerCms({\n  forms: { provider: "tally", apiKey: process.env.TALLY_API_KEY },\n});',
+			"Connect a forms provider to manage submissions in its own dashboard. Astropress verifies the credential — it doesn't capture, store, or notify on submissions itself.",
+		configHint: 'import { registerTally } from "astropress";\n\nregisterTally();',
 		providers: [
 			{ name: "Web3Forms", href: "https://web3forms.com", tag: "Recommended" },
 			{ name: "Formspree", href: "https://formspree.io", tag: "SaaS" },

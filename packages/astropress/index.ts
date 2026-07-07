@@ -457,6 +457,13 @@ export {
 	registerPlausible,
 	verifyPlausible,
 } from "./src/integrations/providers/plausible.js";
+export type { TallyFields } from "./src/integrations/providers/tally";
+export {
+	registerTally,
+	TALLY_FIELDS,
+	TallyVerifyError,
+	verifyTally,
+} from "./src/integrations/providers/tally.js";
 export type {
 	IntegrationDomain,
 	ProviderDefinition,

@@ -10819,7 +10819,7 @@ export const pageLabels = {
 	// ── Integration-connect pages (forms, newsletter, analytics, search, cdn-purge) ──
 	"forms.title": { en: "Forms" },
 	"forms.description": {
-		en: "Connect a forms provider to receive submissions from your site. Submissions land in the existing API tokens path.",
+		en: "Connect a forms provider to manage submissions in its own dashboard. Astropress verifies the credential — it doesn't receive or store submissions itself.",
 	},
 	"newsletter.title": { en: "Newsletter" },
 	"newsletter.description": {
