@@ -124,9 +124,9 @@ export const adminStubs = {
 	community: {
 		capability: "Community",
 		description:
-			"Embed a forum or discussion platform inside the admin shell. Configure a service URL to render an iframe panel.",
+			"Embed your external community forum (Discourse, Flarum) inside the admin shell via registerAstropressService — the same iframe-proxy mechanism services/[provider].astro uses.",
 		configHint:
-			'registerAstropressService({\n  provider: "community",\n  label: "Discourse",\n  proxyTarget: "https://forum.example.com",\n  adminPath: "/ap-admin/community",\n});',
+			'registerAstropressService({\n  provider: "community",\n  label: "Discourse",\n  description: "Community forum",\n  proxyTarget: "https://forum.example.com",\n  adminPath: "/ap-admin/services/community",\n});',
 		providers: [
 			{ name: "Discourse", href: "https://discourse.org", tag: "OSS" },
 			{ name: "Flarum", href: "https://flarum.org", tag: "OSS" },
@@ -489,13 +489,12 @@ export const ADMIN_STUB_PAGES = {
 		variant: "coming-soon",
 		roadmapHref: ROADMAP_ISSUE,
 	},
-	community: {
-		stubKey: "community",
-		navKey: "community",
-		action: "services:manage",
-		variant: "coming-soon",
-		roadmapHref: ROADMAP_ISSUE,
-	},
+	// community was promoted to a real, standalone page (community.astro) —
+	// unlike shop (which redirects to the generic Services hub), community
+	// keeps its own nav leaf and embeds the registered service directly on
+	// its own page, reusing services/[provider].astro's exact iframe-proxy
+	// mechanism (getAstropressService + adminPath) rather than reinventing
+	// embedding. adminStubs.community stays as an orphaned catalog entry.
 	// plugins was promoted to a real page (plugins.astro) — CmsConfig.plugins,
 	// AstropressPlugin, and plugin-dispatch.ts were already real and
 	// dispatching hooks; "coming-soon" was wrong about the underlying

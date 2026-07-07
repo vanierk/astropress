@@ -1,0 +1,142 @@
+---
+import AdminLayout from "@astropress-diy/astropress/components/AdminLayout.astro";
+import { getAstropressService } from "@astropress-diy/astropress/services-config";
+import { getPageT, requiresAccess, resolveAdminLocale } from "astropress";
+
+// Promoted from the [stub].astro route. ServiceProvider (services-config.ts)
+// already includes "community" as a first-class value, and the iframe-proxy
+// runtime (registerAstropressService / services/[provider].astro) already
+// renders it end-to-end — this page reuses that exact mechanism (reads
+// getAstropressService("community"), embeds service.adminPath + "/" the
+// same way services/[provider].astro does) rather than reinventing
+// embedding. Kept as its own nav destination (unlike shop, which redirects
+// to the generic Services hub) since community is meant to be a standalone
+// forum/discussion panel, not just one card among several services.
+const guard = await requiresAccess(Astro, "services:manage");
+if (guard) return guard;
+const adminUser = Astro.locals.adminUser;
+if (!adminUser) return Astro.redirect("/ap-admin/login");
+const adminLocale = resolveAdminLocale(Astro);
+const t = getPageT(adminLocale);
+
+const service = getAstropressService("community");
+---
+
+<AdminLayout
+	title={t("community.title")}
+	heading={t("community.title")}
+	currentPath="/ap-admin/community"
+	description={t("community.description")}
+	userName={adminUser.name}
+>
+	{!service ? (
+		<section class="panel">
+			<p class="admin-kicker">{t("community.notConnected")}</p>
+			<h2>{t("community.emptyStateHeading")}</h2>
+			<p>{t("community.emptyStateBody")}</p>
+			<pre class="admin-code-block"><code>{`registerAstropressService({
+  provider: "community",
+  label: "Discourse",
+  description: "Community forum",
+  proxyTarget: "https://forum.example.com",
+  adminPath: "/ap-admin/services/community",
+});`}</code></pre>
+			<a
+				href="https://github.com/Astropress/astropress"
+				target="_blank"
+				rel="noreferrer"
+				class="admin-button-ghost"
+			>
+				{t("community.docsLink")}
+			</a>
+		</section>
+	) : (
+		<div class="service-host">
+			<div class="service-host__toolbar">
+				<span class="service-host__label">{service.description}</span>
+				<a
+					href={`${service.adminPath}/`}
+					target="_blank"
+					rel="noreferrer"
+					class="admin-button-ghost small"
+				>
+					{t("community.openInNewTab")}
+				</a>
+			</div>
+			<iframe
+				class="service-host__frame"
+				src={`${service.adminPath}/`}
+				title={`${service.label} ${t("community.frameTitle")}`}
+				allow="clipboard-read; clipboard-write"
+			></iframe>
+		</div>
+	)}
+</AdminLayout>
+
+<style>
+	.admin-code-block {
+		background: var(--surface-muted, #f3f4f6);
+		border: 1px solid var(--border, #e5e7eb);
+		border-radius: 8px;
+		padding: 1rem;
+		overflow-x: auto;
+		font-size: 0.85rem;
+		white-space: pre-wrap;
+		margin-bottom: 1rem;
+	}
+
+	.service-host {
+		display: grid;
+		grid-template-rows: auto 1fr;
+		height: calc(100vh - 6rem);
+		gap: 0.6rem;
+	}
+
+	.service-host__toolbar {
+		display: flex;
+		align-items: center;
+		gap: 0.75rem;
+		flex-wrap: wrap;
+	}
+
+	.service-host__label {
+		color: var(--muted);
+		font-size: 0.9rem;
+		flex: 1;
+	}
+
+	.service-host__frame {
+		width: 100%;
+		height: 100%;
+		border: 1px solid var(--line);
+		border-radius: 0.7rem;
+		background: var(--panel);
+	}
+
+	:global(#admin-main) {
+		display: grid;
+		grid-template-rows: 1fr;
+		overflow: hidden;
+	}
+
+	@media (max-width: 600px) {
+		.service-host {
+			height: auto;
+			min-height: 60vh;
+		}
+
+		.service-host__toolbar {
+			flex-direction: column;
+			align-items: stretch;
+			gap: 0.5rem;
+		}
+
+		.service-host__frame {
+			min-height: 55vh;
+		}
+
+		:global(#admin-main) {
+			overflow: auto;
+		}
+	}
+</style>

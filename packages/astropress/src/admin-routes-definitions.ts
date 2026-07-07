@@ -318,7 +318,7 @@ export const adminRouteDefinitions = [
 	},
 	{
 		pattern: "/ap-admin/community",
-		entrypoint: "[stub].astro",
+		entrypoint: "community.astro",
 		kind: "page",
 	},
 	{ pattern: "/ap-admin/shop", entrypoint: "shop.astro", kind: "page" },

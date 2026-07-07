@@ -11130,6 +11130,20 @@ export const pageLabels = {
 	"email.testedNoticePreview": {
 		en: "Test email generated in mock mode — nothing was actually delivered.",
 	},
+
+	// ── Community (promoted: embeds a connected forum via the services registry) ──
+	"community.title": { en: "Community" },
+	"community.description": {
+		en: "Embed your external community forum (Discourse, Flarum) inside the admin shell.",
+	},
+	"community.notConnected": { en: "Not connected" },
+	"community.emptyStateHeading": { en: "No forum connected" },
+	"community.emptyStateBody": {
+		en: 'Connect a forum or discussion platform (Discourse, Flarum) to embed it here. Call registerAstropressService with provider "community" in your site\'s setup code:',
+	},
+	"community.docsLink": { en: "Plugin & service authoring guide" },
+	"community.openInNewTab": { en: "Open in new tab" },
+	"community.frameTitle": { en: "admin panel" },
 } as const satisfies Record<string, LocaleMap>;
 
 /**
