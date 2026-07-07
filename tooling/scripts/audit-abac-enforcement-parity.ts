@@ -11,8 +11,10 @@
  * Rules:
  *  1. Every action route under `pages/ap-admin/actions/**` must pass a
  *     `requireAction: "<perm>"` to its guard — except the reviewed pre-session
- *     flows (token consumption before a session exists). `requireAdmin` is no
- *     longer an acceptable substitute for the declared permission.
+ *     flows (token consumption before a session exists), and except a route
+ *     with a dynamic per-resource guard (see `hasDynamicPerResourceGuard`
+ *     below). `requireAdmin` is no longer an acceptable substitute for the
+ *     declared permission.
  *  2. Every `requireAction` value must be a real action in
  *     `src/access/action-registry-data.ts` (no typo'd / dangling permissions).
  *  3. The admin listing/hub pages that were previously unguarded must keep their
@@ -42,6 +44,40 @@ const PRE_SESSION_ACTIONS: ReadonlyMap<string, string> = new Map([
 	["accept-invite.ts", "consumes a single-use invite token before any session exists"],
 	["reset-password.ts", "consumes a single-use reset token before any session exists"],
 ]);
+
+/**
+ * A narrow, explicit fingerprint for the one other sanctioned bypass of rule
+ * (1): a dynamic per-resource guard. A static `requireAction: "<literal>"`
+ * can't be right when one action route restores/mutates several resource
+ * types that each need a different permission (e.g. `restore.ts` — restoring
+ * an author needs `authors:manage`, not whatever action a different table
+ * would need) — `withAdminFormAction`'s own requireAction check runs before
+ * formData is parsed, so it can't yet know which resource is involved. The
+ * valid alternative is a manual check, evaluated after the resource is known,
+ * using the exact same primitives `withAdminFormAction` itself uses
+ * internally (see `admin-action-utils.ts`'s `enforceRequireAction`): resolve
+ * the access context, call `.can(action)`, and on anything but allow, log the
+ * deny and block. c953a5a introduced this pattern for `restore.ts`.
+ *
+ * Deliberately requires ALL THREE tokens, not just one — each alone is too
+ * weak a signal:
+ *   - `getAccessContext(` alone proves nothing (e.g. a page might call it
+ *     just to read `access.subject.email` for display, with no gating).
+ *   - `.can(` alone is too generic to grep reliably.
+ *   - `logAccessDeny(` has no purpose except logging a genuine deny
+ *     decision — its presence alongside the other two is what makes this a
+ *     reliable signal of a real gate, not incidental access-context use.
+ * A route that imports all three without actually wiring them into a
+ * fail-closed check would be deliberately misleading, not an accidental
+ * regression — outside what a static grep can be expected to catch, same as
+ * rule (1)'s existing static-literal check doesn't verify the literal is
+ * actually reachable/enforced either.
+ */
+function hasDynamicPerResourceGuard(src: string): boolean {
+	return (
+		src.includes("getAccessContext(") && src.includes(".can(") && src.includes("logAccessDeny(")
+	);
+}
 
 /**
  * Nav hrefs whose destination page MUST keep an explicit `requiresAccess(...)`
@@ -101,10 +137,14 @@ async function main(): Promise<void> {
 
 		if (declared.length === 0) {
 			if (PRE_SESSION_ACTIONS.has(file)) continue;
+			if (hasDynamicPerResourceGuard(src)) continue;
 			report.add(
 				`pages/ap-admin/actions/${file}: action route has no requireAction guard. Any ` +
 					`authenticated subject could invoke it. Pass requireAction: "<perm>" to ` +
-					`withAdminFormAction/requireAdminFormAction (#101/#110/#114/#121).`,
+					`withAdminFormAction/requireAdminFormAction (#101/#110/#114/#121), or if a single ` +
+					`static action is genuinely wrong (multiple resource types needing different ` +
+					`actions), add a dynamic per-resource guard using getAccessContext + .can + ` +
+					`logAccessDeny (see hasDynamicPerResourceGuard's doc comment).`,
 			);
 			continue;
 		}
