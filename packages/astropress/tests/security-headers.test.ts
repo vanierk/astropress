@@ -7,6 +7,7 @@ import {
 	jsonOkWithEtag,
 	withApiRequest,
 } from "../src/api-middleware.js";
+import type { AstropressSecurityHeadersOptions } from "../src/security-headers.js";
 import {
 	applyAstropressSecurityHeaders,
 	applyCacheHeaders,
@@ -324,6 +325,136 @@ describe("security headers", () => {
 				new URL("https://example.com/ap-admin/actions/comment-moderate"),
 			),
 		).toBe("api");
+	});
+});
+
+describe("CSP extra-origin extension (extraScriptSrc/extraConnectSrc/extraImgSrc/extraFontSrc/extraFrameSrc)", () => {
+	// One full snapshot per representative option combo, computed from the
+	// pre-extension behavior. If any of these ever changes when no extras
+	// are passed, the extension has stopped being additive.
+	const NO_EXTRAS_CASES: [string, AstropressSecurityHeadersOptions][] = [
+		["defaults", {}],
+		["admin area", { area: "admin" }],
+		["public area with inline styles", { area: "public", allowInlineStyles: true }],
+		["auth area with forceHsts", { area: "auth", forceHsts: true }],
+		["api area with reportUri", { area: "api", reportUri: "/ap-admin/actions/csp-report" }],
+		["frameAncestors 'self'", { frameAncestors: "'self'" }],
+	];
+
+	it.each(
+		NO_EXTRAS_CASES,
+	)("produces byte-identical CSP output when no extras are passed (%s)", (_label, options) => {
+		const withoutExtraFields =
+			createAstropressSecurityHeaders(options).get("Content-Security-Policy");
+		const withExplicitEmptyExtras = createAstropressSecurityHeaders({
+			...options,
+			extraScriptSrc: [],
+			extraConnectSrc: [],
+			extraImgSrc: [],
+			extraFontSrc: [],
+			extraFrameSrc: [],
+		}).get("Content-Security-Policy");
+
+		expect(withExplicitEmptyExtras).toBe(withoutExtraFields);
+		// Pin the exact known-good string for the plain no-options case so a
+		// silent change to the base directives themselves is also caught.
+		if (_label === "defaults") {
+			expect(withoutExtraFields).toBe(
+				"default-src 'self'; base-uri 'self'; frame-ancestors 'none'; form-action 'self' https:; " +
+					"img-src 'self' data: https:; font-src 'self' data: https:; connect-src 'self' https:; " +
+					"media-src 'self' data: https:; script-src 'self' https://challenges.cloudflare.com; " +
+					"style-src 'self'; object-src 'self'; frame-src 'self' https://challenges.cloudflare.com; " +
+					"worker-src 'self' blob:; manifest-src 'self'; upgrade-insecure-requests",
+			);
+		}
+	});
+
+	it("appends valid extra origins to the correct directive without replacing the default allowlist", () => {
+		const csp = createAstropressSecurityHeaders({
+			extraScriptSrc: ["https://client.crisp.chat", "https://app.cal.com"],
+			extraConnectSrc: ["https://*.crisp.chat", "wss://*.relay.crisp.chat"],
+			extraImgSrc: ["https://static.intercomassets.com"],
+			extraFontSrc: ["https://js.intercomcdn.com"],
+			extraFrameSrc: ["https://*.cal.com"],
+		}).get("Content-Security-Policy");
+
+		expect(csp).toContain(
+			"script-src 'self' https://challenges.cloudflare.com https://client.crisp.chat https://app.cal.com",
+		);
+		expect(csp).toContain(
+			"connect-src 'self' https: https://*.crisp.chat wss://*.relay.crisp.chat",
+		);
+		expect(csp).toContain("img-src 'self' data: https: https://static.intercomassets.com");
+		expect(csp).toContain("font-src 'self' data: https: https://js.intercomcdn.com");
+		expect(csp).toContain("frame-src 'self' https://challenges.cloudflare.com https://*.cal.com");
+	});
+
+	it("accepts a wildcard-host origin (CSP host wildcard, distinct from a bare '*')", () => {
+		const csp = createAstropressSecurityHeaders({
+			extraScriptSrc: ["https://*.tawk.to"],
+		}).get("Content-Security-Policy");
+		expect(csp).toContain("script-src 'self' https://challenges.cloudflare.com https://*.tawk.to");
+	});
+
+	it("accepts an origin with a port (self-hosted Chatwoot on a non-standard port)", () => {
+		const csp = createAstropressSecurityHeaders({
+			extraConnectSrc: ["wss://chat.example.com:8443"],
+		}).get("Content-Security-Policy");
+		expect(csp).toContain("connect-src 'self' https: wss://chat.example.com:8443");
+	});
+
+	it("limits the extension surface to exactly the five documented directives — base-uri and upgrade-insecure-requests are untouched", () => {
+		const csp = createAstropressSecurityHeaders({
+			extraScriptSrc: ["https://client.crisp.chat"],
+		}).get("Content-Security-Policy");
+		expect(csp).toContain("base-uri 'self'");
+		expect(csp).toContain("upgrade-insecure-requests");
+		expect(csp).not.toContain("base-uri 'self' https://client.crisp.chat");
+	});
+
+	describe("rejects malicious/malformed extra origins (throws, never silently drops)", () => {
+		const MALICIOUS_INPUTS = [
+			["a CSP keyword", "'unsafe-inline'"],
+			["a semicolon directive-injection attempt", "https://x.com; script-src *"],
+			["a bare wildcard", "*"],
+			["two origins separated by whitespace", "https://a.com https://b.com"],
+			["unsafe-eval", "'unsafe-eval'"],
+			["a nonce source", "'nonce-abc123'"],
+			["strict-dynamic", "'strict-dynamic'"],
+			["a data: scheme", "data:text/html,<script>alert(1)</script>"],
+			["a blob: scheme", "blob:https://example.com/uuid"],
+			["a plain http: origin (not https/wss)", "http://insecure.example.com"],
+			["an empty string", ""],
+			["a host with no scheme", "client.crisp.chat"],
+		] as const;
+
+		it.each(MALICIOUS_INPUTS)("rejects %s (%j) in extraScriptSrc", (_label, value) => {
+			expect(() => createAstropressSecurityHeaders({ extraScriptSrc: [value] })).toThrow(
+				/Invalid CSP origin/,
+			);
+		});
+
+		it("rejects a malicious entry regardless of which of the five directives carries it", () => {
+			for (const field of [
+				"extraScriptSrc",
+				"extraConnectSrc",
+				"extraImgSrc",
+				"extraFontSrc",
+				"extraFrameSrc",
+			] as const) {
+				expect(() => createAstropressSecurityHeaders({ [field]: ["'unsafe-inline'"] })).toThrow(
+					/Invalid CSP origin/,
+				);
+			}
+		});
+
+		it("throws before returning any headers — a bad entry never partially applies", () => {
+			expect(() =>
+				createAstropressSecurityHeaders({
+					extraScriptSrc: ["https://good.example.com", "'unsafe-inline'"],
+				}),
+			).toThrow(/Invalid CSP origin/);
+		});
 	});
 });
 
