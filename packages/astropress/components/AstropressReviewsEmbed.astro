@@ -1,0 +1,84 @@
+---
+/**
+ * AstropressReviewsEmbed.astro
+ *
+ * Embeds a Trustpilot TrustBox review widget so visitors see your reviews.
+ * Astropress does not render this on its own; this component only emits
+ * markup from the props you pass it — the same host-wires-it shape as
+ * <AstropressLocalBusinessJsonLd> / <AstropressEventsEmbed>.
+ *
+ * Review responses always happen in Trustpilot's own dashboard —
+ * Astropress has no visibility into or control over review data.
+ *
+ * Usage:
+ *   <AstropressReviewsEmbed provider="trustpilot" businessUnitId="..." templateId="..." />
+ */
+
+interface Props {
+	provider: "trustpilot" | "custom";
+	/** Trustpilot business unit ID (provider: "trustpilot" only). */
+	businessUnitId?: string;
+	/** Trustpilot TrustBox template ID, e.g. "56278e9abfbbba0bdcd568bc" (provider: "trustpilot" only). */
+	templateId?: string;
+	/** For provider: "custom" — the full embed markup to render as-is (host is responsible for sanitization). */
+	embedSrc?: string;
+	/** Widget width. Defaults to "100%". */
+	width?: string;
+	/** Widget height. Defaults to "150px" (Trustpilot's own default for most TrustBox templates). */
+	height?: string;
+	/** BCP 47 locale for the widget, e.g. "en-US". Defaults to "en-US". */
+	locale?: string;
+}
+
+const {
+	provider,
+	businessUnitId,
+	templateId,
+	embedSrc,
+	width = "100%",
+	height = "150px",
+	locale = "en-US",
+} = Astro.props;
+
+/** Loose format guard: non-empty, no markup-breaking characters. Astro also HTML-escapes attribute values automatically — this catches honest mistakes, not a hostile input (the prop comes from the site operator's own config, not a visitor). */
+function looksLikeSafeToken(value: string | undefined): value is string {
+	return typeof value === "string" && value.trim().length > 0 && !/[<>"']/.test(value);
+}
+
+const validBusinessUnitId =
+	provider === "trustpilot" && looksLikeSafeToken(businessUnitId) ? businessUnitId : undefined;
+const validTemplateId =
+	provider === "trustpilot" && looksLikeSafeToken(templateId) ? templateId : undefined;
+---
+
+{provider === "trustpilot" && validBusinessUnitId && validTemplateId && (
+	<Fragment>
+		<div
+			class="trustpilot-widget"
+			data-locale={locale}
+			data-template-id={validTemplateId}
+			data-businessunit-id={validBusinessUnitId}
+			data-style-height={height}
+			data-style-width={width}
+		>
+			<a href="https://www.trustpilot.com" target="_blank" rel="noopener noreferrer">Trustpilot</a>
+		</div>
+		<script
+			type="text/javascript"
+			src="//widget.trustpilot.com/bootstrap/v5/tp.widget.bootstrap.min.js"
+			async
+		/>
+	</Fragment>
+)}
+
+{/*
+	"custom" is a documented host-escape-hatch (mirrors analytics.ts's,
+	heatmaps.ts's, and AstropressEventsEmbed's "custom" case) — the host
+	who sets provider:"custom" explicitly supplies and is responsible for
+	their own embed markup; Astropress cannot sanitize a snippet for a
+	provider it doesn't know about.
+*/}
+{provider === "custom" && embedSrc && (
+	// audit-ok: host-supplied "custom" embed markup — see comment above
+	<Fragment set:html={embedSrc} />
+)}

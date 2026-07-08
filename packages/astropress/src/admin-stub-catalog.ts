@@ -73,22 +73,18 @@ export const adminStubs = {
 	reviews: {
 		capability: "Reviews",
 		description:
-			"Aggregate reviews from third-party platforms and surface them on the site. Connect a provider to pull review data.",
+			"Embed a Trustpilot review widget so visitors see your reviews. Review responses happen in Trustpilot's own dashboard — Astropress only displays the widget.",
 		configHint:
-			'registerCms({\n  reviews: { provider: "google", placeId: process.env.GOOGLE_PLACE_ID },\n});',
+			'registerCms({\n  reviews: { provider: "trustpilot", businessUnitId: "...", templateId: "..." },\n});',
 		providers: [
+			{ name: "Trustpilot", href: "https://business.trustpilot.com", tag: "Recommended" },
 			{
-				name: "Google Business Profile",
+				name: "Google Business Profile (needs a separate API integration — Places API caps at 5 auto-selected reviews)",
 				href: "https://business.google.com",
 				tag: "SaaS",
 			},
 			{
-				name: "Trustpilot",
-				href: "https://business.trustpilot.com",
-				tag: "SaaS",
-			},
-			{
-				name: "Yelp Fusion",
+				name: "Yelp Fusion (needs a separate API integration — 3 short excerpts + attribution requirements)",
 				href: "https://docs.developer.yelp.com",
 				tag: "SaaS",
 			},
@@ -484,13 +480,15 @@ export const ADMIN_STUB_PAGES = {
 	// resourceKind:"event" existed before this build but were generic ABAC
 	// boilerplate, not native event CRUD evidence. adminStubs.events stays
 	// as an orphaned catalog entry per precedent.
-	reviews: {
-		stubKey: "reviews",
-		navKey: "reviews",
-		action: "testimonials:manage",
-		variant: "coming-soon",
-		roadmapHref: ROADMAP_ISSUE,
-	},
+	// reviews was promoted to a real, env-gated page (reviews.astro) —
+	// CmsConfig.reviews + <AstropressReviewsEmbed> now exist, following the
+	// exact config+emit pattern established by
+	// resolveAnalyticsSnippet()/resolveHeatmapsSnippet()/AstropressEventsEmbed;
+	// "coming-soon" was wrong about the underlying capability, not just the
+	// copy. Also fixed a real ABAC bug here: this stub's `action` used to be
+	// "testimonials:manage" (a mis-share — there was no reviews:manage
+	// action), now reviews:manage. adminStubs.reviews stays as an orphaned
+	// catalog entry per precedent.
 	memberships: {
 		stubKey: "memberships",
 		navKey: "memberships",

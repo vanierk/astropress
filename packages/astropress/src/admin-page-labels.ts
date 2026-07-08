@@ -10873,7 +10873,7 @@ export const pageLabels = {
 	},
 	"stub.reviews.capability": { en: "Reviews" },
 	"stub.reviews.description": {
-		en: "Aggregate reviews from third-party platforms and surface them on the site. Connect a provider to pull review data.",
+		en: "Embed a Trustpilot review widget so visitors see your reviews. Review responses happen in Trustpilot's own dashboard — Astropress only displays the widget.",
 	},
 	"stub.memberships.capability": { en: "Memberships" },
 	"stub.memberships.description": {
@@ -11167,6 +11167,15 @@ export const pageLabels = {
 	},
 	"events.attendeeDataNote": {
 		en: "This only embeds a booking widget — RSVP and attendee data always live in the provider's own dashboard, never in Astropress.",
+	},
+
+	// ── Reviews (promoted: config+embed status page, no review management) ──
+	"reviews.provider.trustpilot": { en: "Trustpilot" },
+	"reviews.activeStatusLine": {
+		en: "Place this component in your site layout to render the review widget:",
+	},
+	"reviews.responsesNote": {
+		en: "This only displays a review widget — responding to reviews always happens in the provider's own dashboard, never in Astropress.",
 	},
 } as const satisfies Record<string, LocaleMap>;
 

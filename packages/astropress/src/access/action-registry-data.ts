@@ -173,6 +173,12 @@ export const BUILT_IN_ACCESS_ACTIONS: readonly ActionDefinition[] = [
 		pluginId: "core",
 	},
 	{
+		id: "reviews:manage",
+		description: "Manage third-party review display",
+		resourceKind: "review",
+		pluginId: "core",
+	},
+	{
 		id: "testimonials:manage",
 		description: "Manage testimonials",
 		resourceKind: "testimonial",

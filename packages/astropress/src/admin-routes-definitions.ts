@@ -305,7 +305,7 @@ export const adminRouteDefinitions = [
 		kind: "page",
 	},
 	{ pattern: "/ap-admin/events", entrypoint: "events.astro", kind: "page" },
-	{ pattern: "/ap-admin/reviews", entrypoint: "[stub].astro", kind: "page" },
+	{ pattern: "/ap-admin/reviews", entrypoint: "reviews.astro", kind: "page" },
 	{
 		pattern: "/ap-admin/referrals",
 		entrypoint: "[stub].astro",

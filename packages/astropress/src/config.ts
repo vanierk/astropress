@@ -19,6 +19,7 @@ import type {
 	EventsConfig,
 	HeatmapsConfig,
 	LocalBusinessConfig,
+	ReviewsConfig,
 	TestimonialsConfig,
 } from "./config-service-types.js";
 import type { ContentTypeDefinition } from "./content-modeling.js";
@@ -41,6 +42,7 @@ export type {
 	LiberapayConfig,
 	LocalBusinessConfig,
 	PledgeCryptoConfig,
+	ReviewsConfig,
 	TestimonialsConfig,
 } from "./config-service-types.js";
 
@@ -156,6 +158,15 @@ export interface CmsConfig {
 	 * bookings made through the widget.
 	 */
 	events?: EventsConfig;
+
+	/**
+	 * Optional third-party review display widget (Trustpilot, or a custom
+	 * embed). This is a data declaration only — Astropress does not
+	 * auto-emit it; render `<AstropressReviewsEmbed>` in your own site
+	 * layout (see the component's doc comment). Review responses happen in
+	 * the provider's own dashboard — Astropress only displays the widget.
+	 */
+	reviews?: ReviewsConfig;
 
 	/**
 	 * Optional donation / fundraising integrations.

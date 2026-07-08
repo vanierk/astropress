@@ -1,0 +1,88 @@
+---
+import AdminLayout from "@astropress-diy/astropress/components/AdminLayout.astro";
+import RequiresIntegration from "@astropress-diy/astropress/components/RequiresIntegration.astro";
+import {
+	adminStubs,
+	getPageT,
+	peekCmsConfig,
+	requiresAccess,
+	resolveAdminLocale,
+} from "astropress";
+
+// Promoted from the [stub].astro coming-soon route: CmsConfig.reviews and
+// <AstropressReviewsEmbed> now exist, following the exact config+emit shape
+// resolveAnalyticsSnippet()/resolveHeatmapsSnippet()/AstropressEventsEmbed
+// already established — the host renders the embed component in their own
+// site layout (same host-wires-it shape as AstropressLocalBusinessJsonLd).
+//
+// This also fixes a real ABAC bug: /ap-admin/reviews used to be gated on
+// testimonials:manage (there was no reviews:manage action) — an operator
+// granted only testimonials:manage could reach reviews config, and there
+// was no way to grant reviews access without also granting testimonials
+// access. Now gated on its own reviews:manage action.
+//
+// This page only displays a Trustpilot widget; it never manages or
+// responds to reviews — that happens in Trustpilot's own dashboard.
+const guard = await requiresAccess(Astro, "reviews:manage");
+if (guard) return guard;
+const adminUser = Astro.locals.adminUser;
+if (!adminUser) return Astro.redirect("/ap-admin/login");
+const locale = resolveAdminLocale(Astro);
+const t = getPageT(locale);
+const stub = adminStubs.reviews;
+const config = peekCmsConfig()?.reviews;
+
+const providerLabel = config
+	? (config.label ?? t(`reviews.provider.${config.provider}`, config.provider))
+	: undefined;
+const embedPropsSnippet = config
+	? config.provider === "trustpilot"
+		? `<AstropressReviewsEmbed provider="trustpilot" businessUnitId="${config.businessUnitId ?? "..."}" templateId="${config.templateId ?? "..."}" />`
+		: `<AstropressReviewsEmbed provider="custom" embedSrc="..." />`
+	: undefined;
+---
+
+<AdminLayout
+	title={t("stub.reviews.capability", stub.capability)}
+	heading={t("stub.reviews.capability", stub.capability)}
+	currentPath="/ap-admin/reviews"
+	description={t("stub.reviews.description", stub.description)}
+	userName={adminUser.name}
+>
+	<p class="field-note">{t("reviews.responsesNote")}</p>
+
+	{config ? (
+		<section class="panel">
+			<p class="admin-kicker">{t("integrationConnect.statusActive")}</p>
+			<h2>{providerLabel}</h2>
+			<p>{t("reviews.activeStatusLine")}</p>
+			<pre class="admin-code-block"><code>{embedPropsSnippet}</code></pre>
+		</section>
+	) : (
+		<RequiresIntegration
+			capability={stub.capability}
+			description={stub.description}
+			configHint={stub.configHint}
+			providers={[...stub.providers]}
+			docsHref={(stub as { docsHref?: string }).docsHref}
+			locale={locale}
+			stubKey="reviews"
+		/>
+	)}
+</AdminLayout>
+
+<style>
+	.field-note {
+		color: var(--muted);
+		margin: 0 0 1rem;
+	}
+	.admin-code-block {
+		background: var(--surface-muted, #f3f4f6);
+		border: 1px solid var(--border, #e5e7eb);
+		border-radius: 8px;
+		padding: 1rem;
+		overflow-x: auto;
+		font-size: 0.85rem;
+		white-space: pre-wrap;
+	}
+</style>

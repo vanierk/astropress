@@ -45,6 +45,19 @@ export interface EventsConfig {
 	label?: string;
 }
 
+export interface ReviewsConfig {
+	/** Review-display widget provider. */
+	provider: "trustpilot" | "custom";
+	/** Trustpilot business unit ID (provider: "trustpilot" only). */
+	businessUnitId?: string;
+	/** Trustpilot TrustBox template ID, e.g. "56278e9abfbbba0bdcd568bc" (provider: "trustpilot" only). */
+	templateId?: string;
+	/** For "custom": the full embed markup to render as-is (host is responsible for sanitization). */
+	embedSrc?: string;
+	/** Override the display label shown on the reviews status page. */
+	label?: string;
+}
+
 export interface GiveLivelyConfig {
 	/** GiveLively organization slug (GIVELIVELY_ORG_SLUG). */
 	orgSlug: string;
