@@ -1,0 +1,150 @@
+---
+/**
+ * AstropressLiveChatEmbed.astro
+ *
+ * Embeds a Crisp, Tawk.to, or Chatwoot live-chat widget. Astropress does
+ * not render this on its own; this component only emits markup from the
+ * props you pass it — the same host-wires-it shape as
+ * <AstropressLocalBusinessJsonLd> / <AstropressEventsEmbed> /
+ * <AstropressReviewsEmbed>.
+ *
+ * Chat responses and conversation history always happen in the provider's
+ * own dashboard/app — Astropress has no visibility into or control over
+ * conversations.
+ *
+ * CSP: if you enforce a Content-Security-Policy (e.g. via
+ * createAstropressSecurityMiddleware()), you must allow each provider's
+ * origins yourself — Astropress's CSP builder does not auto-register a
+ * widget's origins. Requirements confirmed against live docs:
+ *   - Crisp:     script-src client.crisp.chat
+ *   - Tawk.to:   script-src embed.tawk.to (and tawk.to for the widget's
+ *                own asset/connect calls)
+ *   - Chatwoot:  script-src <your baseUrl> (self-hosted origin varies)
+ *   - Intercom (not a provider option here, listed on the stub page for
+ *     awareness only): has a much heavier footprint — script-src
+ *     widget.intercom.io + js.intercomcdn.com, connect-src *.intercom.io
+ *     AND wss://*.intercom.io (easy to miss — omitting it makes the
+ *     widget load but never connect), img-src static.intercomassets.com +
+ *     *.intercomcdn.com, font-src js.intercomcdn.com, frame-src
+ *     intercom-sheets.com.
+ *
+ * Usage:
+ *   <AstropressLiveChatEmbed provider="crisp" websiteId="..." />
+ *   <AstropressLiveChatEmbed provider="tawkto" propertyId="..." widgetId="..." />
+ *   <AstropressLiveChatEmbed provider="chatwoot" websiteToken="..." baseUrl="https://app.chatwoot.com" />
+ */
+
+interface Props {
+	provider: "crisp" | "tawkto" | "chatwoot" | "custom";
+	/** Crisp website ID (public, not a secret; provider: "crisp" only). */
+	websiteId?: string;
+	/** Tawk.to property ID (public, not a secret; provider: "tawkto" only). */
+	propertyId?: string;
+	/** Tawk.to widget ID (public, not a secret; provider: "tawkto" only). */
+	widgetId?: string;
+	/** Chatwoot website token (public, not a secret; provider: "chatwoot" only). */
+	websiteToken?: string;
+	/** Chatwoot instance base URL, e.g. "https://app.chatwoot.com" or a self-hosted origin (provider: "chatwoot" only). */
+	baseUrl?: string;
+	/** For provider: "custom" — the full embed markup to render as-is (host is responsible for sanitization). */
+	snippetSrc?: string;
+}
+
+const { provider, websiteId, propertyId, widgetId, websiteToken, baseUrl, snippetSrc } =
+	Astro.props;
+
+/** Loose format guard: non-empty, no markup-breaking characters. Astro also HTML-escapes attribute values automatically — this catches honest mistakes, not a hostile input (the prop comes from the site operator's own config, not a visitor). */
+function looksLikeSafeToken(value: string | undefined): value is string {
+	return typeof value === "string" && value.trim().length > 0 && !/[<>"']/.test(value);
+}
+
+const validWebsiteId =
+	provider === "crisp" && looksLikeSafeToken(websiteId) ? websiteId : undefined;
+
+const validPropertyId =
+	provider === "tawkto" && looksLikeSafeToken(propertyId) ? propertyId : undefined;
+const validWidgetId = provider === "tawkto" && looksLikeSafeToken(widgetId) ? widgetId : undefined;
+
+const validWebsiteToken =
+	provider === "chatwoot" && looksLikeSafeToken(websiteToken) ? websiteToken : undefined;
+let validBaseUrl: string | undefined;
+if (provider === "chatwoot" && typeof baseUrl === "string") {
+	try {
+		const parsed = new URL(baseUrl);
+		if (parsed.protocol === "https:") validBaseUrl = baseUrl;
+	} catch {
+		validBaseUrl = undefined;
+	}
+}
+---
+
+{provider === "crisp" && validWebsiteId && (
+	<Fragment>
+		{/* The website ID flows through a data attribute (native Astro escaping), read by the fully static bootstrap below — same audit-compliant pattern as AstropressEventsEmbed's Cal.com case. */}
+		<div class="astropress-livechat-crisp" data-crisp-website-id={validWebsiteId} style="display:none" />
+		<script>
+			(function () {
+				const el = document.querySelector(".astropress-livechat-crisp");
+				if (!el) return;
+				(window as unknown as { CRISP_WEBSITE_ID?: string }).CRISP_WEBSITE_ID = (
+					el as HTMLElement
+				).dataset.crispWebsiteId;
+				const s = document.createElement("script");
+				s.src = "https://client.crisp.chat/l.js";
+				s.async = true;
+				document.getElementsByTagName("head")[0]?.appendChild(s);
+			})();
+		</script>
+	</Fragment>
+)}
+
+{provider === "tawkto" && validPropertyId && validWidgetId && (
+	// Both IDs are plain script-tag attributes (URL path segments) — no
+	// script body needed at all, even simpler than the Crisp case.
+	<script async src={`https://embed.tawk.to/${validPropertyId}/${validWidgetId}`} />
+)}
+
+{provider === "chatwoot" && validWebsiteToken && validBaseUrl && (
+	<Fragment>
+		{/* Same data-attribute pattern as Crisp above — websiteToken/baseUrl flow through attributes, read by a fully static bootstrap script. */}
+		<div
+			class="astropress-livechat-chatwoot"
+			data-website-token={validWebsiteToken}
+			data-base-url={validBaseUrl}
+			style="display:none"
+		/>
+		<script>
+			(function () {
+				const el = document.querySelector(".astropress-livechat-chatwoot") as HTMLElement | null;
+				if (!el) return;
+				const baseUrl = el.dataset.baseUrl;
+				const websiteToken = el.dataset.websiteToken;
+				const script = document.createElement("script");
+				script.src = `${baseUrl}/packs/js/sdk.js`;
+				script.async = true;
+				script.defer = true;
+				script.onload = () => {
+					(
+						window as unknown as {
+							chatwootSDK?: { run: (opts: { websiteToken?: string; baseUrl?: string }) => void };
+						}
+					).chatwootSDK?.run({ websiteToken, baseUrl });
+				};
+				document.head.appendChild(script);
+			})();
+		</script>
+	</Fragment>
+)}
+
+{/*
+	"custom" is a documented host-escape-hatch (mirrors analytics.ts's,
+	heatmaps.ts's, AstropressEventsEmbed's, AstropressReviewsEmbed's, and
+	AstropressReferralsEmbed's "custom" case) — the host who sets
+	provider:"custom" explicitly supplies and is responsible for their own
+	embed markup; Astropress cannot sanitize a snippet for a provider it
+	doesn't know about.
+*/}
+{provider === "custom" && snippetSrc && (
+	// audit-ok: host-supplied "custom" embed markup — see comment above
+	<Fragment set:html={snippetSrc} />
+)}

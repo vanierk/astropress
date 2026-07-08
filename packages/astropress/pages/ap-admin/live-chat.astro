@@ -1,0 +1,91 @@
+---
+import AdminLayout from "@astropress-diy/astropress/components/AdminLayout.astro";
+import RequiresIntegration from "@astropress-diy/astropress/components/RequiresIntegration.astro";
+import {
+	adminStubs,
+	getPageT,
+	peekCmsConfig,
+	requiresAccess,
+	resolveAdminLocale,
+} from "astropress";
+
+// Promoted from the [stub].astro coming-soon route: CmsConfig.liveChat and
+// <AstropressLiveChatEmbed> now exist, following the exact config+emit
+// shape resolveAnalyticsSnippet()/resolveHeatmapsSnippet()/
+// AstropressEventsEmbed/AstropressReviewsEmbed already established — the
+// host renders the embed component in their own site layout (same
+// host-wires-it shape as AstropressLocalBusinessJsonLd). Gated on
+// services:manage (unchanged) — the same legitimate shared action
+// monitoring/heatmaps/referrals use.
+//
+// Chat responses and conversation history always happen in the provider's
+// own dashboard/app; this page never implies Astropress manages or
+// displays conversations.
+const guard = await requiresAccess(Astro, "services:manage");
+if (guard) return guard;
+const adminUser = Astro.locals.adminUser;
+if (!adminUser) return Astro.redirect("/ap-admin/login");
+const locale = resolveAdminLocale(Astro);
+const t = getPageT(locale);
+const stub = adminStubs.liveChat;
+const config = peekCmsConfig()?.liveChat;
+
+const providerLabel = config
+	? (config.label ?? t(`liveChat.provider.${config.provider}`, config.provider))
+	: undefined;
+const embedPropsSnippet = config
+	? config.provider === "crisp"
+		? `<AstropressLiveChatEmbed provider="crisp" websiteId="${config.websiteId ?? "..."}" />`
+		: config.provider === "tawkto"
+			? `<AstropressLiveChatEmbed provider="tawkto" propertyId="${config.propertyId ?? "..."}" widgetId="${config.widgetId ?? "..."}" />`
+			: config.provider === "chatwoot"
+				? `<AstropressLiveChatEmbed provider="chatwoot" websiteToken="${config.websiteToken ?? "..."}" baseUrl="${config.baseUrl ?? "https://app.chatwoot.com"}" />`
+				: `<AstropressLiveChatEmbed provider="custom" snippetSrc="..." />`
+	: undefined;
+---
+
+<AdminLayout
+	title={t("stub.liveChat.capability", stub.capability)}
+	heading={t("stub.liveChat.capability", stub.capability)}
+	currentPath="/ap-admin/live-chat"
+	description={t("stub.liveChat.description", stub.description)}
+	userName={adminUser.name}
+>
+	<p class="field-note">{t("liveChat.dashboardNote")}</p>
+	<p class="field-note">{t("liveChat.cspNote")}</p>
+
+	{config ? (
+		<section class="panel">
+			<p class="admin-kicker">{t("integrationConnect.statusActive")}</p>
+			<h2>{providerLabel}</h2>
+			<p>{t("liveChat.activeStatusLine")}</p>
+			<pre class="admin-code-block"><code>{embedPropsSnippet}</code></pre>
+		</section>
+	) : (
+		<RequiresIntegration
+			capability={stub.capability}
+			description={stub.description}
+			configHint={stub.configHint}
+			providers={[...stub.providers]}
+			docsHref={(stub as { docsHref?: string }).docsHref}
+			locale={locale}
+			stubKey="liveChat"
+		/>
+	)}
+</AdminLayout>
+
+<style>
+	.field-note {
+		color: var(--muted);
+		margin: 0 0 1rem;
+	}
+	.admin-code-block {
+		background: var(--surface-muted, #f3f4f6);
+		border: 1px solid var(--border, #e5e7eb);
+		border-radius: 8px;
+		padding: 1rem;
+		overflow-x: auto;
+		font-size: 0.85rem;
+		white-space: pre-wrap;
+	}
+</style>

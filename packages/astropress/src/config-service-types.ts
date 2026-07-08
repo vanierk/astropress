@@ -88,6 +88,25 @@ export interface SocialSyndicationConfig {
 	mastodon?: { instanceUrl: string };
 }
 
+export interface LiveChatConfig {
+	/** Live-chat widget provider. */
+	provider: "crisp" | "tawkto" | "chatwoot" | "custom";
+	/** Crisp website ID (public, not a secret; provider: "crisp" only). */
+	websiteId?: string;
+	/** Tawk.to property ID (public, not a secret; provider: "tawkto" only). */
+	propertyId?: string;
+	/** Tawk.to widget ID (public, not a secret; provider: "tawkto" only). */
+	widgetId?: string;
+	/** Chatwoot website token (public, not a secret; provider: "chatwoot" only). */
+	websiteToken?: string;
+	/** Chatwoot instance base URL, e.g. "https://app.chatwoot.com" or a self-hosted origin (provider: "chatwoot" only). */
+	baseUrl?: string;
+	/** For "custom": the full embed markup to render as-is (host is responsible for sanitization). */
+	snippetSrc?: string;
+	/** Override the display label shown on the live chat status page. */
+	label?: string;
+}
+
 export interface GiveLivelyConfig {
 	/** GiveLively organization slug (GIVELIVELY_ORG_SLUG). */
 	orgSlug: string;

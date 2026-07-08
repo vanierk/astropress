@@ -10897,7 +10897,7 @@ export const pageLabels = {
 	},
 	"stub.liveChat.capability": { en: "Live Chat" },
 	"stub.liveChat.description": {
-		en: "Real-time customer chat embedded on the site. Configure a provider to render the widget.",
+		en: "Embed a live-chat widget on the site (Crisp, Tawk.to, or Chatwoot). Chat responses and conversation history happen entirely in the provider's own dashboard — Astropress never sees or manages conversations.",
 	},
 	"stub.imageCdn.capability": { en: "Image CDN" },
 	"stub.imageCdn.description": {
@@ -11206,6 +11206,20 @@ export const pageLabels = {
 	"socialSyndication.connectButton": { en: "Connect" },
 	"socialSyndication.connectedNoticeBluesky": { en: "Bluesky connected." },
 	"socialSyndication.connectedNoticeMastodon": { en: "Mastodon connected." },
+
+	// ── Live Chat (promoted: config+embed widget, no in-admin chat management) ──
+	"liveChat.provider.crisp": { en: "Crisp" },
+	"liveChat.provider.tawkto": { en: "Tawk.to" },
+	"liveChat.provider.chatwoot": { en: "Chatwoot" },
+	"liveChat.dashboardNote": {
+		en: "This only embeds the chat widget — responding to conversations and viewing chat history always happens in the provider's own dashboard, never in Astropress.",
+	},
+	"liveChat.cspNote": {
+		en: "If you enforce a Content-Security-Policy (for example via Astropress's security middleware), you must allow the provider's script origins yourself — this is currently the host's responsibility.",
+	},
+	"liveChat.activeStatusLine": {
+		en: "Place this component in your site layout to render the chat widget:",
+	},
 } as const satisfies Record<string, LocaleMap>;
 
 /**

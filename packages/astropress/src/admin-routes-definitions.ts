@@ -365,7 +365,7 @@ export const adminRouteDefinitions = [
 	{ pattern: "/ap-admin/email", entrypoint: "email.astro", kind: "page" },
 	{
 		pattern: "/ap-admin/live-chat",
-		entrypoint: "[stub].astro",
+		entrypoint: "live-chat.astro",
 		kind: "page",
 	},
 	{

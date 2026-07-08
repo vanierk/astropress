@@ -288,14 +288,22 @@ export const adminStubs = {
 	liveChat: {
 		capability: "Live Chat",
 		description:
-			"Real-time customer chat embedded on the site. Configure a provider to render the widget.",
-		configHint:
-			'registerCms({\n  liveChat: { provider: "crisp", websiteId: process.env.CRISP_WEBSITE_ID },\n});',
+			"Embed a live-chat widget on the site (Crisp, Tawk.to, or Chatwoot). Chat responses and conversation history happen entirely in the provider's own dashboard — Astropress never sees or manages conversations.",
+		configHint: 'registerCms({\n  liveChat: { provider: "crisp", websiteId: "..." },\n});',
 		providers: [
 			{ name: "Crisp", href: "https://crisp.chat", tag: "Recommended" },
+			{ name: "Tawk.to", href: "https://tawk.to", tag: "Recommended" },
 			{ name: "Chatwoot", href: "https://chatwoot.com", tag: "OSS" },
-			{ name: "Intercom", href: "https://intercom.com", tag: "SaaS" },
-			{ name: "HelpScout", href: "https://helpscout.com", tag: "SaaS" },
+			{
+				name: "Intercom (not available — much heavier CSP footprint: needs connect-src wss://, img-src, font-src, and frame-src beyond a simple script-src)",
+				href: "https://intercom.com",
+				tag: "SaaS",
+			},
+			{
+				name: "HelpScout (embed shape not yet confirmed)",
+				href: "https://helpscout.com",
+				tag: "SaaS",
+			},
 		],
 	},
 	imageCdn: {
@@ -538,13 +546,13 @@ export const ADMIN_STUB_PAGES = {
 	// load-bearing (reset-password.ts/user-invite.ts send live mail through
 	// them); "coming-soon" was wrong about the underlying capability, not
 	// just the copy. adminStubs.email stays as an orphaned catalog entry.
-	"live-chat": {
-		stubKey: "liveChat",
-		navKey: "liveChat",
-		action: "services:manage",
-		variant: "coming-soon",
-		roadmapHref: ROADMAP_ISSUE,
-	},
+	// live-chat was promoted to a real, env-gated page (live-chat.astro) —
+	// CmsConfig.liveChat + <AstropressLiveChatEmbed> now exist, following
+	// the exact config+emit pattern established by
+	// resolveAnalyticsSnippet()/resolveHeatmapsSnippet()/
+	// AstropressEventsEmbed/AstropressReviewsEmbed; "coming-soon" was wrong
+	// about the underlying capability, not just the copy.
+	// adminStubs.liveChat stays as an orphaned catalog entry per precedent.
 	"image-cdn": {
 		stubKey: "imageCdn",
 		navKey: "imageCdn",

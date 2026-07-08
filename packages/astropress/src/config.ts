@@ -18,6 +18,7 @@ import type {
 	DonationsConfig,
 	EventsConfig,
 	HeatmapsConfig,
+	LiveChatConfig,
 	LocalBusinessConfig,
 	ReferralsConfig,
 	ReviewsConfig,
@@ -42,6 +43,7 @@ export type {
 	GiveLivelyConfig,
 	HeatmapsConfig,
 	LiberapayConfig,
+	LiveChatConfig,
 	LocalBusinessConfig,
 	PledgeCryptoConfig,
 	ReferralsConfig,
@@ -199,6 +201,18 @@ export interface CmsConfig {
 	 * why this isn't wired through CmsConfig.plugins/registerCms()).
 	 */
 	socialSyndication?: SocialSyndicationConfig;
+
+	/**
+	 * Optional live-chat widget declaration (Crisp, Tawk.to, Chatwoot, or a
+	 * custom embed). All identifiers here are public, not secrets. This is
+	 * a data declaration only — Astropress does not auto-emit it; render
+	 * `<AstropressLiveChatEmbed>` in your own site layout (see the
+	 * component's doc comment, which also states each provider's CSP
+	 * requirement). Chat responses and history live entirely in the
+	 * provider's own dashboard — Astropress has no visibility into
+	 * conversations.
+	 */
+	liveChat?: LiveChatConfig;
 
 	/**
 	 * Optional donation / fundraising integrations.
