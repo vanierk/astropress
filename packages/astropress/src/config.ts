@@ -19,6 +19,7 @@ import type {
 	EventsConfig,
 	HeatmapsConfig,
 	LocalBusinessConfig,
+	ReferralsConfig,
 	ReviewsConfig,
 	TestimonialsConfig,
 } from "./config-service-types.js";
@@ -42,6 +43,7 @@ export type {
 	LiberapayConfig,
 	LocalBusinessConfig,
 	PledgeCryptoConfig,
+	ReferralsConfig,
 	ReviewsConfig,
 	TestimonialsConfig,
 } from "./config-service-types.js";
@@ -167,6 +169,22 @@ export interface CmsConfig {
 	 * the provider's own dashboard — Astropress only displays the widget.
 	 */
 	reviews?: ReviewsConfig;
+
+	/**
+	 * Optional referral-link arrival tracking (Rewardful, FirstPromoter, or a
+	 * custom embed). This is a data declaration only — Astropress does not
+	 * auto-emit it; render `<AstropressReferralsEmbed>` in your own site
+	 * layout (see the component's doc comment).
+	 *
+	 * This tracks referral-link ARRIVAL only (a visitor landed via a
+	 * referral link). It does NOT track conversions or payouts — turning an
+	 * arrival into a payout requires your own checkout code to separately
+	 * report the conversion to the provider's server-side API (e.g.
+	 * attaching the referral ID to a Stripe customer, or calling a
+	 * provider's conversion endpoint). Astropress does not do this and has
+	 * no visibility into your checkout flow.
+	 */
+	referrals?: ReferralsConfig;
 
 	/**
 	 * Optional donation / fundraising integrations.

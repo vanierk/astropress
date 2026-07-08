@@ -93,14 +93,22 @@ export const adminStubs = {
 	referrals: {
 		capability: "Referrals",
 		description:
-			"Run a refer-a-friend or affiliate program. Track referrers, payouts, and attribution.",
+			"Embed a referral-link arrival tracker (Rewardful or FirstPromoter). This only attributes that a visitor arrived via a referral link — converting that into a payout requires your own checkout code to report the conversion to the provider's API, which Astropress does not do.",
 		configHint:
-			'registerCms({\n  referrals: { provider: "rewardful", apiKey: process.env.REWARDFUL_API_KEY },\n});',
+			'registerCms({\n  referrals: { provider: "rewardful", rewardfulPublicKey: "..." },\n});',
 		providers: [
-			{ name: "Rewardful", href: "https://rewardful.com", tag: "SaaS" },
+			{ name: "Rewardful", href: "https://rewardful.com", tag: "Recommended" },
 			{ name: "FirstPromoter", href: "https://firstpromoter.com", tag: "SaaS" },
-			{ name: "GrowSurf", href: "https://growsurf.com", tag: "SaaS" },
-			{ name: "ReferralCandy", href: "https://referralcandy.com", tag: "SaaS" },
+			{
+				name: "ReferralCandy (tracking needs a computed secret signature, not a safe client-side embed)",
+				href: "https://referralcandy.com",
+				tag: "SaaS",
+			},
+			{
+				name: "GrowSurf (embed shape not yet confirmed)",
+				href: "https://growsurf.com",
+				tag: "SaaS",
+			},
 		],
 	},
 	memberships: {
@@ -465,13 +473,16 @@ export const ADMIN_STUB_PAGES = {
 		variant: "coming-soon",
 		roadmapHref: ROADMAP_ISSUE,
 	},
-	referrals: {
-		stubKey: "referrals",
-		navKey: "referrals",
-		action: "services:manage",
-		variant: "coming-soon",
-		roadmapHref: ROADMAP_ISSUE,
-	},
+	// referrals was promoted to a real, env-gated page (referrals.astro) —
+	// CmsConfig.referrals + <AstropressReferralsEmbed> now exist, following
+	// the exact config+emit pattern established by
+	// resolveAnalyticsSnippet()/resolveHeatmapsSnippet()/
+	// AstropressEventsEmbed/AstropressReviewsEmbed; "coming-soon" was wrong
+	// about the underlying capability, not just the copy. Still gated on
+	// services:manage — that was already the correct, legitimate shared
+	// action here (unlike reviews' testimonials:manage mis-share), so no
+	// new action was added. adminStubs.referrals stays as an orphaned
+	// catalog entry per precedent.
 	// events was promoted to a real, env-gated page (events.astro) —
 	// CmsConfig.events + <AstropressEventsEmbed> now exist, following the
 	// exact config+emit pattern resolveAnalyticsSnippet()/

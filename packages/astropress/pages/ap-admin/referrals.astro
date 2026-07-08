@@ -1,0 +1,102 @@
+---
+import AdminLayout from "@astropress-diy/astropress/components/AdminLayout.astro";
+import RequiresIntegration from "@astropress-diy/astropress/components/RequiresIntegration.astro";
+import {
+	adminStubs,
+	getPageT,
+	peekCmsConfig,
+	requiresAccess,
+	resolveAdminLocale,
+} from "astropress";
+
+// Promoted from the [stub].astro coming-soon route: CmsConfig.referrals and
+// <AstropressReferralsEmbed> now exist, following the exact config+emit
+// shape resolveAnalyticsSnippet()/resolveHeatmapsSnippet()/
+// AstropressEventsEmbed/AstropressReviewsEmbed already established — the
+// host renders the embed component in their own site layout (same
+// host-wires-it shape as AstropressLocalBusinessJsonLd).
+//
+// Gated on services:manage (unchanged) — this is the same legitimate
+// shared action monitoring.astro/heatmaps.astro/analytics.astro use, not a
+// mis-share like reviews had; there is no dedicated referrals:manage
+// action and none is needed.
+//
+// CRITICAL BOUNDARY: this page only ever configures referral-link ARRIVAL
+// tracking. Converting an arrival into a payout requires the host's own
+// checkout code to separately report the conversion to the provider's
+// server-side API — Astropress does not do this and cannot, since it has
+// no visibility into the host's checkout flow. This is stated prominently
+// on the page itself, not buried as a footnote.
+const guard = await requiresAccess(Astro, "services:manage");
+if (guard) return guard;
+const adminUser = Astro.locals.adminUser;
+if (!adminUser) return Astro.redirect("/ap-admin/login");
+const locale = resolveAdminLocale(Astro);
+const t = getPageT(locale);
+const stub = adminStubs.referrals;
+const config = peekCmsConfig()?.referrals;
+
+const providerLabel = config
+	? (config.label ?? t(`referrals.provider.${config.provider}`, config.provider))
+	: undefined;
+const embedPropsSnippet = config
+	? config.provider === "rewardful"
+		? `<AstropressReferralsEmbed provider="rewardful" rewardfulPublicKey="${config.rewardfulPublicKey ?? "..."}" />`
+		: config.provider === "firstpromoter"
+			? `<AstropressReferralsEmbed provider="firstpromoter" firstPromoterPublicId="${config.firstPromoterPublicId ?? "..."}" />`
+			: `<AstropressReferralsEmbed provider="custom" snippetSrc="..." />`
+	: undefined;
+---
+
+<AdminLayout
+	title={t("stub.referrals.capability", stub.capability)}
+	heading={t("stub.referrals.capability", stub.capability)}
+	currentPath="/ap-admin/referrals"
+	description={t("stub.referrals.description", stub.description)}
+	userName={adminUser.name}
+>
+	<section class="panel boundary-callout">
+		<p class="admin-kicker">{t("referrals.boundaryKicker")}</p>
+		<h2>{t("referrals.boundaryHeading")}</h2>
+		<p>{t("referrals.boundaryBody")}</p>
+	</section>
+
+	{config ? (
+		<section class="panel">
+			<p class="admin-kicker">{t("integrationConnect.statusActive")}</p>
+			<h2>{providerLabel}</h2>
+			<p>{t("referrals.activeStatusLine")}</p>
+			<pre class="admin-code-block"><code>{embedPropsSnippet}</code></pre>
+		</section>
+	) : (
+		<RequiresIntegration
+			capability={stub.capability}
+			description={stub.description}
+			configHint={stub.configHint}
+			providers={[...stub.providers]}
+			docsHref={(stub as { docsHref?: string }).docsHref}
+			locale={locale}
+			stubKey="referrals"
+		/>
+	)}
+</AdminLayout>
+
+<style>
+	.boundary-callout {
+		border: 2px solid var(--warning-border, #d97706);
+		background: var(--warning-surface, #fffbeb);
+	}
+	.boundary-callout .admin-kicker {
+		color: var(--warning-text, #92400e);
+		font-weight: 700;
+	}
+	.admin-code-block {
+		background: var(--surface-muted, #f3f4f6);
+		border: 1px solid var(--border, #e5e7eb);
+		border-radius: 8px;
+		padding: 1rem;
+		overflow-x: auto;
+		font-size: 0.85rem;
+		white-space: pre-wrap;
+	}
+</style>

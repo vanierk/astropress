@@ -58,6 +58,19 @@ export interface ReviewsConfig {
 	label?: string;
 }
 
+export interface ReferralsConfig {
+	/** Referral-tracking provider. */
+	provider: "rewardful" | "firstpromoter" | "custom";
+	/** Rewardful's public tracking key (embedded client-side by design — not a secret; provider: "rewardful" only). */
+	rewardfulPublicKey?: string;
+	/** FirstPromoter's public campaign ID (embedded client-side by design — not a secret; provider: "firstpromoter" only). */
+	firstPromoterPublicId?: string;
+	/** For "custom": the full embed markup to render as-is (host is responsible for sanitization). */
+	snippetSrc?: string;
+	/** Override the display label shown on the referrals status page. */
+	label?: string;
+}
+
 export interface GiveLivelyConfig {
 	/** GiveLively organization slug (GIVELIVELY_ORG_SLUG). */
 	orgSlug: string;

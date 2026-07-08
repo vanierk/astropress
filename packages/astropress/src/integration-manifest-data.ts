@@ -178,6 +178,14 @@ export const INTEGRATIONS: readonly IntegrationEntry[] = [
 		requiredAction: "reviews:manage",
 		adminOnly: true,
 	},
+	{
+		href: "/ap-admin/referrals",
+		navKey: "referrals",
+		status: "env-gated",
+		configField: "referrals",
+		requiredAction: "services:manage",
+		adminOnly: true,
+	},
 
 	// Coming-soon — no implementation. Sidebar must visually demote;
 	// page must use variant="coming-soon" (no env-var hints).

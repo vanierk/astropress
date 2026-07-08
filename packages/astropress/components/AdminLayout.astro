@@ -173,7 +173,6 @@ const navItems: NavItem[] = [
 	mappedLeaf("/ap-admin/newsletter", adminUi.navigation.newsletter),
 	mappedLeaf("/ap-admin/comments", adminUi.navigation.comments),
 	mappedLeaf("/ap-admin/testimonials", adminUi.navigation.testimonials),
-	mappedLeaf("/ap-admin/referrals", adminUi.navigation.referrals),
 	mappedLeaf("/ap-admin/memberships", adminUi.navigation.memberships),
 	mappedLeaf("/ap-admin/fundraising", adminUi.navigation.fundraising),
 	mappedLeaf("/ap-admin/community", adminUi.navigation.community),
@@ -185,6 +184,8 @@ const navItems: NavItem[] = [
 	// integrationLeavesForGroup below, not this static array.
 	// No "Reviews" leaf either, same reason — gated on the new
 	// reviews:manage action, not testimonials:manage.
+	// No "Referrals" leaf either, same reason — still gated on
+	// services:manage (unchanged), just moved to INTEGRATIONS.
 	mappedLeaf("/ap-admin/social-syndication", adminUi.navigation.socialSyndication),
 
 	groupSep(adminUi.navigation.groupDiscoverability),

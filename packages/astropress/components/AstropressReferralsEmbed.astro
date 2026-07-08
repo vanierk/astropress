@@ -1,0 +1,106 @@
+---
+/**
+ * AstropressReferralsEmbed.astro
+ *
+ * Embeds a Rewardful or FirstPromoter referral-tracking snippet so a
+ * visitor's arrival via a referral link gets attributed. Astropress does
+ * not render this on its own; this component only emits markup from the
+ * props you pass it — the same host-wires-it shape as
+ * <AstropressLocalBusinessJsonLd> / <AstropressEventsEmbed> /
+ * <AstropressReviewsEmbed>.
+ *
+ * IMPORTANT: this tracks referral-link ARRIVAL only. It does NOT report
+ * conversions or payouts — turning an arrival into a payout requires your
+ * own checkout code to separately call the provider's server-side API
+ * (e.g. attaching the referral ID to a Stripe customer, or calling a
+ * conversion endpoint). Astropress does not do this and has no visibility
+ * into your checkout flow.
+ *
+ * Usage:
+ *   <AstropressReferralsEmbed provider="rewardful" rewardfulPublicKey="..." />
+ *   <AstropressReferralsEmbed provider="firstpromoter" firstPromoterPublicId="..." />
+ */
+
+interface Props {
+	provider: "rewardful" | "firstpromoter" | "custom";
+	/** Rewardful's public tracking key — embedded client-side by design, not a secret (provider: "rewardful" only). */
+	rewardfulPublicKey?: string;
+	/** FirstPromoter's public campaign ID — embedded client-side by design, not a secret (provider: "firstpromoter" only). */
+	firstPromoterPublicId?: string;
+	/** For provider: "custom" — the full embed markup to render as-is (host is responsible for sanitization). */
+	snippetSrc?: string;
+}
+
+const { provider, rewardfulPublicKey, firstPromoterPublicId, snippetSrc } = Astro.props;
+
+/** Loose format guard: non-empty, no markup-breaking characters. Astro also HTML-escapes attribute values automatically — this catches honest mistakes, not a hostile input (the prop comes from the site operator's own config, not a visitor). */
+function looksLikeSafeToken(value: string | undefined): value is string {
+	return typeof value === "string" && value.trim().length > 0 && !/[<>"']/.test(value);
+}
+
+const validRewardfulKey =
+	provider === "rewardful" && looksLikeSafeToken(rewardfulPublicKey)
+		? rewardfulPublicKey
+		: undefined;
+const validFirstPromoterId =
+	provider === "firstpromoter" && looksLikeSafeToken(firstPromoterPublicId)
+		? firstPromoterPublicId
+		: undefined;
+---
+
+{provider === "rewardful" && validRewardfulKey && (
+	<Fragment>
+		{/* Static bootstrap, no site-specific value — safe as Astro's default (non-inline) script. */}
+		<script>
+			(function (w, r) {
+				w._rwq = r;
+				w[r] =
+					w[r] ||
+					function () {
+						(w[r].q = w[r].q || []).push(arguments);
+					};
+			})(window, "rewardful");
+		</script>
+		{/* The public key is an HTML attribute on an external (src-only) script tag — no dynamic script body needed, so no is:inline required. */}
+		<script async src="https://r.wdfl.co/rw.js" data-rewardful={validRewardfulKey} />
+	</Fragment>
+)}
+
+{provider === "firstpromoter" && validFirstPromoterId && (
+	<Fragment>
+		{/* The public campaign ID flows through a data attribute (native Astro escaping), read by the fully static bootstrap below — same audit-compliant pattern as AstropressEventsEmbed's Cal.com case. */}
+		<div class="astropress-referrals-fpr" data-fpr-cid={validFirstPromoterId} style="display:none" />
+		<script src="https://cdn.firstpromoter.com/fpr.js" async />
+		<script>
+			// @ts-nocheck -- FirstPromoter's own bootstrap loader, embedded
+			// verbatim (https://docs.firstpromoter.com/script-docs/fpr-js-docs).
+			// Third-party vendor code with its own untyped `window.fpr` global;
+			// only the querySelector lookup below is Astropress's own code.
+			(function (w) {
+				w.fpr =
+					w.fpr ||
+					function () {
+						w.fpr.q = w.fpr.q || [];
+						w.fpr.q[arguments[0] === "set" ? "unshift" : "push"](arguments);
+					};
+			})(window);
+			const el = document.querySelector(".astropress-referrals-fpr");
+			if (el) {
+				fpr("init", { cid: el.dataset.fprCid });
+				fpr("click");
+			}
+		</script>
+	</Fragment>
+)}
+
+{/*
+	"custom" is a documented host-escape-hatch (mirrors analytics.ts's,
+	heatmaps.ts's, AstropressEventsEmbed's, and AstropressReviewsEmbed's
+	"custom" case) — the host who sets provider:"custom" explicitly
+	supplies and is responsible for their own embed markup; Astropress
+	cannot sanitize a snippet for a provider it doesn't know about.
+*/}
+{provider === "custom" && snippetSrc && (
+	// audit-ok: host-supplied "custom" embed markup — see comment above
+	<Fragment set:html={snippetSrc} />
+)}

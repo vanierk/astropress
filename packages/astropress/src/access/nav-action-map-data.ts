@@ -41,7 +41,6 @@ export const NAV_ACTION_MAP: readonly NavActionEntry[] = [
 	{ href: "/ap-admin/newsletter", requiredAction: "newsletter:send", adminOnly: true },
 	{ href: "/ap-admin/comments", requiredAction: "comments:moderate" },
 	{ href: "/ap-admin/testimonials", requiredAction: "testimonials:manage", adminOnly: true },
-	{ href: "/ap-admin/referrals", requiredAction: "services:manage", adminOnly: true },
 	{ href: "/ap-admin/memberships", requiredAction: "services:manage", adminOnly: true },
 	{ href: "/ap-admin/fundraising", requiredAction: "fundraising:manage", adminOnly: true },
 	{ href: "/ap-admin/community", requiredAction: "services:manage", adminOnly: true },
@@ -54,6 +53,9 @@ export const NAV_ACTION_MAP: readonly NavActionEntry[] = [
 	// No entry for /ap-admin/reviews either, same reason — its leaf now
 	// comes from an env-gated INTEGRATIONS entry (gated on the new
 	// reviews:manage action, no longer testimonials:manage).
+	// No entry for /ap-admin/referrals either, same reason — its leaf now
+	// comes from an env-gated INTEGRATIONS entry (still gated on
+	// services:manage, unchanged).
 	{ href: "/ap-admin/social-syndication", requiredAction: "services:manage", adminOnly: true },
 
 	// Discoverability

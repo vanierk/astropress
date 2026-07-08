@@ -10865,7 +10865,7 @@ export const pageLabels = {
 	},
 	"stub.referrals.capability": { en: "Referrals" },
 	"stub.referrals.description": {
-		en: "Run a refer-a-friend or affiliate program. Track referrers, payouts, and attribution.",
+		en: "Embed a referral-link arrival tracker (Rewardful or FirstPromoter). This only attributes that a visitor arrived via a referral link — converting that into a payout requires your own checkout code to report the conversion to the provider's API, which Astropress does not do.",
 	},
 	"stub.events.capability": { en: "Events" },
 	"stub.events.description": {
@@ -11176,6 +11176,18 @@ export const pageLabels = {
 	},
 	"reviews.responsesNote": {
 		en: "This only displays a review widget — responding to reviews always happens in the provider's own dashboard, never in Astropress.",
+	},
+
+	// ── Referrals (promoted: config+embed, arrival-attribution only) ──
+	"referrals.provider.rewardful": { en: "Rewardful" },
+	"referrals.provider.firstpromoter": { en: "FirstPromoter" },
+	"referrals.boundaryKicker": { en: "Important boundary" },
+	"referrals.boundaryHeading": { en: "This tracks referral-link arrival only" },
+	"referrals.boundaryBody": {
+		en: "This embed only attributes that a visitor arrived via a referral link. It does not track conversions or payouts. Turning an arrival into a payout requires your own checkout code to separately report the conversion to the provider's server-side API (for example, attaching the referral ID to a Stripe customer, or calling the provider's conversion endpoint). Astropress does not do this and has no visibility into your checkout flow.",
+	},
+	"referrals.activeStatusLine": {
+		en: "Place this component in your site layout to track referral-link arrivals:",
 	},
 } as const satisfies Record<string, LocaleMap>;
 
