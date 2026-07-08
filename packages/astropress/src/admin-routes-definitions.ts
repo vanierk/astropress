@@ -217,6 +217,11 @@ export const adminRouteDefinitions = [
 		kind: "action",
 	},
 	{
+		pattern: "/ap-admin/actions/social-syndication-connect",
+		entrypoint: "actions/social-syndication-connect.ts",
+		kind: "action",
+	},
+	{
 		pattern: "/ap-admin/actions/sitemap-submit",
 		entrypoint: "actions/sitemap-submit.ts",
 		kind: "action",
@@ -324,7 +329,7 @@ export const adminRouteDefinitions = [
 	{ pattern: "/ap-admin/shop", entrypoint: "shop.astro", kind: "page" },
 	{
 		pattern: "/ap-admin/social-syndication",
-		entrypoint: "[stub].astro",
+		entrypoint: "social-syndication.astro",
 		kind: "page",
 	},
 	{

@@ -56,7 +56,9 @@ export const NAV_ACTION_MAP: readonly NavActionEntry[] = [
 	// No entry for /ap-admin/referrals either, same reason — its leaf now
 	// comes from an env-gated INTEGRATIONS entry (still gated on
 	// services:manage, unchanged).
-	{ href: "/ap-admin/social-syndication", requiredAction: "services:manage", adminOnly: true },
+	// No entry for /ap-admin/social-syndication either, same reason — its
+	// leaf now comes from an env-gated INTEGRATIONS entry (still gated on
+	// services:manage, unchanged).
 
 	// Discoverability
 	{ href: "/ap-admin/seo", requiredAction: "seo:edit", adminOnly: true },

@@ -71,6 +71,23 @@ export interface ReferralsConfig {
 	label?: string;
 }
 
+export interface SocialSyndicationConfig {
+	/**
+	 * Bluesky auto-post declaration. Only the non-secret handle lives here —
+	 * the app password is submitted separately via the admin connect form
+	 * and stored as a sealed secret (see social-syndication.ts), never as a
+	 * plaintext CmsConfig field.
+	 */
+	bluesky?: { handle: string };
+	/**
+	 * Mastodon auto-post declaration. Only the non-secret instance URL lives
+	 * here — the access token is submitted separately via the admin connect
+	 * form and stored as a sealed secret, never as a plaintext CmsConfig
+	 * field.
+	 */
+	mastodon?: { instanceUrl: string };
+}
+
 export interface GiveLivelyConfig {
 	/** GiveLively organization slug (GIVELIVELY_ORG_SLUG). */
 	orgSlug: string;

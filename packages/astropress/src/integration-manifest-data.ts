@@ -186,6 +186,14 @@ export const INTEGRATIONS: readonly IntegrationEntry[] = [
 		requiredAction: "services:manage",
 		adminOnly: true,
 	},
+	{
+		href: "/ap-admin/social-syndication",
+		navKey: "socialSyndication",
+		status: "env-gated",
+		configField: "socialSyndication",
+		requiredAction: "services:manage",
+		adminOnly: true,
+	},
 
 	// Coming-soon — no implementation. Sidebar must visually demote;
 	// page must use variant="coming-soon" (no env-var hints).

@@ -767,6 +767,8 @@ describe("saveRuntimeContentState — error strings, audit, plugin events", () =
 			kind: "post",
 			status: "draft",
 			actor: actor.email,
+			title: "Draft event",
+			canonicalUrl: "https://example.com/hello-world",
 		});
 		expect(publishEvents).toHaveLength(0);
 	});
@@ -807,7 +809,37 @@ describe("saveRuntimeContentState — error strings, audit, plugin events", () =
 			kind: "post",
 			status: "published",
 			actor: actor.email,
+			title: "Published event",
+			canonicalUrl: "https://example.com/hello-world",
 		});
+	});
+
+	it("forwards locals to onContentPublish so plugins can access store/secret state", async () => {
+		const receivedLocals: unknown[] = [];
+		registerCms({
+			...STANDARD_CMS_CONFIG,
+			plugins: [
+				{
+					name: "capture-locals",
+					onContentPublish: (_event, hookLocals) => {
+						receivedLocals.push(hookLocals);
+					},
+				},
+			],
+		});
+
+		await saveRuntimeContentState(
+			"hello-world",
+			{
+				title: "Published event",
+				status: "published",
+				seoTitle: "SEO",
+				metaDescription: "Meta",
+			},
+			actor,
+			locals,
+		);
+		expect(receivedLocals).toEqual([locals]);
 	});
 
 	it("returns ok with state.title/status/seoTitle/metaDescription matching the saved values", async () => {

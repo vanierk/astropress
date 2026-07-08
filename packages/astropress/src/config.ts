@@ -21,6 +21,7 @@ import type {
 	LocalBusinessConfig,
 	ReferralsConfig,
 	ReviewsConfig,
+	SocialSyndicationConfig,
 	TestimonialsConfig,
 } from "./config-service-types.js";
 import type { ContentTypeDefinition } from "./content-modeling.js";
@@ -45,6 +46,7 @@ export type {
 	PledgeCryptoConfig,
 	ReferralsConfig,
 	ReviewsConfig,
+	SocialSyndicationConfig,
 	TestimonialsConfig,
 } from "./config-service-types.js";
 
@@ -185,6 +187,18 @@ export interface CmsConfig {
 	 * no visibility into your checkout flow.
 	 */
 	referrals?: ReferralsConfig;
+
+	/**
+	 * Optional auto-post-on-publish declaration for Bluesky/Mastodon. Only
+	 * non-secret identifying fields (handle, instance URL) live here — the
+	 * app password / access token are submitted via the admin connect form
+	 * and stored as a sealed secret (see social-syndication.ts), never as a
+	 * plaintext CmsConfig field. Setting this field enables a call to the
+	 * existing onContentPublish dispatch point (see
+	 * runtime-actions-content.ts / social-syndication.ts's module doc for
+	 * why this isn't wired through CmsConfig.plugins/registerCms()).
+	 */
+	socialSyndication?: SocialSyndicationConfig;
 
 	/**
 	 * Optional donation / fundraising integrations.
@@ -383,6 +397,15 @@ import {
 	getCmsConfigOrThrow,
 	setStoreConfig,
 } from "./config-store.js";
+
+// social-syndication.ts is NOT imported here. config.ts sits underneath
+// admin-store-dispatch.ts's own dependency chain (sqlite-runtime/utils.ts
+// imports config.ts), so importing anything that reaches back into store
+// access from here would be circular (confirmed via `bun run
+// audit:deps:graph`). Instead, runtime-actions-content.ts — a consumer of
+// admin-store-dispatch.ts, not part of its dependency chain — invokes
+// social-syndication directly at the existing onContentPublish dispatch
+// call site, gated on `socialSyndication` being configured.
 
 export function registerCms(config: CmsConfig): void {
 	setStoreConfig(config);

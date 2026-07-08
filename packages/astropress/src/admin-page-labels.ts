@@ -10861,7 +10861,7 @@ export const pageLabels = {
 	// ── Stub-catalog capability/description (20 live ADMIN_STUB_PAGES entries) ──
 	"stub.socialSyndication.capability": { en: "Social Syndication" },
 	"stub.socialSyndication.description": {
-		en: "Auto-post on publish to social networks. Configure a provider to enable cross-posting.",
+		en: "Auto-post on publish to Bluesky and/or Mastodon. Declare the network here, then connect the posting credential on the admin page — it's sealed, never stored in config.",
 	},
 	"stub.referrals.capability": { en: "Referrals" },
 	"stub.referrals.description": {
@@ -11189,6 +11189,23 @@ export const pageLabels = {
 	"referrals.activeStatusLine": {
 		en: "Place this component in your site layout to track referral-link arrivals:",
 	},
+
+	// ── Social Syndication (promoted: auto-post via the existing publish hook) ──
+	"socialSyndication.provider.bluesky": { en: "Bluesky" },
+	"socialSyndication.provider.mastodon": { en: "Mastodon" },
+	"socialSyndication.bestEffortNote": {
+		en: "Posting is best-effort: there is no delivery guarantee and no retry. A failed post to one network never blocks or fails the publish action.",
+	},
+	"socialSyndication.networksHeading": { en: "Networks" },
+	"socialSyndication.connected": { en: "Connected" },
+	"socialSyndication.notConnected": { en: "Not connected" },
+	"socialSyndication.blueskyHandleLabel": { en: "Handle" },
+	"socialSyndication.blueskyAppPasswordLabel": { en: "App password" },
+	"socialSyndication.mastodonInstanceLabel": { en: "Instance URL" },
+	"socialSyndication.mastodonAccessTokenLabel": { en: "Access token" },
+	"socialSyndication.connectButton": { en: "Connect" },
+	"socialSyndication.connectedNoticeBluesky": { en: "Bluesky connected." },
+	"socialSyndication.connectedNoticeMastodon": { en: "Mastodon connected." },
 } as const satisfies Record<string, LocaleMap>;
 
 /**

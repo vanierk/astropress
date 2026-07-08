@@ -79,11 +79,13 @@ async function dispatchPluginError(error: Error, context: string): Promise<void>
  *
  * Called internally after content saves and publishes. Errors thrown by
  * individual plugin hooks are caught, forwarded to `onError`, and logged;
- * they never fail the action.
+ * they never fail the action. `locals`, when supplied, is forwarded to
+ * each hook as a second argument for plugins that need store access.
  */
 export async function dispatchPluginContentEvent(
 	hook: "onContentSave" | "onContentPublish",
 	event: AstropressContentEvent,
+	locals?: App.Locals,
 ): Promise<void> {
 	const config = peekCmsConfig();
 	if (!config?.plugins?.length) return;
@@ -91,7 +93,7 @@ export async function dispatchPluginContentEvent(
 		const fn = plugin[hook];
 		if (typeof fn !== "function") continue;
 		try {
-			await fn(event);
+			await fn(event, locals);
 			recordHookRun(plugin.name);
 		} catch (err) {
 			const error = err instanceof Error ? err : new Error(String(err));

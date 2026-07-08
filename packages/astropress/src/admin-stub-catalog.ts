@@ -160,13 +160,22 @@ export const adminStubs = {
 	socialSyndication: {
 		capability: "Social Syndication",
 		description:
-			"Auto-post on publish to social networks. Configure a provider to enable cross-posting.",
-		configHint: 'registerCms({\n  socialSyndication: { providers: ["bluesky", "mastodon"] },\n});',
+			"Auto-post on publish to Bluesky and/or Mastodon. Declare the network here, then connect the posting credential on the admin page — it's sealed, never stored in config.",
+		configHint:
+			'registerCms({\n  socialSyndication: { bluesky: { handle: "you.bsky.social" } },\n});\n// Then connect the app password on the Social Syndication admin page.',
 		providers: [
-			{ name: "Bluesky", href: "https://bsky.app", tag: "OSS" },
-			{ name: "Mastodon", href: "https://joinmastodon.org", tag: "OSS" },
-			{ name: "LinkedIn", href: "https://linkedin.com", tag: "SaaS" },
-			{ name: "X / Twitter", href: "https://x.com", tag: "SaaS" },
+			{ name: "Bluesky", href: "https://bsky.app", tag: "Recommended" },
+			{ name: "Mastodon", href: "https://joinmastodon.org", tag: "Recommended" },
+			{
+				name: "X / Twitter (not available — no free tier; ~$0.20 per post with a link as of 2026)",
+				href: "https://x.com",
+				tag: "SaaS",
+			},
+			{
+				name: "LinkedIn (not available — posting on behalf of a page needs Marketing Developer Platform approval, weeks to months, no self-service path)",
+				href: "https://linkedin.com",
+				tag: "SaaS",
+			},
 		],
 	},
 	structuredData: {
@@ -466,13 +475,13 @@ const ROADMAP_ISSUE = "https://github.com/Astropress/astropress/issues/76";
 
 export const ADMIN_STUB_PAGES = {
 	// Coming-soon (status="coming-soon" in INTEGRATIONS or allowlist).
-	"social-syndication": {
-		stubKey: "socialSyndication",
-		navKey: "socialSyndication",
-		action: "services:manage",
-		variant: "coming-soon",
-		roadmapHref: ROADMAP_ISSUE,
-	},
+	// social-syndication was promoted to a real, env-gated page
+	// (social-syndication.astro) — CmsConfig.socialSyndication and the
+	// built-in auto-post handler now exist, hooking the existing
+	// onContentPublish dispatch point (runtime-actions-content.ts) that
+	// already fires on every real publish; "coming-soon" was wrong about
+	// the underlying capability, not just the copy. adminStubs.socialSyndication
+	// stays as an orphaned catalog entry per precedent.
 	// referrals was promoted to a real, env-gated page (referrals.astro) —
 	// CmsConfig.referrals + <AstropressReferralsEmbed> now exist, following
 	// the exact config+emit pattern established by

@@ -29,6 +29,7 @@ import {
 	validateContentTypeFields,
 } from "./runtime-actions-content-shared";
 import type { SaveContentInput } from "./runtime-actions-content-types";
+import { runSocialSyndicationOnPublish } from "./social-syndication";
 
 export async function saveRuntimeContentState(
 	slug: string,
@@ -139,10 +140,23 @@ export async function saveRuntimeContentState(
 				kind: "post",
 				status,
 				actor: actor.email,
+				title,
+				canonicalUrl: `${getCmsConfig().siteUrl}${pageRecord.legacyUrl}`,
 			};
-			await dispatchPluginContentEvent("onContentSave", pluginEvent);
+			await dispatchPluginContentEvent("onContentSave", pluginEvent, locals);
 			if (status === "published") {
-				await dispatchPluginContentEvent("onContentPublish", pluginEvent);
+				await dispatchPluginContentEvent("onContentPublish", pluginEvent, locals);
+				// Not routed through CmsConfig.plugins — see social-syndication.ts's
+				// module doc for why. Wrapped in try/catch so a failed post never
+				// blocks or fails the publish action, the same contract
+				// dispatchPluginContentEvent upholds for real plugins.
+				if (getCmsConfig().socialSyndication) {
+					try {
+						await runSocialSyndicationOnPublish(pluginEvent, locals);
+					} catch (err) {
+						console.error("[astropress] social-syndication dispatch failed:", err);
+					}
+				}
 				// Fire CDN purge asynchronously — failure must not block the publish response
 				void purgeCdnCache(pageRecord.slug, getCmsConfig());
 			}

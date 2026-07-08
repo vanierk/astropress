@@ -47,8 +47,17 @@ describe("dispatchPluginContentEvent", () => {
 		]);
 		const evt = { kind: "save" } as never;
 		await dispatchPluginContentEvent("onContentSave", evt);
-		expect(a).toHaveBeenCalledWith(evt);
-		expect(b).toHaveBeenCalledWith(evt);
+		expect(a).toHaveBeenCalledWith(evt, undefined);
+		expect(b).toHaveBeenCalledWith(evt, undefined);
+	});
+
+	it("forwards the optional locals argument to every hook", async () => {
+		const a = vi.fn();
+		setPlugins([{ name: "a", onContentSave: a }]);
+		const evt = { kind: "save" } as never;
+		const locals = { fake: "locals" } as never;
+		await dispatchPluginContentEvent("onContentSave", evt, locals);
+		expect(a).toHaveBeenCalledWith(evt, locals);
 	});
 
 	it("invokes onContentPublish for the publish hook", async () => {

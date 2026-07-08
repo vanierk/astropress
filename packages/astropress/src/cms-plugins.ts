@@ -12,6 +12,10 @@ export interface AstropressContentEvent {
 	status: string;
 	/** Email of the admin user who performed the action. */
 	actor: string;
+	/** The saved title. Populated by the dispatch call site — already in scope there, so no extra lookup needed. */
+	title?: string;
+	/** Absolute canonical URL for the content record (siteUrl + legacyUrl). */
+	canonicalUrl?: string;
 }
 
 export interface AstropressMediaEvent {
@@ -53,14 +57,22 @@ export interface AstropressPlugin {
 	/**
 	 * Called after a content record is saved via the admin panel.
 	 * Errors thrown here are logged but do not fail the admin action.
+	 *
+	 * The second parameter carries the request's `locals`, when available,
+	 * for plugins that need store access (e.g. `withLocalStoreFallback`) —
+	 * existing plugins that only declare one parameter are unaffected.
 	 */
-	onContentSave?: (event: AstropressContentEvent) => Promise<void> | void;
+	onContentSave?: (event: AstropressContentEvent, locals?: App.Locals) => Promise<void> | void;
 
 	/**
 	 * Called after a content record status changes to "published".
 	 * Runs in addition to `onContentSave` when the saved status is "published".
+	 *
+	 * The second parameter carries the request's `locals`, when available,
+	 * for plugins that need store access (e.g. `withLocalStoreFallback`) —
+	 * existing plugins that only declare one parameter are unaffected.
 	 */
-	onContentPublish?: (event: AstropressContentEvent) => Promise<void> | void;
+	onContentPublish?: (event: AstropressContentEvent, locals?: App.Locals) => Promise<void> | void;
 
 	/**
 	 * Called after a media asset is successfully uploaded via the admin panel.

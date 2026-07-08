@@ -1,0 +1,132 @@
+---
+import AdminLayout from "@astropress-diy/astropress/components/AdminLayout.astro";
+import CsrfInput from "@astropress-diy/astropress/components/CsrfInput.astro";
+import RequiresIntegration from "@astropress-diy/astropress/components/RequiresIntegration.astro";
+import {
+	adminStubs,
+	getPageT,
+	peekCmsConfig,
+	requiresAccess,
+	resolveAdminLocale,
+} from "astropress";
+import { listConnectedSocialSyndicationProviders } from "../../src/social-syndication.js";
+
+// Promoted from the [stub].astro coming-soon route: CmsConfig.socialSyndication
+// and the built-in social-syndication auto-post handler now exist, hooking
+// the EXISTING onContentPublish dispatch point (runtime-actions-content.ts)
+// that already fires on every real publish — no new publish pipeline,
+// retry, queue, or scheduler was built. Gated on services:manage
+// (unchanged) — the same legitimate shared action monitoring/heatmaps use.
+//
+// Posting credentials (Bluesky app password, Mastodon access token) are
+// never stored in CmsConfig: they're submitted below and sealed via the
+// same repository.connect()/findSecret() envelope every other domain's
+// secrets use — never plaintext, never exposed client-side. This page
+// only ever shows connection PRESENCE, never the credential values.
+//
+// Delivery is best-effort: no retry, no delivery guarantee. A failed post
+// to one network never blocks or fails the publish action.
+const guard = await requiresAccess(Astro, "services:manage");
+if (guard) return guard;
+const adminUser = Astro.locals.adminUser;
+if (!adminUser) return Astro.redirect("/ap-admin/login");
+const locale = resolveAdminLocale(Astro);
+const t = getPageT(locale);
+const stub = adminStubs.socialSyndication;
+const config = peekCmsConfig()?.socialSyndication;
+
+const connectedProviders = await listConnectedSocialSyndicationProviders(Astro.locals);
+
+const wasConnected = Astro.url.searchParams.get("connected");
+const connectedNoticeKey =
+	wasConnected === "bluesky"
+		? "socialSyndication.connectedNoticeBluesky"
+		: wasConnected === "mastodon"
+			? "socialSyndication.connectedNoticeMastodon"
+			: undefined;
+---
+
+<AdminLayout
+	title={t("stub.socialSyndication.capability", stub.capability)}
+	heading={t("stub.socialSyndication.capability", stub.capability)}
+	currentPath="/ap-admin/social-syndication"
+	description={t("stub.socialSyndication.description", stub.description)}
+	userName={adminUser.name}
+>
+	<p class="field-note">{t("socialSyndication.bestEffortNote")}</p>
+
+	{connectedNoticeKey && <p class="notice">{t(connectedNoticeKey)}</p>}
+
+	{config ? (
+		<section class="panel">
+			<p class="admin-kicker">{t("socialSyndication.networksHeading")}</p>
+
+			<h2>{t("socialSyndication.provider.bluesky")}</h2>
+			<p>
+				{connectedProviders.has("bluesky")
+					? t("socialSyndication.connected")
+					: t("socialSyndication.notConnected")}
+			</p>
+			<form method="post" action="/ap-admin/actions/social-syndication-connect" class="admin-field">
+				<CsrfInput token={Astro.locals.csrfToken} />
+				<input type="hidden" name="provider" value="bluesky" />
+				<label class="admin-field">
+					<span>{t("socialSyndication.blueskyHandleLabel")}</span>
+					<input type="text" name="handle" required class="admin-input" placeholder="you.bsky.social" />
+				</label>
+				<label class="admin-field">
+					<span>{t("socialSyndication.blueskyAppPasswordLabel")}</span>
+					<input type="password" name="appPassword" required class="admin-input" />
+				</label>
+				<div class="actions admin-actions-row">
+					<button type="submit" class="admin-button">{t("socialSyndication.connectButton")}</button>
+				</div>
+			</form>
+
+			<h2>{t("socialSyndication.provider.mastodon")}</h2>
+			<p>
+				{connectedProviders.has("mastodon")
+					? t("socialSyndication.connected")
+					: t("socialSyndication.notConnected")}
+			</p>
+			<form method="post" action="/ap-admin/actions/social-syndication-connect" class="admin-field">
+				<CsrfInput token={Astro.locals.csrfToken} />
+				<input type="hidden" name="provider" value="mastodon" />
+				<label class="admin-field">
+					<span>{t("socialSyndication.mastodonInstanceLabel")}</span>
+					<input
+						type="url"
+						name="instanceUrl"
+						required
+						class="admin-input"
+						placeholder="https://mastodon.social"
+					/>
+				</label>
+				<label class="admin-field">
+					<span>{t("socialSyndication.mastodonAccessTokenLabel")}</span>
+					<input type="password" name="accessToken" required class="admin-input" />
+				</label>
+				<div class="actions admin-actions-row">
+					<button type="submit" class="admin-button">{t("socialSyndication.connectButton")}</button>
+				</div>
+			</form>
+		</section>
+	) : (
+		<RequiresIntegration
+			capability={stub.capability}
+			description={stub.description}
+			configHint={stub.configHint}
+			providers={[...stub.providers]}
+			docsHref={(stub as { docsHref?: string }).docsHref}
+			locale={locale}
+			stubKey="socialSyndication"
+		/>
+	)}
+</AdminLayout>
+
+<style>
+	.field-note {
+		color: var(--muted);
+		margin: 0 0 1rem;
+	}
+</style>
