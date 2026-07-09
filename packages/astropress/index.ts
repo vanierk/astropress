@@ -545,6 +545,7 @@ export {
 	getRuntimeMediaResolutionOptions,
 	resolveMediaUrl,
 	resolveRuntimeMediaUrl,
+	wrapImageCdnUrl,
 } from "./src/media";
 export type { NewsletterAdapter } from "./src/newsletter-adapter";
 // Newsletter

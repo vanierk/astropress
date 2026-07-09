@@ -18,6 +18,7 @@ import type {
 	DonationsConfig,
 	EventsConfig,
 	HeatmapsConfig,
+	ImageCdnConfig,
 	LiveChatConfig,
 	LocalBusinessConfig,
 	ReferralsConfig,
@@ -42,6 +43,7 @@ export type {
 	EventsConfig,
 	GiveLivelyConfig,
 	HeatmapsConfig,
+	ImageCdnConfig,
 	LiberapayConfig,
 	LiveChatConfig,
 	LocalBusinessConfig,
@@ -213,6 +215,20 @@ export interface CmsConfig {
 	 * conversations.
 	 */
 	liveChat?: LiveChatConfig;
+
+	/**
+	 * Optional image CDN / transform-proxy declaration (Cloudinary fetch,
+	 * imgix Web Proxy, Bunny.net Optimizer, or a custom URL template).
+	 * Rewrites existing media URLs through the provider's on-the-fly
+	 * transform proxy — no new pipeline, no asset upload/migration. The
+	 * provider's source/pull-zone/fetch-permission must already be
+	 * configured in the provider's own dashboard; this field only supplies
+	 * the resulting hostname/cloud name to wrapImageCdnUrl() (see
+	 * media.ts), which resolveMediaUrl() calls only in deployment mode on
+	 * an already-resolved R2 URL — never in development mode, and never on
+	 * the bare localPath fallback (a CDN can't fetch a localhost path).
+	 */
+	imageCdn?: ImageCdnConfig;
 
 	/**
 	 * Optional donation / fundraising integrations.

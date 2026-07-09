@@ -44,8 +44,6 @@ export interface IntegrationEntry {
 	readonly domain?: IntegrationDomain;
 }
 
-const ROADMAP_ISSUE = "https://github.com/Astropress/astropress/issues/76";
-
 export const INTEGRATIONS: readonly IntegrationEntry[] = [
 	// Real — handlers exist, no env gating required.
 	{
@@ -202,14 +200,11 @@ export const INTEGRATIONS: readonly IntegrationEntry[] = [
 		requiredAction: "services:manage",
 		adminOnly: true,
 	},
-
-	// Coming-soon — no implementation. Sidebar must visually demote;
-	// page must use variant="coming-soon" (no env-var hints).
 	{
 		href: "/ap-admin/image-cdn",
 		navKey: "imageCdn",
-		status: "coming-soon",
-		roadmapHref: ROADMAP_ISSUE,
+		status: "env-gated",
+		configField: "imageCdn",
 		requiredAction: "services:manage",
 		adminOnly: true,
 	},

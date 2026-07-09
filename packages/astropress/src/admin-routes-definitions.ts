@@ -370,7 +370,7 @@ export const adminRouteDefinitions = [
 	},
 	{
 		pattern: "/ap-admin/image-cdn",
-		entrypoint: "[stub].astro",
+		entrypoint: "image-cdn.astro",
 		kind: "page",
 	},
 	{ pattern: "/ap-admin/search", entrypoint: "search.astro", kind: "page" },

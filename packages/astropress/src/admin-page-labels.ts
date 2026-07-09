@@ -10901,7 +10901,7 @@ export const pageLabels = {
 	},
 	"stub.imageCdn.capability": { en: "Image CDN" },
 	"stub.imageCdn.description": {
-		en: "Offload image transforms and delivery to a CDN. Configure a provider to enable image-pipeline routing.",
+		en: "Rewrites existing media URLs through the provider's on-the-fly transform proxy — no new pipeline, no asset upload or migration. The provider's source/pull-zone/fetch permission must already be configured in its own dashboard.",
 	},
 	"stub.deployHooks.capability": { en: "Deploy Hooks" },
 	"stub.deployHooks.description": {
@@ -11219,6 +11219,23 @@ export const pageLabels = {
 	},
 	"liveChat.activeStatusLine": {
 		en: "Place this component in your site layout to render the chat widget:",
+	},
+
+	// ── Image CDN (promoted: URL-rewrite only, no upload pipeline) ──
+	"imageCdn.provider.cloudinary": { en: "Cloudinary" },
+	"imageCdn.provider.imgix": { en: "imgix" },
+	"imageCdn.provider.bunny": { en: "Bunny.net" },
+	"imageCdn.dashboardPrereqNote": {
+		en: "This only rewrites media URLs — the source, pull zone, or fetch permission must already be configured in the provider's own dashboard. Astropress does not provision it for you.",
+	},
+	"imageCdn.cloudinaryFetchDisabledNote": {
+		en: "Cloudinary's fetch delivery is disabled by default. If wrapped URLs return an error, enable \"Fetched URL\" under Restricted Media Types in your Cloudinary dashboard's security settings.",
+	},
+	"imageCdn.cspNote": {
+		en: "CSP note: img-src already allows any https: origin by default, so this usually needs no CSP change. Only add the provider's origin via extraImgSrc if you've narrowed img-src yourself.",
+	},
+	"imageCdn.sampleUrlLine": {
+		en: "A sample media URL, wrapped through the configured provider:",
 	},
 } as const satisfies Record<string, LocaleMap>;
 

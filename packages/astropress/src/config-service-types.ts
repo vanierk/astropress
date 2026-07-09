@@ -107,6 +107,28 @@ export interface LiveChatConfig {
 	label?: string;
 }
 
+export interface ImageCdnConfig {
+	/** Image CDN / transform-proxy provider. */
+	provider: "cloudinary" | "imgix" | "bunny" | "custom";
+	/** Cloudinary cloud name, e.g. "my-cloud" (provider: "cloudinary" only). Fetch delivery must be enabled in the Cloudinary dashboard — disabled by default. */
+	cloudName?: string;
+	/** imgix source hostname, e.g. "my-source.imgix.net" — the Web Proxy/Web Folder source must already be configured in the imgix dashboard (provider: "imgix" only). */
+	sourceHostname?: string;
+	/** Bunny.net pull zone hostname, e.g. "my-zone.b-cdn.net" — the pull zone must already be configured in the Bunny dashboard to pull from the same origin Astropress serves media from (provider: "bunny" only). */
+	pullZoneHostname?: string;
+	/**
+	 * Default transform parameters applied to every wrapped URL. Shape is
+	 * provider-specific: Cloudinary uses comma-separated path segments
+	 * (e.g. "w_800,q_auto,f_auto"); imgix/Bunny use query-string params
+	 * (e.g. "w=800&auto=format" / "width=800&quality=80").
+	 */
+	defaultParams?: string;
+	/** For "custom": a URL template containing the literal placeholder "{url}", replaced with the resolved origin URL (host is responsible for correctness/encoding). */
+	urlTemplate?: string;
+	/** Override the display label shown on the image CDN status page. */
+	label?: string;
+}
+
 export interface GiveLivelyConfig {
 	/** GiveLively organization slug (GIVELIVELY_ORG_SLUG). */
 	orgSlug: string;

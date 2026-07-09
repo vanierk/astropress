@@ -309,18 +309,17 @@ export const adminStubs = {
 	imageCdn: {
 		capability: "Image CDN",
 		description:
-			"Offload image transforms and delivery to a CDN. Configure a provider to enable image-pipeline routing.",
-		configHint:
-			'registerCms({\n  imageCdn: { provider: "cloudinary", cloudName: process.env.CLOUDINARY_CLOUD },\n});',
+			"Rewrites existing media URLs through the provider's on-the-fly transform proxy — no new pipeline, no asset upload or migration. The provider's source/pull-zone/fetch permission must already be configured in its own dashboard.",
+		configHint: 'registerCms({\n  imageCdn: { provider: "cloudinary", cloudName: "..." },\n});',
 		providers: [
+			{ name: "Cloudinary", href: "https://cloudinary.com", tag: "Recommended" },
+			{ name: "imgix", href: "https://imgix.com", tag: "Recommended" },
+			{ name: "Bunny.net", href: "https://bunny.net", tag: "Recommended" },
 			{
-				name: "Cloudflare Images",
+				name: 'Cloudflare Images (not available — its "Images" product is upload/storage-based; its separate URL-transform variant needs Cloudflare-proxied DNS; both are out of scope for a URL-rewrite-only build)',
 				href: "https://www.cloudflare.com/products/cloudflare-images/",
-				tag: "Recommended",
+				tag: "SaaS",
 			},
-			{ name: "Bunny.net", href: "https://bunny.net", tag: "SaaS" },
-			{ name: "Cloudinary", href: "https://cloudinary.com", tag: "SaaS" },
-			{ name: "imgix", href: "https://imgix.com", tag: "SaaS" },
 		],
 	},
 	search: {
@@ -553,13 +552,12 @@ export const ADMIN_STUB_PAGES = {
 	// AstropressEventsEmbed/AstropressReviewsEmbed; "coming-soon" was wrong
 	// about the underlying capability, not just the copy.
 	// adminStubs.liveChat stays as an orphaned catalog entry per precedent.
-	"image-cdn": {
-		stubKey: "imageCdn",
-		navKey: "imageCdn",
-		action: "services:manage",
-		variant: "coming-soon",
-		roadmapHref: ROADMAP_ISSUE,
-	},
+	// image-cdn was promoted to a real, env-gated page (image-cdn.astro) —
+	// CmsConfig.imageCdn + wrapImageCdnUrl()/resolveMediaUrl() now exist,
+	// rewriting existing media URLs through the provider's on-the-fly
+	// transform proxy; "coming-soon" was wrong about the underlying
+	// capability, not just the copy. adminStubs.imageCdn stays as an
+	// orphaned catalog entry per precedent.
 	// deploy-hooks was promoted to a real page (deploy-hooks.astro) since
 	// providers/github-deploy.ts already implements registerDeployHooks(...).
 	// adminStubs.deployHooks (capability/description copy) stays as an

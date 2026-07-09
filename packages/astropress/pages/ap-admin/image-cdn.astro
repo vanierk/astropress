@@ -1,0 +1,90 @@
+---
+import AdminLayout from "@astropress-diy/astropress/components/AdminLayout.astro";
+import RequiresIntegration from "@astropress-diy/astropress/components/RequiresIntegration.astro";
+import {
+	adminStubs,
+	getPageT,
+	peekCmsConfig,
+	requiresAccess,
+	resolveAdminLocale,
+	wrapImageCdnUrl,
+} from "astropress";
+
+// Promoted from the [stub].astro coming-soon route: CmsConfig.imageCdn and
+// wrapImageCdnUrl()/resolveMediaUrl() now exist, rewriting already-resolved
+// media URLs through the provider's on-the-fly transform proxy — no new
+// pipeline, no asset upload/migration. Gated on services:manage (unchanged)
+// — the same legitimate shared action monitoring/heatmaps/live-chat use.
+//
+// The provider's source/pull-zone/fetch-permission must already be
+// configured in the provider's own dashboard; this page never implies
+// Astropress provisions that for you.
+const guard = await requiresAccess(Astro, "services:manage");
+if (guard) return guard;
+const adminUser = Astro.locals.adminUser;
+if (!adminUser) return Astro.redirect("/ap-admin/login");
+const locale = resolveAdminLocale(Astro);
+const t = getPageT(locale);
+const stub = adminStubs.imageCdn;
+const config = peekCmsConfig()?.imageCdn;
+
+const providerLabel = config
+	? (config.label ?? t(`imageCdn.provider.${config.provider}`, config.provider))
+	: undefined;
+
+// A representative sample R2 URL, purely for showing what a wrapped URL
+// looks like — never a real asset, never fetched.
+const sampleOriginUrl = "https://media.example.com/uploads/sample-photo.jpg";
+const sampleWrappedUrl = config ? wrapImageCdnUrl(sampleOriginUrl, config) : undefined;
+---
+
+<AdminLayout
+	title={t("stub.imageCdn.capability", stub.capability)}
+	heading={t("stub.imageCdn.capability", stub.capability)}
+	currentPath="/ap-admin/image-cdn"
+	description={t("stub.imageCdn.description", stub.description)}
+	userName={adminUser.name}
+>
+	<p class="field-note">{t("imageCdn.dashboardPrereqNote")}</p>
+	{config?.provider === "cloudinary" && (
+		<p class="field-note">{t("imageCdn.cloudinaryFetchDisabledNote")}</p>
+	)}
+	<p class="field-note">{t("imageCdn.cspNote")}</p>
+
+	{config ? (
+		<section class="panel">
+			<p class="admin-kicker">{t("integrationConnect.statusActive")}</p>
+			<h2>{providerLabel}</h2>
+			<p>{t("imageCdn.sampleUrlLine")}</p>
+			<p class="field-note">{sampleOriginUrl}</p>
+			<pre class="admin-code-block"><code>{sampleWrappedUrl}</code></pre>
+		</section>
+	) : (
+		<RequiresIntegration
+			capability={stub.capability}
+			description={stub.description}
+			configHint={stub.configHint}
+			providers={[...stub.providers]}
+			docsHref={(stub as { docsHref?: string }).docsHref}
+			locale={locale}
+			stubKey="imageCdn"
+		/>
+	)}
+</AdminLayout>
+
+<style>
+	.field-note {
+		color: var(--muted);
+		margin: 0 0 1rem;
+	}
+	.admin-code-block {
+		background: var(--surface-muted, #f3f4f6);
+		border: 1px solid var(--border, #e5e7eb);
+		border-radius: 8px;
+		padding: 1rem;
+		overflow-x: auto;
+		font-size: 0.85rem;
+		white-space: pre-wrap;
+		word-break: break-all;
+	}
+</style>
